@@ -10,9 +10,11 @@ import SwiftUI
 
 class MainScreenTabBarController: UITabBarController {
     
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        UserDefaults.standard.set(true, forKey: "SEEN-TUTORIAL")
         view.backgroundColor = .myBackgroundColor
         setupTabBar()
         
@@ -53,4 +55,5 @@ class MainScreenTabBarController: UITabBarController {
     
     
 }
+
 

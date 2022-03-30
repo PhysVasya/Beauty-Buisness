@@ -13,19 +13,21 @@ class FirstStepSetupViewController: UIViewController {
     
     private let onboardingViewController = UIHostingController(rootView: OnboardingView())
     private var nextStep: ((String) -> Void)?
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        //Closure from 1st setup step saves the name of salon, brings in the main screen
         nextStep = { [weak self] name in
-            let secontStepVC = SecondStepSetupViewController()
-            secontStepVC.title = name
-            self?.navigationController?.pushViewController(secontStepVC, animated: true)
-            UserDefaults.standard.set(name, forKey: "SalonName")
+            let secondStepSetup = SecondStepSetupViewController()
+            secondStepSetup.title = name
+            secondStepSetup.modalPresentationStyle = .fullScreen
+            self?.navigationController?.pushViewController(secondStepSetup, animated: true)
+            UserDefaults.standard.set(name, forKey: "SALON-NAME")
         }
         
         setupFirstStepViewController()
-       
+        
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -39,15 +41,9 @@ class FirstStepSetupViewController: UIViewController {
     }
     
     private func presentOnBoarding() {
-        let seenTutorial = UserDefaults.standard.bool(forKey: "SEEN-TUTORIAL")
         onboardingViewController.modalPresentationStyle = .formSheet
-                
-        if !seenTutorial {
-            present(onboardingViewController, animated: true) {
-                UserDefaults.standard.set(true, forKey: "SEEN-TUTORIAL")
-            }
-        }
-        
+        onboardingViewController.isModalInPresentation = true
+        present(onboardingViewController, animated: true)
     }
     
     private func setupFirstStepViewController() {
@@ -61,4 +57,6 @@ class FirstStepSetupViewController: UIViewController {
         navigationController?.navigationBar.prefersLargeTitles = true
         view.backgroundColor = .myBackgroundColor
     }
+    
+   
 }

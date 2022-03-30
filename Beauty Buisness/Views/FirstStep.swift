@@ -35,9 +35,11 @@ struct FirstStep: View {
                         .font(.title)
                     TextField("",
                               text: $name,
-                              prompt: placeholderNeeded ? Text(placeholder).font(.system(size: 16)) : Text(""))
+                              prompt: placeholderNeeded ? Text(placeholder).font(.system(size: 16)) : Text("")
+                    )
                     .font(.system(size: 32, weight: .semibold, design: .rounded))
                     .keyboardType(.alphabet)
+                    .textInputAutocapitalization(.characters)
                     .disableAutocorrection(true)
                     .textFieldStyle(.plain)
                     .multilineTextAlignment(.center)
@@ -48,12 +50,6 @@ struct FirstStep: View {
                             placeholderNeeded = false
                         }
                     }
-//                        if name != "" {
-//                            nextStep?(name)
-//                        } else {
-//                            placeholderNeeded = true
-//                        }
-//                    }
                     .focused($animate)
                     .overlay(Rectangle()
                         .foregroundColor(animate ? .myAccentColor : .gray)

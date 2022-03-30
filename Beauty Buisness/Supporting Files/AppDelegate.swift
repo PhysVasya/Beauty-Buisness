@@ -14,12 +14,20 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        // Override point for customization after application launch.
         
-//        UserDefaults.standard.set(false, forKey: "SEEN-TUTORIAL")
+        print( FileManager.default.urls(for: .documentDirectory, in: .userDomainMask) )
+        
+        UserDefaults.standard.set(false, forKey: "SEEN-TUTORIAL")
+
+        let seenTutorial = UserDefaults.standard.bool(forKey: "SEEN-TUTORIAL")
 
         let window = UIWindow(frame: UIScreen.main.bounds)
-        window.rootViewController = UINavigationController(rootViewController: FirstStepSetupViewController())
+        
+        if !seenTutorial {
+            window.rootViewController = UINavigationController(rootViewController: FirstStepSetupViewController())
+        } else {
+            window.rootViewController = MainScreenTabBarController()
+        }
         window.makeKeyAndVisible()
         self.window = window
         

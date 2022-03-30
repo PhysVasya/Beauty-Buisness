@@ -17,8 +17,12 @@
 		FFFAA31127F09AA5002EC74B /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFFAA31027F09AA5002EC74B /* MainViewController.swift */; };
 		FFFAA31327F0AB8E002EC74B /* FirstStepSetupViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFFAA31227F0AB8E002EC74B /* FirstStepSetupViewController.swift */; };
 		FFFAA31627F0ACA4002EC74B /* FirstStep.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFFAA31527F0ACA4002EC74B /* FirstStep.swift */; };
-		FFFAA31827F0B6F3002EC74B /* SecondStepSetupViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFFAA31727F0B6F3002EC74B /* SecondStepSetupViewController.swift */; };
 		FFFAA31A27F0B77C002EC74B /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFFAA31927F0B77C002EC74B /* Extensions.swift */; };
+		FFFAA31F27F36A32002EC74B /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFFAA31E27F36A32002EC74B /* SettingsViewController.swift */; };
+		FFFAA32127F391F7002EC74B /* SettingsTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFFAA32027F391F7002EC74B /* SettingsTableViewCell.swift */; };
+		FFFAA32527F3A44D002EC74B /* SecondStep.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFFAA32427F3A44D002EC74B /* SecondStep.swift */; };
+		FFFAA32727F4286F002EC74B /* SecondStepSetupViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFFAA32627F4286F002EC74B /* SecondStepSetupViewController.swift */; };
+		FFFAA32927F48DE8002EC74B /* MainTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFFAA32827F48DE8002EC74B /* MainTableViewCell.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -34,8 +38,12 @@
 		FFFAA31027F09AA5002EC74B /* MainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
 		FFFAA31227F0AB8E002EC74B /* FirstStepSetupViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirstStepSetupViewController.swift; sourceTree = "<group>"; };
 		FFFAA31527F0ACA4002EC74B /* FirstStep.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirstStep.swift; sourceTree = "<group>"; };
-		FFFAA31727F0B6F3002EC74B /* SecondStepSetupViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecondStepSetupViewController.swift; sourceTree = "<group>"; };
 		FFFAA31927F0B77C002EC74B /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
+		FFFAA31E27F36A32002EC74B /* SettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
+		FFFAA32027F391F7002EC74B /* SettingsTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsTableViewCell.swift; sourceTree = "<group>"; };
+		FFFAA32427F3A44D002EC74B /* SecondStep.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecondStep.swift; sourceTree = "<group>"; };
+		FFFAA32627F4286F002EC74B /* SecondStepSetupViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecondStepSetupViewController.swift; sourceTree = "<group>"; };
+		FFFAA32827F48DE8002EC74B /* MainTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTableViewCell.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -68,7 +76,7 @@
 		FFFAA2F127EFA3CA002EC74B /* Beauty Buisness */ = {
 			isa = PBXGroup;
 			children = (
-				FFFAA30B27EFA587002EC74B /* CoreData Dependencies */,
+				FFFAA31B27F36064002EC74B /* Model */,
 				FFFAA30D27EFA64B002EC74B /* Views */,
 				FFFAA30C27EFA5AF002EC74B /* ViewControllers */,
 				FFFAA30927EFA54C002EC74B /* Launch Screen */,
@@ -111,6 +119,9 @@
 				FFFAA31427F0AB93002EC74B /* SetupProcessVCs */,
 				FFFAA2F627EFA3CA002EC74B /* MainScreenTabBarController.swift */,
 				FFFAA31027F09AA5002EC74B /* MainViewController.swift */,
+				FFFAA31E27F36A32002EC74B /* SettingsViewController.swift */,
+				FFFAA32027F391F7002EC74B /* SettingsTableViewCell.swift */,
+				FFFAA32827F48DE8002EC74B /* MainTableViewCell.swift */,
 			);
 			path = ViewControllers;
 			sourceTree = "<group>";
@@ -120,6 +131,7 @@
 			children = (
 				FFFAA30E27EFA65C002EC74B /* OnboardingView.swift */,
 				FFFAA31527F0ACA4002EC74B /* FirstStep.swift */,
+				FFFAA32427F3A44D002EC74B /* SecondStep.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -128,9 +140,17 @@
 			isa = PBXGroup;
 			children = (
 				FFFAA31227F0AB8E002EC74B /* FirstStepSetupViewController.swift */,
-				FFFAA31727F0B6F3002EC74B /* SecondStepSetupViewController.swift */,
+				FFFAA32627F4286F002EC74B /* SecondStepSetupViewController.swift */,
 			);
 			path = SetupProcessVCs;
+			sourceTree = "<group>";
+		};
+		FFFAA31B27F36064002EC74B /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				FFFAA30B27EFA587002EC74B /* CoreData Dependencies */,
+			);
+			path = Model;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -203,14 +223,18 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FFFAA32527F3A44D002EC74B /* SecondStep.swift in Sources */,
 				FFFAA2F727EFA3CA002EC74B /* MainScreenTabBarController.swift in Sources */,
 				FFFAA2FD27EFA3CA002EC74B /* Beauty_Buisness.xcdatamodeld in Sources */,
+				FFFAA32127F391F7002EC74B /* SettingsTableViewCell.swift in Sources */,
+				FFFAA32927F48DE8002EC74B /* MainTableViewCell.swift in Sources */,
+				FFFAA31F27F36A32002EC74B /* SettingsViewController.swift in Sources */,
 				FFFAA30F27EFA65C002EC74B /* OnboardingView.swift in Sources */,
+				FFFAA32727F4286F002EC74B /* SecondStepSetupViewController.swift in Sources */,
 				FFFAA31127F09AA5002EC74B /* MainViewController.swift in Sources */,
 				FFFAA2F327EFA3CA002EC74B /* AppDelegate.swift in Sources */,
 				FFFAA31A27F0B77C002EC74B /* Extensions.swift in Sources */,
 				FFFAA2F527EFA3CA002EC74B /* SceneDelegate.swift in Sources */,
-				FFFAA31827F0B6F3002EC74B /* SecondStepSetupViewController.swift in Sources */,
 				FFFAA31627F0ACA4002EC74B /* FirstStep.swift in Sources */,
 				FFFAA31327F0AB8E002EC74B /* FirstStepSetupViewController.swift in Sources */,
 			);
