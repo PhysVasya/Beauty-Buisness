@@ -44,19 +44,21 @@ class SettingsViewController: UIViewController {
     
     @objc private func saveChanges () {
         
+        //LOGIC NEEDS TO BE CHANGED LATER!
         if let newStartingHour = newStartingHour {
             UserDefaults.standard.set(newStartingHour, forKey: "STARTING-HOUR")
 
         }
-        
-        
+         
         if let newEndingHour = newEndingHour {
             UserDefaults.standard.set(newEndingHour, forKey: "ENDING-HOUR")
         }
         
     }
     
-    @objc public func topTimePickerChangedValue (sender: UIDatePicker) {
+    
+    //PRIVATIZED methods can only be accessed from here, pay attention to the "sender" attribute which is needed to access values from Selector
+    @objc private func topTimePickerChangedValue (sender: UIDatePicker) {
              
         newStartingHour = sender.date
         
@@ -64,7 +66,7 @@ class SettingsViewController: UIViewController {
         
     }
     
-    @objc public func bottomTimePickerChangedValue (sender: UIDatePicker) {
+    @objc private func bottomTimePickerChangedValue (sender: UIDatePicker) {
            
         newEndingHour = sender.date
         
@@ -85,7 +87,6 @@ extension SettingsViewController: UITableViewDelegate, UITableViewDataSource {
             cell.backgroundColor = .myBackgroundColor
             cell.topTimePickerValueChanged(self, action: #selector(topTimePickerChangedValue(sender:)))
             cell.bottomTimePickerValueChanged(self, action: #selector(bottomTimePickerChangedValue(sender:)))
-//            cell.bottomTimePickerValueChanged(self, action: <#T##Selector#>)
             return cell
         } else {
             return UITableViewCell()

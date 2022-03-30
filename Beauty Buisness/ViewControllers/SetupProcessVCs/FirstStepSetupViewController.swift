@@ -17,7 +17,7 @@ class FirstStepSetupViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        //Closure from 1st setup step saves the name of salon, brings in the main screen
+        //Closure from 1st setup step saves the name of salon, brings in the second step (setting time)
         nextStep = { [weak self] name in
             let secondStepSetup = SecondStepSetupViewController()
             secondStepSetup.title = name
@@ -53,7 +53,7 @@ class FirstStepSetupViewController: UIViewController {
     }
     
     private func setupNavigationController () {
-        navigationItem.title = "Настройка"
+        navigationItem.title = "Название"
         navigationController?.navigationBar.prefersLargeTitles = true
         view.backgroundColor = .myBackgroundColor
     }

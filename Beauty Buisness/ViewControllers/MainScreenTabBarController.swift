@@ -14,6 +14,7 @@ class MainScreenTabBarController: UITabBarController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        //After loading main screen, no need to go back to onboarding.
         UserDefaults.standard.set(true, forKey: "SEEN-TUTORIAL")
         view.backgroundColor = .myBackgroundColor
         setupTabBar()
@@ -36,9 +37,12 @@ class MainScreenTabBarController: UITabBarController {
     
     private func setupTabBar () {
         
+        //setting this appearance let us visually differ the starting of tabBarVC
         let appearance = UITabBarAppearance()
         appearance.backgroundColor = .mySecondaryAccentColor
         tabBar.scrollEdgeAppearance = appearance
+        
+        //Setuping TabBar
         let vc1 = UINavigationController(rootViewController: MainViewController())
         let vc2 = MainViewController()
         vc1.navigationBar.prefersLargeTitles = true

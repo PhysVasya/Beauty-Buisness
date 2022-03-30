@@ -20,7 +20,6 @@ class MainViewController: UIViewController {
         return tv
     }()
     
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -34,6 +33,8 @@ class MainViewController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        
+        //Each time the view appears (i.e. ater changing settings also, the next methods are called to reload tableView
         workingDay = MainTableViewCell.generateHoursInWorkingDay()
         mainScreenTableView.reloadData()
     }
@@ -52,6 +53,7 @@ class MainViewController: UIViewController {
         navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "gearshape"), style: .plain, target: self, action: #selector(showSettingsViewController))
     }
     
+    //Method tor gearshape button
     @objc private func showSettingsViewController () {
         navigationController?.pushViewController(SettingsViewController(), animated: true)
     }
@@ -67,14 +69,19 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
         let cell = tableView.dequeueReusableCell(withIdentifier: MainTableViewCell.cellIdentifier, for: indexPath) as! MainTableViewCell
         cell.backgroundColor = .myBackgroundColor
         var config = cell.defaultContentConfiguration()
+        
+        //CAREFUL force unwrap! But should always not be nil. Here we access the starting hour and depending on the number of rows, just add 1 hour each new row.
         config.text = String(workingDay!.startingHour + indexPath.row)
+        
+        //Just a blank.
         config.secondaryText = "TEXT"
         cell.contentConfiguration = config
         return cell
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-                   
+                
+        //CAREFUL! 
         return workingDay!.hours.count
     }
     

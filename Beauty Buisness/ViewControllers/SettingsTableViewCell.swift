@@ -11,7 +11,7 @@ import UIKit
 
 class SettingsTableViewCell: UITableViewCell {
     
-    
+    static let identifier = "SettingsViewControllerCell"
     
     private let topTimePicker: UIDatePicker = {
         let dp = UIDatePicker()
@@ -31,7 +31,6 @@ class SettingsTableViewCell: UITableViewCell {
         return dp
     }()
     
-    static let identifier = "SettingsViewControllerCell"
     
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
@@ -69,6 +68,7 @@ class SettingsTableViewCell: UITableViewCell {
         horizontalStackView.axis = .horizontal
         horizontalStackView.distribution = .fillEqually
         
+        //Just adding constraints programmatically
         leftView.translatesAutoresizingMaskIntoConstraints = false
         leftView.leadingAnchor.constraint(equalTo: horizontalStackView.leadingAnchor).isActive = true
         leftView.topAnchor.constraint(equalTo: horizontalStackView.topAnchor).isActive = true
@@ -99,6 +99,7 @@ class SettingsTableViewCell: UITableViewCell {
             
     }
     
+    //PAY ATTENTION! A good way to pass values to different target. No need to specify self methods.
     public func topTimePickerValueChanged (_ target: Any?, action: Selector) {
         topTimePicker.addTarget(target, action: action, for: .valueChanged)
     }
