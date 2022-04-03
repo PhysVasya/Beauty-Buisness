@@ -19,11 +19,21 @@ class SecondStepSetupViewController: UIViewController {
         
         //Runs when tapping "Continue" button from the second step
         
-        proceedToMainScreen = { [weak self] startingHour, endingHour in
-  
-            //Saving working hours which later can be accessed and changed in the settings from right bar buttom item
+        proceedToMainScreen = { [weak self] startingHourDate, endingHourDate in
+            
+            let startingDateComps = Calendar.current.dateComponents([.hour, .minute], from: startingHourDate)
+            let endingDateComps = Calendar.current.dateComponents([.hour, .minute], from: endingHourDate)
+            
+            guard let startingHour = startingDateComps.hour,
+                  let startingMinute = startingDateComps.minute,
+                  let endingHour = endingDateComps.hour,
+                  let endingMinute = endingDateComps.minute else { return }
+            
+            //Saving working hours which later can be accessed and changed in the settings from right bar button item
             UserDefaults.standard.set(startingHour, forKey: "STARTING-HOUR")
+            UserDefaults.standard.set(startingMinute, forKey: "STARTING-MINUTE")
             UserDefaults.standard.set(endingHour, forKey: "ENDING-HOUR")
+            UserDefaults.standard.set(endingMinute, forKey: "ENDING-MINUTE")
             
             //No need for continuing navigationController flow, present new.
             let mainScreenTabBarController = MainScreenTabBarController()

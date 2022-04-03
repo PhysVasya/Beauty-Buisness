@@ -10,20 +10,24 @@ import UIKit
 
 class SettingsViewController: UIViewController {
     
-    var newStartingHour: Date?
-    var newEndingHour: Date?
+    private var newStartingHour: Int?
+    private var newEndingHour: Int?
+    private var newStartingMinute: Int?
+    private var newEndingMinute: Int?
+    
+    private let calendar = Calendar.current
+    
     
     private let settingsTableView: UITableView = {
-       let tv = UITableView()
+        let tv = UITableView()
         tv.register(SettingsTableViewCell.self, forCellReuseIdentifier: SettingsTableViewCell.identifier)
         return tv
     }()
     
-   
-
+    
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         view.backgroundColor = .myBackgroundColor
         setupTableView()
         setupNavigationBar()
@@ -45,36 +49,31 @@ class SettingsViewController: UIViewController {
     @objc private func saveChanges () {
         
         //LOGIC NEEDS TO BE CHANGED LATER!
-        if let newStartingHour = newStartingHour {
-            UserDefaults.standard.set(newStartingHour, forKey: "STARTING-HOUR")
-
-        }
-         
-        if let newEndingHour = newEndingHour {
-            UserDefaults.standard.set(newEndingHour, forKey: "ENDING-HOUR")
+        if let newStartingHour = newStartingHour,
+           let newStartingMinute = newEndingMinute {
+            UserDefaults.setNewStartingTime(hour: newStartingHour, minute: newStartingMinute)
         }
         
+        if let newEndingHour = newEndingHour,
+           let newEndingMinute = newEndingMinute {
+            UserDefaults.setNewEndingTime(hour: newEndingHour, minute: newEndingMinute)
+        }
     }
     
     
     //PRIVATIZED methods can only be accessed from here, pay attention to the "sender" attribute which is needed to access values from Selector
-    @objc private func topTimePickerChangedValue (sender: UIDatePicker) {
-             
-        newStartingHour = sender.date
+    @objc private func topTimePickerChangedValue (_ sender: UIDatePicker) {
         
-        print(newStartingHour)
-        
+        let newStartingTime = calendar.dateComponents([.hour, .minute], from: sender.date)
+        newStartingHour = newStartingTime.hour
+        newStartingMinute = newStartingTime.minute
     }
     
-    @objc private func bottomTimePickerChangedValue (sender: UIDatePicker) {
-           
-        newEndingHour = sender.date
+    @objc private func bottomTimePickerChangedValue (_ sender: UIDatePicker) {
         
-        print(newEndingHour)
-       
-
-        
-        
+        let newEndingTime = calendar.dateComponents([.hour, .minute], from: sender.date)
+        newEndingHour = newEndingTime.hour
+        newEndingMinute = newEndingTime.minute
     }
 }
 
@@ -85,8 +84,8 @@ extension SettingsViewController: UITableViewDelegate, UITableViewDataSource {
         if indexPath.row == 0 {
             let cell = tableView.dequeueReusableCell(withIdentifier: SettingsTableViewCell.identifier, for: indexPath) as! SettingsTableViewCell
             cell.backgroundColor = .myBackgroundColor
-            cell.topTimePickerValueChanged(self, action: #selector(topTimePickerChangedValue(sender:)))
-            cell.bottomTimePickerValueChanged(self, action: #selector(bottomTimePickerChangedValue(sender:)))
+            cell.topTimePickerValueChanged(self, action: #selector(topTimePickerChangedValue(_:)))
+            cell.bottomTimePickerValueChanged(self, action: #selector(bottomTimePickerChangedValue(_:)))
             return cell
         } else {
             return UITableViewCell()

@@ -23,6 +23,14 @@
 		FFFAA32527F3A44D002EC74B /* SecondStep.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFFAA32427F3A44D002EC74B /* SecondStep.swift */; };
 		FFFAA32727F4286F002EC74B /* SecondStepSetupViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFFAA32627F4286F002EC74B /* SecondStepSetupViewController.swift */; };
 		FFFAA32927F48DE8002EC74B /* MainTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFFAA32827F48DE8002EC74B /* MainTableViewCell.swift */; };
+		FFFAA32B27F4B53A002EC74B /* NewProcedureButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFFAA32A27F4B53A002EC74B /* NewProcedureButton.swift */; };
+		FFFAA32D27F9955C002EC74B /* WorkingDay.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFFAA32C27F9955C002EC74B /* WorkingDay.swift */; };
+		FFFAA32F27F99564002EC74B /* Event.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFFAA32E27F99564002EC74B /* Event.swift */; };
+		FFFAA33127F995B8002EC74B /* Client.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFFAA33027F995B8002EC74B /* Client.swift */; };
+		FFFAA33327F99606002EC74B /* Penalty.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFFAA33227F99606002EC74B /* Penalty.swift */; };
+		FFFAA33527F99619002EC74B /* Master.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFFAA33427F99619002EC74B /* Master.swift */; };
+		FFFAA33927F99C87002EC74B /* NewEventViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFFAA33827F99C87002EC74B /* NewEventViewController.swift */; };
+		FFFAA33C27F9A453002EC74B /* NewEventTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFFAA33B27F9A453002EC74B /* NewEventTableViewCell.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -44,6 +52,14 @@
 		FFFAA32427F3A44D002EC74B /* SecondStep.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecondStep.swift; sourceTree = "<group>"; };
 		FFFAA32627F4286F002EC74B /* SecondStepSetupViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecondStepSetupViewController.swift; sourceTree = "<group>"; };
 		FFFAA32827F48DE8002EC74B /* MainTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTableViewCell.swift; sourceTree = "<group>"; };
+		FFFAA32A27F4B53A002EC74B /* NewProcedureButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewProcedureButton.swift; sourceTree = "<group>"; };
+		FFFAA32C27F9955C002EC74B /* WorkingDay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkingDay.swift; sourceTree = "<group>"; };
+		FFFAA32E27F99564002EC74B /* Event.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Event.swift; sourceTree = "<group>"; };
+		FFFAA33027F995B8002EC74B /* Client.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Client.swift; sourceTree = "<group>"; };
+		FFFAA33227F99606002EC74B /* Penalty.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Penalty.swift; sourceTree = "<group>"; };
+		FFFAA33427F99619002EC74B /* Master.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Master.swift; sourceTree = "<group>"; };
+		FFFAA33827F99C87002EC74B /* NewEventViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewEventViewController.swift; sourceTree = "<group>"; };
+		FFFAA33B27F9A453002EC74B /* NewEventTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewEventTableViewCell.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -118,10 +134,9 @@
 			children = (
 				FFFAA31427F0AB93002EC74B /* SetupProcessVCs */,
 				FFFAA2F627EFA3CA002EC74B /* MainScreenTabBarController.swift */,
-				FFFAA31027F09AA5002EC74B /* MainViewController.swift */,
-				FFFAA31E27F36A32002EC74B /* SettingsViewController.swift */,
-				FFFAA32027F391F7002EC74B /* SettingsTableViewCell.swift */,
-				FFFAA32827F48DE8002EC74B /* MainTableViewCell.swift */,
+				FFFAA33727F996D5002EC74B /* HomeVC */,
+				FFFAA33627F996C8002EC74B /* SettingsVC */,
+				FFFAA33A27F9A43D002EC74B /* NewEventVC */,
 			);
 			path = ViewControllers;
 			sourceTree = "<group>";
@@ -132,6 +147,7 @@
 				FFFAA30E27EFA65C002EC74B /* OnboardingView.swift */,
 				FFFAA31527F0ACA4002EC74B /* FirstStep.swift */,
 				FFFAA32427F3A44D002EC74B /* SecondStep.swift */,
+				FFFAA32A27F4B53A002EC74B /* NewProcedureButton.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -149,8 +165,40 @@
 			isa = PBXGroup;
 			children = (
 				FFFAA30B27EFA587002EC74B /* CoreData Dependencies */,
+				FFFAA32C27F9955C002EC74B /* WorkingDay.swift */,
+				FFFAA32E27F99564002EC74B /* Event.swift */,
+				FFFAA33027F995B8002EC74B /* Client.swift */,
+				FFFAA33227F99606002EC74B /* Penalty.swift */,
+				FFFAA33427F99619002EC74B /* Master.swift */,
 			);
 			path = Model;
+			sourceTree = "<group>";
+		};
+		FFFAA33627F996C8002EC74B /* SettingsVC */ = {
+			isa = PBXGroup;
+			children = (
+				FFFAA31E27F36A32002EC74B /* SettingsViewController.swift */,
+				FFFAA32027F391F7002EC74B /* SettingsTableViewCell.swift */,
+			);
+			path = SettingsVC;
+			sourceTree = "<group>";
+		};
+		FFFAA33727F996D5002EC74B /* HomeVC */ = {
+			isa = PBXGroup;
+			children = (
+				FFFAA31027F09AA5002EC74B /* MainViewController.swift */,
+				FFFAA32827F48DE8002EC74B /* MainTableViewCell.swift */,
+			);
+			path = HomeVC;
+			sourceTree = "<group>";
+		};
+		FFFAA33A27F9A43D002EC74B /* NewEventVC */ = {
+			isa = PBXGroup;
+			children = (
+				FFFAA33827F99C87002EC74B /* NewEventViewController.swift */,
+				FFFAA33B27F9A453002EC74B /* NewEventTableViewCell.swift */,
+			);
+			path = NewEventVC;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -227,13 +275,21 @@
 				FFFAA2F727EFA3CA002EC74B /* MainScreenTabBarController.swift in Sources */,
 				FFFAA2FD27EFA3CA002EC74B /* Beauty_Buisness.xcdatamodeld in Sources */,
 				FFFAA32127F391F7002EC74B /* SettingsTableViewCell.swift in Sources */,
+				FFFAA33927F99C87002EC74B /* NewEventViewController.swift in Sources */,
+				FFFAA33C27F9A453002EC74B /* NewEventTableViewCell.swift in Sources */,
 				FFFAA32927F48DE8002EC74B /* MainTableViewCell.swift in Sources */,
 				FFFAA31F27F36A32002EC74B /* SettingsViewController.swift in Sources */,
 				FFFAA30F27EFA65C002EC74B /* OnboardingView.swift in Sources */,
 				FFFAA32727F4286F002EC74B /* SecondStepSetupViewController.swift in Sources */,
+				FFFAA33127F995B8002EC74B /* Client.swift in Sources */,
+				FFFAA32F27F99564002EC74B /* Event.swift in Sources */,
 				FFFAA31127F09AA5002EC74B /* MainViewController.swift in Sources */,
 				FFFAA2F327EFA3CA002EC74B /* AppDelegate.swift in Sources */,
+				FFFAA32D27F9955C002EC74B /* WorkingDay.swift in Sources */,
+				FFFAA33327F99606002EC74B /* Penalty.swift in Sources */,
 				FFFAA31A27F0B77C002EC74B /* Extensions.swift in Sources */,
+				FFFAA33527F99619002EC74B /* Master.swift in Sources */,
+				FFFAA32B27F4B53A002EC74B /* NewProcedureButton.swift in Sources */,
 				FFFAA2F527EFA3CA002EC74B /* SceneDelegate.swift in Sources */,
 				FFFAA31627F0ACA4002EC74B /* FirstStep.swift in Sources */,
 				FFFAA31327F0AB8E002EC74B /* FirstStepSetupViewController.swift in Sources */,

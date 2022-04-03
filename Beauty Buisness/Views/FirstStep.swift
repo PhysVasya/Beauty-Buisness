@@ -29,6 +29,7 @@ struct FirstStep: View {
                     .foregroundColor(.myAccentColor)
                     .multilineTextAlignment(.center)
                 
+                Spacer()
                 HStack {
                     Image(systemName: "pencil")
                         .foregroundColor(.myAccentColor)

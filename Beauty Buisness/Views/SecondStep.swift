@@ -55,6 +55,7 @@ struct SecondStep: View {
     @State private var placeholderNeeded: Bool = false
     @State private var startingHour: Date = Date()
     @State private var endingHour: Date = Date()
+    @State private var timeIsEqual: Bool = true
     
     public let finalStep: ((_ startingHour: Date, _ endingHour: Date) -> Void)?
     
@@ -84,13 +85,27 @@ struct SecondStep: View {
                     
                 }
                 
-                CustomButton(action: {
+                ZStack {
+                   
+                    CustomButton(action: {
 
-                    finalStep?(startingHour, endingHour)
-                    dismiss()
+                        finalStep?(startingHour, endingHour)
+                        dismiss()
+                        
+                    }, labelText: "Продолжить")
+                    .padding(.vertical, 80)
                     
-                }, labelText: "Продолжить")
-                .padding(.vertical, 80)
+                    RoundedRectangle(cornerRadius: 20)
+                        .frame(width: 350, height: 60, alignment: .center)
+                        .foregroundColor(.myBackgroundColor)
+                        .opacity(timeIsEqual ? 0.8 : 0)
+                        .animation(.easeIn, value: timeIsEqual)
+                        .onChange(of: startingHour) { newValue in
+                            timeIsEqual = newValue >= endingHour
+                        }
+                        
+                }
+                
             
             }
             .padding(.horizontal, 40)

@@ -15,17 +15,19 @@ class SettingsTableViewCell: UITableViewCell {
     
     private let topTimePicker: UIDatePicker = {
         let dp = UIDatePicker()
-        let startHour = UserDefaults.standard.object(forKey: "STARTING-HOUR") as! Date
+        let startHour = Int.startingHour
+        let startingMinute = Int.startingMinute
         dp.datePickerMode = .time
         dp.minuteInterval = 15
-        dp.date = startHour
+        dp.date = Calendar.current.date(bySettingHour: startHour, minute: startingMinute, second: 0, of: Date.now)!
         return dp
     }()
     
     private let bottomTimePicker: UIDatePicker = {
-        let endHour = UserDefaults.standard.object(forKey: "ENDING-HOUR") as! Date
+        let endHour = Int.endingHour
+        let endMinute = Int.endingMinute
         let dp = UIDatePicker()
-        dp.date = endHour
+        dp.date = Calendar.current.date(bySettingHour: endHour, minute: endMinute, second: 0, of: Date.now)!
         dp.datePickerMode = .time
         dp.minuteInterval = 15
         return dp

@@ -14,11 +14,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        
-        //        print( FileManager.default.urls(for: .documentDirectory, in: .userDomainMask) )
-        
+                
         //Presents onboarding every launch
-        UserDefaults.standard.set(false, forKey: "SEEN-TUTORIAL")
+//        UserDefaults.standard.set(false, forKey: "SEEN-TUTORIAL")
         
         let seenTutorial = UserDefaults.standard.bool(forKey: "SEEN-TUTORIAL")
         
@@ -29,7 +27,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             window.rootViewController = MainScreenTabBarController()
         }
         window.makeKeyAndVisible()
-        self.window = window
+        self.window = window      
         
         return true
     }
