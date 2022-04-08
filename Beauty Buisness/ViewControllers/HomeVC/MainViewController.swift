@@ -27,13 +27,13 @@ class MainViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-          
+        
         newProcedureButtonTapped = { [weak self] in
             let newEventVC = NewEventViewController()
             self?.navigationController?.present(UINavigationController(rootViewController: newEventVC), animated: true)
             
             newEventVC.onCompletion = { event in
-                print(event!)
+                print(event)
                 
             }
             
@@ -45,14 +45,12 @@ class MainViewController: UIViewController {
         setupTableView()
         addNavBarSettingsItem()
         setupAddNewProcedureButton()
-      
         
-
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
- 
+        
         //Each time the view appears (i.e. after changing settings also, the next methods are called to reload tableView
         do {
             workingDay = try WorkingDay.generateHoursInWorkingDay()
@@ -82,23 +80,30 @@ class MainViewController: UIViewController {
     }
     
     private func setupBGView () {
+        let subviews = view.subviews
+        
         if events.count == 0 {
-            let noEventsLabel = UILabel()
-            noEventsLabel.text = "Пока нет записи..."
-            noEventsLabel.font = .systemFont(ofSize: 24, weight: .bold)
-            noEventsLabel.textColor = .systemGray4
-            noEventsLabel.textAlignment = .center
-            noEventsLabel.frame = view.bounds
-            noEventsLabel.restorationIdentifier = "NoEvents"
-            view.addSubview(noEventsLabel)
+            if let noEventsView = subviews.first(where: {$0.restorationIdentifier == "NoEvents"}) {
+                if subviews.contains(noEventsView) {
+                    //                    noEventsView.removeFromSuperview()
+                }
+            } else {
+                let noEventsLabel = UILabel()
+                noEventsLabel.text = "Пока нет записи..."
+                noEventsLabel.font = .systemFont(ofSize: 24, weight: .bold)
+                noEventsLabel.textColor = .systemGray4
+                noEventsLabel.textAlignment = .center
+                noEventsLabel.frame = view.bounds
+                noEventsLabel.restorationIdentifier = "NoEvents"
+                view.addSubview(noEventsLabel)
+                
+            }
         } else {
-            let subviews = view.subviews
             if let noEventsView = subviews.first(where: {$0.restorationIdentifier == "NoEvents"}) {
                 if subviews.contains(noEventsView) {
                     noEventsView.removeFromSuperview()
                 }
             }
-            return
         }
     }
     
@@ -117,10 +122,10 @@ class MainViewController: UIViewController {
 
 
 extension MainViewController: UITableViewDelegate, UITableViewDataSource {
-        
+    
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-      
+        
         let cell = tableView.dequeueReusableCell(withIdentifier: MainTableViewCell.cellIdentifier, for: indexPath) as! MainTableViewCell
         cell.backgroundColor = .myBackgroundColor
         var config = cell.defaultContentConfiguration()
@@ -135,8 +140,8 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-                
-        //CAREFUL! 
+        
+        //CAREFUL!
         return events.count
     }
     
@@ -160,7 +165,7 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
         dateLabel.backgroundColor = .myHighlightColor
         
         return dateLabel
-    
+        
         
     }
     

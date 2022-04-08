@@ -7,6 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		FF5A034727FC6D3F00F8FB24 /* CoreDataStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF5A034627FC6D3F00F8FB24 /* CoreDataStack.swift */; };
+		FF5A034A27FC7B2D00F8FB24 /* FetchingManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF5A034927FC7B2D00F8FB24 /* FetchingManager.swift */; };
+		FF5A037F27FF66DB00F8FB24 /* SalonTypesDB.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF5A037E27FF66DB00F8FB24 /* SalonTypesDB.swift */; };
+		FF5A0381280024E900F8FB24 /* ThirdStep.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF5A0380280024E900F8FB24 /* ThirdStep.swift */; };
+		FF5A038328003AD400F8FB24 /* FinalStep.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF5A038228003AD400F8FB24 /* FinalStep.swift */; };
 		FFFAA2F327EFA3CA002EC74B /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFFAA2F227EFA3CA002EC74B /* AppDelegate.swift */; };
 		FFFAA2F527EFA3CA002EC74B /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFFAA2F427EFA3CA002EC74B /* SceneDelegate.swift */; };
 		FFFAA2F727EFA3CA002EC74B /* MainScreenTabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFFAA2F627EFA3CA002EC74B /* MainScreenTabBarController.swift */; };
@@ -15,25 +20,27 @@
 		FFFAA30227EFA3CC002EC74B /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = FFFAA30027EFA3CC002EC74B /* LaunchScreen.storyboard */; };
 		FFFAA30F27EFA65C002EC74B /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFFAA30E27EFA65C002EC74B /* OnboardingView.swift */; };
 		FFFAA31127F09AA5002EC74B /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFFAA31027F09AA5002EC74B /* MainViewController.swift */; };
-		FFFAA31327F0AB8E002EC74B /* FirstStepSetupViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFFAA31227F0AB8E002EC74B /* FirstStepSetupViewController.swift */; };
 		FFFAA31627F0ACA4002EC74B /* FirstStep.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFFAA31527F0ACA4002EC74B /* FirstStep.swift */; };
 		FFFAA31A27F0B77C002EC74B /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFFAA31927F0B77C002EC74B /* Extensions.swift */; };
 		FFFAA31F27F36A32002EC74B /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFFAA31E27F36A32002EC74B /* SettingsViewController.swift */; };
 		FFFAA32127F391F7002EC74B /* SettingsTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFFAA32027F391F7002EC74B /* SettingsTableViewCell.swift */; };
 		FFFAA32527F3A44D002EC74B /* SecondStep.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFFAA32427F3A44D002EC74B /* SecondStep.swift */; };
-		FFFAA32727F4286F002EC74B /* SecondStepSetupViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFFAA32627F4286F002EC74B /* SecondStepSetupViewController.swift */; };
 		FFFAA32927F48DE8002EC74B /* MainTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFFAA32827F48DE8002EC74B /* MainTableViewCell.swift */; };
 		FFFAA32B27F4B53A002EC74B /* NewProcedureButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFFAA32A27F4B53A002EC74B /* NewProcedureButton.swift */; };
 		FFFAA32D27F9955C002EC74B /* WorkingDay.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFFAA32C27F9955C002EC74B /* WorkingDay.swift */; };
 		FFFAA32F27F99564002EC74B /* Event.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFFAA32E27F99564002EC74B /* Event.swift */; };
 		FFFAA33127F995B8002EC74B /* Client.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFFAA33027F995B8002EC74B /* Client.swift */; };
-		FFFAA33327F99606002EC74B /* Penalty.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFFAA33227F99606002EC74B /* Penalty.swift */; };
 		FFFAA33527F99619002EC74B /* Master.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFFAA33427F99619002EC74B /* Master.swift */; };
 		FFFAA33927F99C87002EC74B /* NewEventViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFFAA33827F99C87002EC74B /* NewEventViewController.swift */; };
 		FFFAA33C27F9A453002EC74B /* NewEventTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFFAA33B27F9A453002EC74B /* NewEventTableViewCell.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		FF5A034627FC6D3F00F8FB24 /* CoreDataStack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataStack.swift; sourceTree = "<group>"; };
+		FF5A034927FC7B2D00F8FB24 /* FetchingManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FetchingManager.swift; sourceTree = "<group>"; };
+		FF5A037E27FF66DB00F8FB24 /* SalonTypesDB.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SalonTypesDB.swift; sourceTree = "<group>"; };
+		FF5A0380280024E900F8FB24 /* ThirdStep.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThirdStep.swift; sourceTree = "<group>"; };
+		FF5A038228003AD400F8FB24 /* FinalStep.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FinalStep.swift; sourceTree = "<group>"; };
 		FFFAA2EF27EFA3CA002EC74B /* Beauty Buisness.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Beauty Buisness.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		FFFAA2F227EFA3CA002EC74B /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		FFFAA2F427EFA3CA002EC74B /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -44,19 +51,16 @@
 		FFFAA30327EFA3CC002EC74B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		FFFAA30E27EFA65C002EC74B /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
 		FFFAA31027F09AA5002EC74B /* MainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
-		FFFAA31227F0AB8E002EC74B /* FirstStepSetupViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirstStepSetupViewController.swift; sourceTree = "<group>"; };
 		FFFAA31527F0ACA4002EC74B /* FirstStep.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirstStep.swift; sourceTree = "<group>"; };
 		FFFAA31927F0B77C002EC74B /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		FFFAA31E27F36A32002EC74B /* SettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
 		FFFAA32027F391F7002EC74B /* SettingsTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsTableViewCell.swift; sourceTree = "<group>"; };
 		FFFAA32427F3A44D002EC74B /* SecondStep.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecondStep.swift; sourceTree = "<group>"; };
-		FFFAA32627F4286F002EC74B /* SecondStepSetupViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecondStepSetupViewController.swift; sourceTree = "<group>"; };
 		FFFAA32827F48DE8002EC74B /* MainTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTableViewCell.swift; sourceTree = "<group>"; };
 		FFFAA32A27F4B53A002EC74B /* NewProcedureButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewProcedureButton.swift; sourceTree = "<group>"; };
 		FFFAA32C27F9955C002EC74B /* WorkingDay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkingDay.swift; sourceTree = "<group>"; };
 		FFFAA32E27F99564002EC74B /* Event.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Event.swift; sourceTree = "<group>"; };
 		FFFAA33027F995B8002EC74B /* Client.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Client.swift; sourceTree = "<group>"; };
-		FFFAA33227F99606002EC74B /* Penalty.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Penalty.swift; sourceTree = "<group>"; };
 		FFFAA33427F99619002EC74B /* Master.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Master.swift; sourceTree = "<group>"; };
 		FFFAA33827F99C87002EC74B /* NewEventViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewEventViewController.swift; sourceTree = "<group>"; };
 		FFFAA33B27F9A453002EC74B /* NewEventTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewEventTableViewCell.swift; sourceTree = "<group>"; };
@@ -73,6 +77,37 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		FF5A034827FC7B1000F8FB24 /* Managers */ = {
+			isa = PBXGroup;
+			children = (
+				FF5A034927FC7B2D00F8FB24 /* FetchingManager.swift */,
+			);
+			path = Managers;
+			sourceTree = "<group>";
+		};
+		FF5A037D27FD8B6400F8FB24 /* NotUsed */ = {
+			isa = PBXGroup;
+			children = (
+				FFFAA32E27F99564002EC74B /* Event.swift */,
+				FFFAA33027F995B8002EC74B /* Client.swift */,
+				FFFAA33427F99619002EC74B /* Master.swift */,
+			);
+			path = NotUsed;
+			sourceTree = "<group>";
+		};
+		FF5A0386280087FA00F8FB24 /* FirstLaunchViews */ = {
+			isa = PBXGroup;
+			children = (
+				FFFAA30E27EFA65C002EC74B /* OnboardingView.swift */,
+				FFFAA31527F0ACA4002EC74B /* FirstStep.swift */,
+				FFFAA32427F3A44D002EC74B /* SecondStep.swift */,
+				FFFAA32A27F4B53A002EC74B /* NewProcedureButton.swift */,
+				FF5A0380280024E900F8FB24 /* ThirdStep.swift */,
+				FF5A038228003AD400F8FB24 /* FinalStep.swift */,
+			);
+			path = FirstLaunchViews;
+			sourceTree = "<group>";
+		};
 		FFFAA2E627EFA3CA002EC74B = {
 			isa = PBXGroup;
 			children = (
@@ -93,6 +128,7 @@
 			isa = PBXGroup;
 			children = (
 				FFFAA31B27F36064002EC74B /* Model */,
+				FF5A034827FC7B1000F8FB24 /* Managers */,
 				FFFAA30D27EFA64B002EC74B /* Views */,
 				FFFAA30C27EFA5AF002EC74B /* ViewControllers */,
 				FFFAA30927EFA54C002EC74B /* Launch Screen */,
@@ -121,18 +157,19 @@
 			path = "Supporting Files";
 			sourceTree = "<group>";
 		};
-		FFFAA30B27EFA587002EC74B /* CoreData Dependencies */ = {
+		FFFAA30B27EFA587002EC74B /* CoreData */ = {
 			isa = PBXGroup;
 			children = (
 				FFFAA2FB27EFA3CA002EC74B /* Beauty_Buisness.xcdatamodeld */,
+				FF5A034627FC6D3F00F8FB24 /* CoreDataStack.swift */,
+				FFFAA32C27F9955C002EC74B /* WorkingDay.swift */,
 			);
-			path = "CoreData Dependencies";
+			path = CoreData;
 			sourceTree = "<group>";
 		};
 		FFFAA30C27EFA5AF002EC74B /* ViewControllers */ = {
 			isa = PBXGroup;
 			children = (
-				FFFAA31427F0AB93002EC74B /* SetupProcessVCs */,
 				FFFAA2F627EFA3CA002EC74B /* MainScreenTabBarController.swift */,
 				FFFAA33727F996D5002EC74B /* HomeVC */,
 				FFFAA33627F996C8002EC74B /* SettingsVC */,
@@ -144,32 +181,17 @@
 		FFFAA30D27EFA64B002EC74B /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				FFFAA30E27EFA65C002EC74B /* OnboardingView.swift */,
-				FFFAA31527F0ACA4002EC74B /* FirstStep.swift */,
-				FFFAA32427F3A44D002EC74B /* SecondStep.swift */,
-				FFFAA32A27F4B53A002EC74B /* NewProcedureButton.swift */,
+				FF5A0386280087FA00F8FB24 /* FirstLaunchViews */,
 			);
 			path = Views;
-			sourceTree = "<group>";
-		};
-		FFFAA31427F0AB93002EC74B /* SetupProcessVCs */ = {
-			isa = PBXGroup;
-			children = (
-				FFFAA31227F0AB8E002EC74B /* FirstStepSetupViewController.swift */,
-				FFFAA32627F4286F002EC74B /* SecondStepSetupViewController.swift */,
-			);
-			path = SetupProcessVCs;
 			sourceTree = "<group>";
 		};
 		FFFAA31B27F36064002EC74B /* Model */ = {
 			isa = PBXGroup;
 			children = (
-				FFFAA30B27EFA587002EC74B /* CoreData Dependencies */,
-				FFFAA32C27F9955C002EC74B /* WorkingDay.swift */,
-				FFFAA32E27F99564002EC74B /* Event.swift */,
-				FFFAA33027F995B8002EC74B /* Client.swift */,
-				FFFAA33227F99606002EC74B /* Penalty.swift */,
-				FFFAA33427F99619002EC74B /* Master.swift */,
+				FF5A037D27FD8B6400F8FB24 /* NotUsed */,
+				FFFAA30B27EFA587002EC74B /* CoreData */,
+				FF5A037E27FF66DB00F8FB24 /* SalonTypesDB.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -280,19 +302,21 @@
 				FFFAA32927F48DE8002EC74B /* MainTableViewCell.swift in Sources */,
 				FFFAA31F27F36A32002EC74B /* SettingsViewController.swift in Sources */,
 				FFFAA30F27EFA65C002EC74B /* OnboardingView.swift in Sources */,
-				FFFAA32727F4286F002EC74B /* SecondStepSetupViewController.swift in Sources */,
 				FFFAA33127F995B8002EC74B /* Client.swift in Sources */,
 				FFFAA32F27F99564002EC74B /* Event.swift in Sources */,
+				FF5A038328003AD400F8FB24 /* FinalStep.swift in Sources */,
 				FFFAA31127F09AA5002EC74B /* MainViewController.swift in Sources */,
+				FF5A0381280024E900F8FB24 /* ThirdStep.swift in Sources */,
 				FFFAA2F327EFA3CA002EC74B /* AppDelegate.swift in Sources */,
 				FFFAA32D27F9955C002EC74B /* WorkingDay.swift in Sources */,
-				FFFAA33327F99606002EC74B /* Penalty.swift in Sources */,
+				FF5A034A27FC7B2D00F8FB24 /* FetchingManager.swift in Sources */,
 				FFFAA31A27F0B77C002EC74B /* Extensions.swift in Sources */,
 				FFFAA33527F99619002EC74B /* Master.swift in Sources */,
+				FF5A034727FC6D3F00F8FB24 /* CoreDataStack.swift in Sources */,
 				FFFAA32B27F4B53A002EC74B /* NewProcedureButton.swift in Sources */,
 				FFFAA2F527EFA3CA002EC74B /* SceneDelegate.swift in Sources */,
+				FF5A037F27FF66DB00F8FB24 /* SalonTypesDB.swift in Sources */,
 				FFFAA31627F0ACA4002EC74B /* FirstStep.swift in Sources */,
-				FFFAA31327F0AB8E002EC74B /* FirstStepSetupViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

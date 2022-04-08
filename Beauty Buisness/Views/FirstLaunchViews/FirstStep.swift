@@ -7,27 +7,32 @@
 
 import SwiftUI
 
+
 struct FirstStep: View {
     
+    @State private var isActive: Bool = false
     @State private var name: String = ""
     @FocusState private var animate: Bool
     @State private var placeholder =  "Поле не может быть пустым"
-    @State private var placeholderNeeded: Bool = false
-    
-    public let nextStep: ((String) -> Void)?
+    @State private var showSecondStep: Bool = false
+    @State private var isFirstTimeLaunched: Bool = false
     
     var body: some View {
-        
-        ZStack {
-            Color.myBackgroundColor
+        NavigationView {
+            
             VStack (alignment: .center) {
+                NavigationLink(isActive: $showSecondStep) {
+                    SecondStep ()
+                    
+                } label: {
+                    Text("")
+                }
                 
                 Text("Введите название салона")
                     .font(.system(size: 26, weight: .semibold, design: .default))
-                    .padding(.top, 200)
-                    .padding(.bottom, 100)
                     .foregroundColor(.myAccentColor)
                     .multilineTextAlignment(.center)
+                    .padding(.top, 30)
                 
                 Spacer()
                 HStack {
@@ -36,7 +41,7 @@ struct FirstStep: View {
                         .font(.title)
                     TextField("",
                               text: $name,
-                              prompt: placeholderNeeded ? Text(placeholder).font(.system(size: 16)) : Text("")
+                              prompt: Text(placeholder).font(.system(size: 16))
                     )
                     .font(.system(size: 32, weight: .semibold, design: .rounded))
                     .keyboardType(.alphabet)
@@ -44,13 +49,6 @@ struct FirstStep: View {
                     .disableAutocorrection(true)
                     .textFieldStyle(.plain)
                     .multilineTextAlignment(.center)
-                    .onSubmit {
-                        if name == "" {
-                            placeholderNeeded = true
-                        } else {
-                            placeholderNeeded = false
-                        }
-                    }
                     .focused($animate)
                     .overlay(Rectangle()
                         .foregroundColor(animate ? .myAccentColor : .gray)
@@ -58,24 +56,39 @@ struct FirstStep: View {
                         .opacity(animate ? 1 : 0.1),
                              alignment: .bottom)
                     .animation(.easeIn, value: animate)
+                    
                 }
+                .padding()
                 
                 Spacer()
-                CustomButton(action: {
-                    if name != "" {
-                        nextStep?(name)
-                    }
+                CustomButton(isActive: $isActive,action: {
+                    self.showSecondStep = true
+                    UserDefaults.standard.set(name, forKey: "SALON-NAME")
+                    
                 }, labelText: "Продолжить")
-                .padding(.vertical, 80)
+                .onChange(of: name) { newValue in
+                    if newValue != "" {
+                        isActive = true
+                    } else {
+                        isActive = false
+                    }
+                }
             }
-            .padding(.horizontal, 40)
+            .navigationTitle(Text("Название"))
+            .statusBar(hidden: false)
+            .sheet(isPresented: $isFirstTimeLaunched) {
+                OnboardingView()
+            }
+            .padding()
+
         }
-        .ignoresSafeArea()
+        .background(Color.myBackgroundColor)
+        
     }
 }
 
 struct FirstStep_Previews: PreviewProvider {
     static var previews: some View {
-        FirstStep( nextStep: {_ in })
+        FirstStep()
     }
 }

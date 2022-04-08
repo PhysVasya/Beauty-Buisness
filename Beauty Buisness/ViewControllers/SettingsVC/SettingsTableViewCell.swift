@@ -48,8 +48,6 @@ class SettingsTableViewCell: UITableViewCell {
     private func setupCell () {
         
         let leftView = UILabel()
-        
-        
         let rightTopLabel = UILabel()
         rightTopLabel.text = "Начало: "
         let rightBottomLabel = UILabel()
@@ -59,9 +57,11 @@ class SettingsTableViewCell: UITableViewCell {
         
         let topRightView = UIStackView(arrangedSubviews: [rightTopLabel, topTimePicker])
         topRightView.axis = .horizontal
+        topRightView.distribution = .fillEqually
         
         let bottomRightView = UIStackView(arrangedSubviews: [rightBottomLabel, bottomTimePicker])
         bottomRightView.axis = .horizontal
+        bottomRightView.distribution = .fillEqually
         
         let verticalStackView = UIStackView(arrangedSubviews: [topRightView, bottomRightView])
         verticalStackView.axis = .vertical
@@ -76,7 +76,6 @@ class SettingsTableViewCell: UITableViewCell {
         leftView.topAnchor.constraint(equalTo: horizontalStackView.topAnchor).isActive = true
         leftView.bottomAnchor.constraint(equalTo: horizontalStackView.bottomAnchor).isActive = true
         leftView.trailingAnchor.constraint(equalTo: verticalStackView.leadingAnchor).isActive = true
-        
         
         topRightView.translatesAutoresizingMaskIntoConstraints = false
         topRightView.leadingAnchor.constraint(equalTo: verticalStackView.leadingAnchor).isActive = true

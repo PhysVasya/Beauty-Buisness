@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="20086" systemVersion="21E258" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+    <entity name="Customer" representedClassName=".Customer" syncable="YES" codeGenerationType="class">
+        <attribute name="name" optional="YES" attributeType="String"/>
+        <attribute name="phone" optional="YES" attributeType="String"/>
+        <attribute name="rating" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <relationship name="event" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Event" inverseName="customer" inverseEntity="Event"/>
+        <relationship name="preferredMaster" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Master" inverseName="preferredCustomer" inverseEntity="Master"/>
+        <relationship name="procedure" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Procedure" inverseName="customer" inverseEntity="Procedure"/>
+    </entity>
+    <entity name="DayOfWork" representedClassName=".DayOfWork" syncable="YES" codeGenerationType="class">
+        <attribute name="date" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="endingHour" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="endingMinute" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="startingHour" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="startingMinute" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <relationship name="events" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Event" inverseName="day" inverseEntity="Event"/>
+    </entity>
+    <entity name="Event" representedClassName=".Event" syncable="YES" codeGenerationType="class">
+        <attribute name="endHour" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="endMinute" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="procedure" optional="YES" attributeType="String"/>
+        <attribute name="startHour" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="startMinute" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <relationship name="customer" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Customer" inverseName="event" inverseEntity="Customer"/>
+        <relationship name="day" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="DayOfWork" inverseName="events" inverseEntity="DayOfWork"/>
+        <relationship name="master" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Master" inverseName="event" inverseEntity="Master"/>
+    </entity>
+    <entity name="Master" representedClassName=".Master" syncable="YES" codeGenerationType="class">
+        <attribute name="name" optional="YES" attributeType="String"/>
+        <attribute name="phone" optional="YES" attributeType="String"/>
+        <attribute name="rating" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <relationship name="event" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Event" inverseName="master" inverseEntity="Event"/>
+        <relationship name="preferredCustomer" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Customer" inverseName="preferredMaster" inverseEntity="Customer"/>
+        <relationship name="skills" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Skill" inverseName="master" inverseEntity="Skill"/>
+    </entity>
+    <entity name="Procedure" representedClassName=".Procedure" syncable="YES" codeGenerationType="class">
+        <attribute name="name" optional="YES" attributeType="String"/>
+        <relationship name="customer" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Customer" inverseName="procedure" inverseEntity="Customer"/>
+        <relationship name="salonType" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="SalonType" inverseName="procedures" inverseEntity="SalonType"/>
+        <relationship name="skill" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Skill" inverseName="procedure" inverseEntity="Skill"/>
+        <relationship name="zones" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ProcedureZone" inverseName="procedure" inverseEntity="ProcedureZone"/>
+    </entity>
+    <entity name="ProcedureZone" representedClassName="ProcedureZone" syncable="YES" codeGenerationType="class">
+        <attribute name="name" optional="YES" attributeType="String"/>
+        <relationship name="procedure" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Procedure" inverseName="zones" inverseEntity="Procedure"/>
+    </entity>
+    <entity name="SalonType" representedClassName=".SalonType" syncable="YES" codeGenerationType="class">
+        <attribute name="type" optional="YES" attributeType="String"/>
+        <relationship name="procedures" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Procedure" inverseName="salonType" inverseEntity="Procedure"/>
+    </entity>
+    <entity name="Skill" representedClassName=".Skill" syncable="YES" codeGenerationType="class">
+        <attribute name="level" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="name" optional="YES" attributeType="String"/>
+        <relationship name="master" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Master" inverseName="skills" inverseEntity="Master"/>
+        <relationship name="procedure" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Procedure" inverseName="skill" inverseEntity="Procedure"/>
+    </entity>
+    <fetchRequest name="FetchDayOfWork" entity="DayOfWork" predicateString="date == CAST(670778319.704676, &quot;NSDate&quot;)"/>
+    <fetchRequest name="FetchEvents" entity="Event" predicateString="endHour == 0"/>
+    <elements>
+        <element name="Customer" positionX="-182.640625" positionY="-193.89453125" width="128" height="133"/>
+        <element name="DayOfWork" positionX="-630.69921875" positionY="-193.640625" width="128" height="133"/>
+        <element name="Event" positionX="-398.23046875" positionY="-207.8515625" width="128" height="163"/>
+        <element name="Master" positionX="-111.79296875" positionY="46.55078125" width="128" height="133"/>
+        <element name="Procedure" positionX="157.8359375" positionY="-163.984375" width="128" height="118"/>
+        <element name="Skill" positionX="70.12890625" positionY="80.7265625" width="128" height="103"/>
+        <element name="SalonType" positionX="44.03125" positionY="-376.06640625" width="128" height="73"/>
+        <element name="ProcedureZone" positionX="-414" positionY="-207" width="128" height="59"/>
+    </elements>
+</model>

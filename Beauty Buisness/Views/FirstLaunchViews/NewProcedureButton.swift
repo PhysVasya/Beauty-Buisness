@@ -20,7 +20,7 @@ struct NewProcedureButton: View {
     var body: some View {
         Button {
             tap?()
-                
+            
         } label: {
             ZStack {
                 RoundedRectangle(cornerRadius: 10, style: .continuous)
@@ -34,13 +34,14 @@ struct NewProcedureButton: View {
         .offset(y: appeared ? 0 : 20)
         .animation(.easeIn(duration: 0.2), value: appeared)
         .onChange(of: elements.offset) { newValue in
-            if newValue! > previousContentOffset || newValue! < previousContentOffset {
+            
+            if elements.events != 0 {
                 appeared = true
                 Timer.scheduledTimer(withTimeInterval: 3, repeats: false) { _ in
                     appeared = false
+                    
                 }
             }
-          
             
         }
         .onAppear {
@@ -48,8 +49,8 @@ struct NewProcedureButton: View {
                 appeared = true
             }
         }
-       
-             
+        
+        
     }
 }
 

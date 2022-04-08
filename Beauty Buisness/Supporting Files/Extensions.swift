@@ -80,3 +80,19 @@ extension UserDefaults {
         UserDefaults.standard.set(minute, forKey: "ENDING-MINUTE")
     }
 }
+
+extension UIDatePicker {
+    
+    var hour: Int? {
+        let calendar = Calendar.current
+        return calendar.dateComponents([.hour], from: self.date).hour
+    }
+    
+    var minute: Int? {
+        let calendar = Calendar.current
+        return calendar.dateComponents([.minute], from: self.date).minute
+    }
+    
+    
+    
+}

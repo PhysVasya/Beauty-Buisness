@@ -29,22 +29,31 @@ struct Comment: View {
 
 struct CustomButton: View {
     
+    @Binding var isActive: Bool
     var action: (() -> Void)?
-    var labelText: String = ""
+    var labelText: String = "HELLO"
     
     var body: some View {
-        Button {
-            action?()
-        } label: {
-            ZStack {
-                RoundedRectangle(cornerRadius: 20)
-                    .frame(width: 350, height: 60, alignment: .center)
-                    .foregroundColor(.myAccentColor)
-                Text(labelText)
-                    .font(.body.weight(.semibold))
-                    .foregroundColor(.myBackgroundColor)
-                    .lineLimit(0)
+        ZStack {
+            
+            Button {
+                action?()
+            } label: {
+                ZStack {
+                    RoundedRectangle(cornerRadius: 20)
+                        .frame(width: 350, height: 60, alignment: .center)
+                        .foregroundColor(.myAccentColor)
+                    Text(labelText)
+                        .font(.body.weight(.semibold))
+                        .foregroundColor(.myBackgroundColor)
+                        .lineLimit(0)
+                }
             }
+            RoundedRectangle(cornerRadius: 20)
+                .frame(width: 350, height: 60, alignment: .center)
+                .foregroundColor(.myBackgroundColor)
+                .opacity(isActive ? 0 : 0.8)
+                .animation(.easeIn, value: isActive)
         }
     }
 }
@@ -53,6 +62,7 @@ struct CustomButton: View {
 struct OnboardingView: View {
     
     @Environment(\.dismiss) private var dismiss
+    @State private var isActive = true
     
     var body: some View {
         ZStack {
@@ -78,7 +88,7 @@ struct OnboardingView: View {
                 
                 Spacer()
                 
-                CustomButton(action: {
+                CustomButton(isActive: $isActive, action: {
                     dismiss()
                 }, labelText: "Продолжить")
                 .padding(.vertical, 80)
@@ -94,8 +104,11 @@ struct OnboardingView: View {
 }
 
 struct GreetingsView_Previews: PreviewProvider {
+    
+
     static var previews: some View {
         OnboardingView()
             .previewDevice("iPhone 12")
+        
     }
 }

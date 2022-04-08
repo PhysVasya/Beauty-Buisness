@@ -16,24 +16,20 @@ class SettingsViewController: UIViewController {
     private var newEndingMinute: Int?
     
     private let calendar = Calendar.current
-    
-    
+
     private let settingsTableView: UITableView = {
         let tv = UITableView()
         tv.register(SettingsTableViewCell.self, forCellReuseIdentifier: SettingsTableViewCell.identifier)
         return tv
     }()
-    
-    
-    
+      
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .myBackgroundColor
         setupTableView()
         setupNavigationBar()
     }
-    
-    
+        
     private func setupTableView () {
         view.addSubview(settingsTableView)
         settingsTableView.backgroundColor = .myBackgroundColor

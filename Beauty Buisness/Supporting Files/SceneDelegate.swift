@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import SwiftUI
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
@@ -20,7 +21,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         let window = UIWindow(windowScene: scene)
         
         if !seenTutorial {
-            window.rootViewController = UINavigationController(rootViewController: FirstStepSetupViewController())
+            window.rootViewController = UIHostingController(rootView: FirstStep())
         } else {
             window.rootViewController = MainScreenTabBarController()
         }
@@ -57,7 +58,6 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // to restore the scene back to its current state.
 
         // Save changes in the application's managed object context when the application transitions to the background.
-        (UIApplication.shared.delegate as? AppDelegate)?.saveContext()
     }
 
 
