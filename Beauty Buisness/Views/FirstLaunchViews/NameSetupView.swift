@@ -8,21 +8,21 @@
 import SwiftUI
 
 
-struct FirstStep: View {
+struct NameSetupView: View {
     
     @State private var isActive: Bool = false
     @State private var name: String = ""
-    @FocusState private var animate: Bool
+    @State private var animate: Bool = false
     @State private var placeholder =  "Поле не может быть пустым"
     @State private var showSecondStep: Bool = false
-    @State private var isFirstTimeLaunched: Bool = false
+    @State private var isFirstTimeLaunched: Bool = true
     
     var body: some View {
         NavigationView {
             
             VStack (alignment: .center) {
                 NavigationLink(isActive: $showSecondStep) {
-                    SecondStep ()
+                    WorkingHoursSetupView ()
                     
                 } label: {
                     Text("")
@@ -49,13 +49,15 @@ struct FirstStep: View {
                     .disableAutocorrection(true)
                     .textFieldStyle(.plain)
                     .multilineTextAlignment(.center)
-                    .focused($animate)
                     .overlay(Rectangle()
                         .foregroundColor(animate ? .myAccentColor : .gray)
                         .frame(height: animate ? 2 : 1)
                         .opacity(animate ? 1 : 0.1),
                              alignment: .bottom)
                     .animation(.easeIn, value: animate)
+                    .onTapGesture {
+                        animate = true
+                    }
                     
                 }
                 .padding()
@@ -75,12 +77,11 @@ struct FirstStep: View {
                 }
             }
             .navigationTitle(Text("Название"))
-            .statusBar(hidden: false)
             .sheet(isPresented: $isFirstTimeLaunched) {
                 OnboardingView()
             }
             .padding()
-
+            
         }
         .background(Color.myBackgroundColor)
         
@@ -89,6 +90,6 @@ struct FirstStep: View {
 
 struct FirstStep_Previews: PreviewProvider {
     static var previews: some View {
-        FirstStep()
+        NameSetupView() 
     }
 }

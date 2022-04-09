@@ -26,7 +26,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             CoreDataStack.shared.clearDB()
             SalonTypesDB.shared.createAndSaveSalonTypes()
             
-            window.rootViewController = UIHostingController(rootView: FirstStep())
+            window.rootViewController = UIHostingController(rootView: NameSetupView())
         } else {
             window.rootViewController = MainScreenTabBarController()
         }

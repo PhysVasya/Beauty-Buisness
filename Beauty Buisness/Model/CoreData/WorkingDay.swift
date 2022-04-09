@@ -55,4 +55,6 @@ struct WorkingDay {
         return WorkingDay(startingHour: startingHour, endingHour: endingHour, startingMinute: startingMinute, endingMinute: endingMinute, hours: Range(0...hours))
     }
     
+    
+    
 }

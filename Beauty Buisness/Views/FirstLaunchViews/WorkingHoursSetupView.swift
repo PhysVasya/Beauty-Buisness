@@ -46,7 +46,7 @@ struct DatePickerRepresentable: UIViewRepresentable {
     
 }
 
-struct SecondStep: View {
+struct WorkingHoursSetupView: View {
     
     @Environment (\.dismiss) private var dismiss
     
@@ -64,10 +64,10 @@ struct SecondStep: View {
                     .font(.system(size: 26, weight: .semibold, design: .default))
                     .foregroundColor(.myAccentColor)
                     .multilineTextAlignment(.center)
-                    .padding(.top, 30)
+                    .padding(.top, 50)
                 
                 Spacer()
-                HStack(spacing: 20) {
+                HStack(alignment: .center, spacing: 30) {
                     Image(systemName: "clock")
                         .foregroundColor(.myAccentColor)
                         .font(.title)
@@ -85,6 +85,8 @@ struct SecondStep: View {
                         }
                     }
                 }
+                .padding()
+                
                 Spacer()
                 ZStack {
                     
@@ -98,7 +100,7 @@ struct SecondStep: View {
                         isActive = !timeIsEqual
                     }
                     NavigationLink(isActive: $presentThirdStep, destination: {
-                        ThirdStep()
+                        SalonTypesChooseView()
                     }) {
                         Text("")
                     }
@@ -131,6 +133,6 @@ struct SecondStep: View {
 
 struct SecondStep_Previews: PreviewProvider {
     static var previews: some View {
-        SecondStep()
+        WorkingHoursSetupView()
     }
 }

@@ -21,7 +21,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         let window = UIWindow(windowScene: scene)
         
         if !seenTutorial {
-            window.rootViewController = UIHostingController(rootView: FirstStep())
+            window.rootViewController = UIHostingController(rootView: NameSetupView())
         } else {
             window.rootViewController = MainScreenTabBarController()
         }

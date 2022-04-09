@@ -12,6 +12,33 @@ import Combine
 
 class SalonTypesDB: ObservableObject {
     
+    private enum SalonTypesFetchingErrors: LocalizedError {
+        case fetchTypesError(NSError)
+        case fetchProceduresError(NSError)
+        case saveProceduresError(NSError)
+        case saveTypesError(NSError)
+        case deleteProceduresError(NSError)
+        case deleteTypesError(NSError)
+        
+        var errorDescription: String? {
+            switch self {
+            case .fetchTypesError(let nSError):
+                return ("Error fetching salon types: \(nSError), \(nSError.userInfo)")
+            case .fetchProceduresError(let nSError):
+                return ("Error fetching procedures: \(nSError), \(nSError.userInfo)")
+            case .saveProceduresError(let nSError):
+                return ("Error saving procedures: \(nSError), \(nSError.userInfo)")
+            case .saveTypesError(let nSError):
+                return ("Error saving salon types: \(nSError), \(nSError.userInfo)")
+            case .deleteProceduresError(let nSError):
+                return ("Error deleting procedures: \(nSError), \(nSError.userInfo)")
+            case .deleteTypesError(let nSError):
+                return ("Error deleting salon types: \(nSError), \(nSError.userInfo)")
+            }
+        }
+      
+    }
+    
     static let shared = SalonTypesDB()
     
     private let viewContext = CoreDataStack.shared.context
@@ -21,8 +48,8 @@ class SalonTypesDB: ObservableObject {
     
     private init () {}
     
-    public var salonTypes: [SalonType] = []
-    @Published private(set) var procedures: [Procedure] = []
+    @Published public var salonTypes: [SalonType] = []
+    @Published public var procedures: [Procedure] = []
     
     public func createAndSaveSalonTypes () {
         
@@ -53,7 +80,7 @@ class SalonTypesDB: ObservableObject {
             salonTypes = result
 
         } catch let error as NSError {
-            print("Error fetching salonTypes \(error), \(error.userInfo)")
+            print(SalonTypesFetchingErrors.fetchTypesError(error))
         }
         
     }
@@ -61,16 +88,42 @@ class SalonTypesDB: ObservableObject {
     public func fetchProceduresForSalonType (_ type: SalonType) {
         
         let request: NSFetchRequest<Procedure> = Procedure.fetchRequest()
-        
+        request.predicate = NSPredicate(format: "%K == %@", #keyPath(Procedure.salonType.type), type.type!)
+
         do {
             let procedures = try viewContext.fetch(request)
-            let mappedProcedures = procedures.compactMap({ proc -> Procedure? in  proc.salonType == type ? proc : nil })
-            self.procedures = mappedProcedures
+            self.procedures = procedures
         } catch let error as NSError {
-            print("Error fetching procedures for salon type: \(error), \(error.userInfo)")
+            print(SalonTypesFetchingErrors.fetchProceduresError(error))
         }
         
     }
     
+    public func deleteProcedure (_ delete: Procedure) {
+       
+            viewContext.delete(delete)
+            CoreDataStack.shared.saveContext()
+        
+    }
     
+    public func addProcedure (procedureName: String, for salonType: SalonType) {
+        
+        let newProcedure = Procedure(context: viewContext)
+        newProcedure.name = procedureName
+        
+        salonType.addToProcedures(newProcedure)
+        CoreDataStack.shared.saveContext()
+        fetchProceduresForSalonType(salonType)
+        
+    }
+    
+    public func addNewSalonType (salonName: String) {
+        
+        let salon = SalonType(context: viewContext)
+        salon.type = salonName
+        
+        CoreDataStack.shared.saveContext()
+        fetchSalonTypes()
+    }
+
 }
