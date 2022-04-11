@@ -15,8 +15,6 @@ struct DatePickerRepresentable: UIViewRepresentable {
         Coordinator(date: $date)
     }
     
-    
-    
     func makeUIView(context: Context) -> UIDatePicker {
         let datePicker = UIDatePicker()
         datePicker.datePickerMode = .time
@@ -43,7 +41,6 @@ struct DatePickerRepresentable: UIViewRepresentable {
         }
     }
     
-    
 }
 
 struct WorkingHoursSetupView: View {
@@ -55,61 +52,58 @@ struct WorkingHoursSetupView: View {
     @State private var endingHour: Date = Date()
     @State private var timeIsEqual: Bool = true
     @State private var isActive: Bool = false
-        
+    
     var body: some View {
         
-            VStack (alignment: .center) {
-                
-                Text("Укажите часы работы")
-                    .font(.system(size: 26, weight: .semibold, design: .default))
+        VStack (alignment: .center) {
+            
+            Text("Укажите часы работы")
+                .font(.system(size: 26, weight: .semibold, design: .default))
+                .foregroundColor(.myAccentColor)
+                .multilineTextAlignment(.center)
+                .padding(.top, 50)
+            
+            Spacer()
+            HStack(alignment: .center, spacing: 30) {
+                Image(systemName: "clock")
                     .foregroundColor(.myAccentColor)
-                    .multilineTextAlignment(.center)
-                    .padding(.top, 50)
+                    .font(.title)
                 
-                Spacer()
-                HStack(alignment: .center, spacing: 30) {
-                    Image(systemName: "clock")
-                        .foregroundColor(.myAccentColor)
-                        .font(.title)
-                    
-                    VStack {
-                        HStack {
-                            Text("Начало работы")
-                            DatePickerRepresentable(date: $startingHour)
-                                .frame(height: 50, alignment: .center)
-                        }
-                        HStack {
-                            Text("Конец работы")
-                            DatePickerRepresentable(date: $endingHour)
-                                .frame(height: 50, alignment: .center)
-                        }
+                VStack {
+                    HStack {
+                        Text("Начало работы")
+                        DatePickerRepresentable(date: $startingHour)
+                            .frame(height: 50, alignment: .center)
+                    }
+                    HStack {
+                        Text("Конец работы")
+                        DatePickerRepresentable(date: $endingHour)
+                            .frame(height: 50, alignment: .center)
                     }
                 }
-                .padding()
-                
-                Spacer()
-                ZStack {
-                    
-                    CustomButton(isActive: $isActive, action: {
-                        self.presentThirdStep = true
-                        saveWorkingHours()
-                        
-                    }, labelText: "Продолжить")
-                    .onChange(of: startingHour) { newValue in
-                        timeIsEqual = newValue >= endingHour
-                        isActive = !timeIsEqual
-                    }
-                    NavigationLink(isActive: $presentThirdStep, destination: {
-                        SalonTypesChooseView()
-                    }) {
-                        Text("")
-                    }
-                    
-                }
-                .navigationTitle(Text("Время работы"))
             }
             .padding()
-        
+            
+            Spacer()
+            ZStack {
+                CustomButton(isActive: $isActive, action: {
+                    self.presentThirdStep = true
+                    saveWorkingHours()
+                    
+                }, labelText: "Продолжить")
+                .onChange(of: startingHour) { newValue in
+                    timeIsEqual = newValue >= endingHour
+                    isActive = !timeIsEqual
+                }
+                NavigationLink(isActive: $presentThirdStep, destination: {
+                    SalonTypesChooseView()
+                }) {
+                    Text("")
+                }
+            }
+            .navigationTitle(Text("Время работы"))
+        }
+        .padding()
     }
     
     

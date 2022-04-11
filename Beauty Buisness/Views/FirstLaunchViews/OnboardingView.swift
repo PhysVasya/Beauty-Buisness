@@ -35,7 +35,6 @@ struct CustomButton: View {
     
     var body: some View {
         ZStack {
-            
             Button {
                 action?()
             } label: {
@@ -98,9 +97,7 @@ struct OnboardingView: View {
             //END OF VSTACK
         }
         .edgesIgnoringSafeArea(.all)
-        
-    }
-    
+    }   
 }
 
 struct GreetingsView_Previews: PreviewProvider {

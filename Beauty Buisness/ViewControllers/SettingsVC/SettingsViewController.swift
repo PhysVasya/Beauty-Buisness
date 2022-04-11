@@ -7,102 +7,75 @@
 
 import Foundation
 import UIKit
+import SwiftUI
 
 class SettingsViewController: UIViewController {
     
-    private var newStartingHour: Int?
-    private var newEndingHour: Int?
-    private var newStartingMinute: Int?
-    private var newEndingMinute: Int?
-    
-    private let calendar = Calendar.current
-
     private let settingsTableView: UITableView = {
-        let tv = UITableView()
-        tv.register(SettingsTableViewCell.self, forCellReuseIdentifier: SettingsTableViewCell.identifier)
-        return tv
+        let tableView = UITableView(frame: .zero, style: .insetGrouped)
+        tableView.backgroundColor = .myBackgroundColor
+        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
+        return tableView
     }()
-      
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .myBackgroundColor
+        
         setupTableView()
         setupNavigationBar()
     }
-        
+    
     private func setupTableView () {
         view.addSubview(settingsTableView)
-        settingsTableView.backgroundColor = .myBackgroundColor
         settingsTableView.frame = view.bounds
         settingsTableView.delegate = self
         settingsTableView.dataSource = self
     }
     
-    private func setupNavigationBar() {
-        navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Сохранить", style: .plain, target: self, action: #selector(saveChanges))
-    }
-    
-    @objc private func saveChanges () {
-        
-        //LOGIC NEEDS TO BE CHANGED LATER!
-        if let newStartingHour = newStartingHour,
-           let newStartingMinute = newEndingMinute {
-            UserDefaults.setNewStartingTime(hour: newStartingHour, minute: newStartingMinute)
-        }
-        
-        if let newEndingHour = newEndingHour,
-           let newEndingMinute = newEndingMinute {
-            UserDefaults.setNewEndingTime(hour: newEndingHour, minute: newEndingMinute)
-        }
+    private func setupNavigationBar () {
+        title = "Настройки"
+        navigationController?.navigationBar.prefersLargeTitles = true
     }
     
     
-    //PRIVATIZED methods can only be accessed from here, pay attention to the "sender" attribute which is needed to access values from Selector
-    @objc private func topTimePickerChangedValue (_ sender: UIDatePicker) {
-        
-        let newStartingTime = calendar.dateComponents([.hour, .minute], from: sender.date)
-        newStartingHour = newStartingTime.hour
-        newStartingMinute = newStartingTime.minute
-    }
     
-    @objc private func bottomTimePickerChangedValue (_ sender: UIDatePicker) {
-        
-        let newEndingTime = calendar.dateComponents([.hour, .minute], from: sender.date)
-        newEndingHour = newEndingTime.hour
-        newEndingMinute = newEndingTime.minute
-    }
 }
 
 extension SettingsViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
+        cell.accessoryType = .disclosureIndicator
+        var config = cell.defaultContentConfiguration()
         
         if indexPath.row == 0 {
-            let cell = tableView.dequeueReusableCell(withIdentifier: SettingsTableViewCell.identifier, for: indexPath) as! SettingsTableViewCell
-            cell.backgroundColor = .myBackgroundColor
-            cell.topTimePickerValueChanged(self, action: #selector(topTimePickerChangedValue(_:)))
-            cell.bottomTimePickerValueChanged(self, action: #selector(bottomTimePickerChangedValue(_:)))
-            return cell
-        } else {
-            return UITableViewCell()
+            config.text = "Часы работы"
+        } else if indexPath.row == 1 {
+            config.text = "Перечень услуг"
         }
+        cell.contentConfiguration = config
+        return cell
+    }
+    
+    func numberOfSections(in tableView: UITableView) -> Int {
+        return 1
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 1
+        return 2
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         
-        
-    }
-    
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         if indexPath.row == 0 {
-            return 100
-        } else {
-            return 44
+            navigationController?.pushViewController(TimeChangeOption(), animated: true)
+        } else if indexPath.row == 1 {
+            SalonTypesDB.shared.fetchSalonTypes()
+            let salon = SalonTypesDB.shared.salonTypes.first { $0.type == UserDefaults.standard.string(forKey: "SALON-TYPE") }
+            let newProcedureVC = UIHostingController(rootView: ProcedureTypesChooseView(salonType: salon!, salonTypesDB: SalonTypesDB.shared, setupProcessFinished: true))
+            newProcedureVC.title = "Перечень услуг"
+            navigationController?.pushViewController(newProcedureVC, animated: true)
         }
     }
     

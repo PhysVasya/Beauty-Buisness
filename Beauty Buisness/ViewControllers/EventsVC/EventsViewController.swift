@@ -9,21 +9,23 @@ import Foundation
 import UIKit
 import SwiftUI
 import Combine
+import CoreData
 
 
-class MainViewController: UIViewController {
+class EventsViewController: UIViewController {
     
     private var newProcedureButtonTapped: (() -> Void)?
-    private var model = ObservableElementsForNewProcedureButton()
+    private var newEventObservableElements = ObservableElementsForNewProcedureButton()
     private var workingDay: WorkingDay?
-    private var events: [Event] = []
     
-    private let mainScreenTableView: UITableView = {
+    private let eventsTableView: UITableView = {
         let tv = UITableView()
-        tv.register(MainTableViewCell.self, forCellReuseIdentifier: MainTableViewCell.cellIdentifier)
+        tv.register(EventsTableCell.self, forCellReuseIdentifier: EventsTableCell.cellIdentifier)
         tv.backgroundColor = .myBackgroundColor
         return tv
     }()
+    
+    private var fetchedEvents: NSFetchedResultsController<Event>?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -31,19 +33,12 @@ class MainViewController: UIViewController {
         newProcedureButtonTapped = { [weak self] in
             let newEventVC = NewEventViewController()
             self?.navigationController?.present(UINavigationController(rootViewController: newEventVC), animated: true)
-            
-            newEventVC.onCompletion = { event in
-                print(event)
-                
-            }
-            
+               
         }
         
-        view.backgroundColor = .myBackgroundColor
         navigationItem.title = UserDefaults.standard.string(forKey: "SALON-NAME")
         
         setupTableView()
-        addNavBarSettingsItem()
         setupAddNewProcedureButton()
         
     }
@@ -52,27 +47,30 @@ class MainViewController: UIViewController {
         super.viewWillAppear(animated)
         
         //Each time the view appears (i.e. after changing settings also, the next methods are called to reload tableView
-        do {
-            workingDay = try WorkingDay.generateHoursInWorkingDay()
-        } catch {
-            print(error)
+       reloadEvents()
+    }
+    
+    private func reloadEvents () {
+        Task {
+            fetchedEvents = await EventsFetchingManager.shared.fetchEventsForToday(Date())
+            fetchedEvents?.delegate = self
+            setupBGView()
+            eventsTableView.reloadData()
         }
-        setupBGView()
-        mainScreenTableView.reloadData()
     }
     
     private func setupTableView () {
-        mainScreenTableView.dataSource = self
-        mainScreenTableView.delegate = self
-        view.addSubview(mainScreenTableView)
-        mainScreenTableView.frame = view.bounds
+        eventsTableView.dataSource = self
+        eventsTableView.delegate = self
+        view.addSubview(eventsTableView)
+        eventsTableView.frame = view.bounds
     }
     
     private func setupAddNewProcedureButton () {
-        model.events = events.count
-        let newButton = UIHostingController(rootView: NewProcedureButton(elements: model, tap: newProcedureButtonTapped)).view!
+        newEventObservableElements.events = fetchedEvents?.sections?.count
+        let newButton = UIHostingController(rootView: NewProcedureButton(name: "Новая запись", elements: newEventObservableElements, tap: newProcedureButtonTapped)).view!
         view.addSubview(newButton)
-        newButton.frame = CGRect(x: 0, y: 0, width: 150, height: 40)
+        newButton.frame = CGRect(x: 0, y: 0, width: 200, height: 50)
         newButton.backgroundColor = .clear
         newButton.translatesAutoresizingMaskIntoConstraints = false
         newButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -view.frame.height / 8).isActive = true
@@ -82,7 +80,7 @@ class MainViewController: UIViewController {
     private func setupBGView () {
         let subviews = view.subviews
         
-        if events.count == 0 {
+        if fetchedEvents?.sections?.count == 0 || fetchedEvents?.sections == nil || fetchedEvents?.sections?[0].objects?.count == 0 {
             if let noEventsView = subviews.first(where: {$0.restorationIdentifier == "NoEvents"}) {
                 if subviews.contains(noEventsView) {
                     //                    noEventsView.removeFromSuperview()
@@ -96,7 +94,6 @@ class MainViewController: UIViewController {
                 noEventsLabel.frame = view.bounds
                 noEventsLabel.restorationIdentifier = "NoEvents"
                 view.addSubview(noEventsLabel)
-                
             }
         } else {
             if let noEventsView = subviews.first(where: {$0.restorationIdentifier == "NoEvents"}) {
@@ -107,31 +104,26 @@ class MainViewController: UIViewController {
         }
     }
     
-    
-    
-    private func addNavBarSettingsItem () {
-        navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "gearshape"), style: .plain, target: self, action: #selector(showSettingsViewController))
-    }
-    
-    //Method for gearshape button
-    @objc private func showSettingsViewController () {
-        navigationController?.pushViewController(SettingsViewController(), animated: true)
-    }
-    
 }
 
 
-extension MainViewController: UITableViewDelegate, UITableViewDataSource {
+extension EventsViewController: UITableViewDelegate, UITableViewDataSource {
+    
+    func numberOfSections(in tableView: UITableView) -> Int {
+        return fetchedEvents?.sections?.count ?? 0
+    }
     
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
-        let cell = tableView.dequeueReusableCell(withIdentifier: MainTableViewCell.cellIdentifier, for: indexPath) as! MainTableViewCell
+        let event = fetchedEvents?.object(at: indexPath)
+        
+        let cell = tableView.dequeueReusableCell(withIdentifier: EventsTableCell.cellIdentifier, for: indexPath) as! EventsTableCell
         cell.backgroundColor = .myBackgroundColor
         var config = cell.defaultContentConfiguration()
         
         //CAREFUL force unwrap! But should always not be nil. Here we access the starting hour and depending on the number of rows, just add 1 hour each new row.
-        config.text = String(workingDay!.startingHour + indexPath.row)
+        config.text = event?.procedure?.name
         
         //Just a blank.
         config.secondaryText = "TEXT"
@@ -142,7 +134,11 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         
         //CAREFUL!
-        return events.count
+        
+        guard let sectionInfo = fetchedEvents?.sections?[section] else {
+            return 0
+        }
+        return sectionInfo.numberOfObjects
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
@@ -174,11 +170,43 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        model.offset = scrollView.contentOffset.y
+        newEventObservableElements.offset = scrollView.contentOffset.y
     }
     
     
     
+    
+}
+
+extension EventsViewController: NSFetchedResultsControllerDelegate {
+    
+    func controllerWillChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
+        eventsTableView.beginUpdates()
+    }
+    
+    func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChange anObject: Any, at indexPath: IndexPath?, for type: NSFetchedResultsChangeType, newIndexPath: IndexPath?) {
+        switch type {
+        case .insert:
+            eventsTableView.insertRows(at: [newIndexPath!], with: .automatic)
+        case .delete:
+            eventsTableView.deleteRows(at: [indexPath!], with: .automatic)
+        case .move:
+            eventsTableView.deleteRows(at: [indexPath!], with: .automatic)
+            eventsTableView.insertRows(at: [newIndexPath!], with: .automatic)
+        case .update:
+            let cell = eventsTableView.cellForRow(at: indexPath!)
+            let event = fetchedEvents?.object(at: indexPath!)
+            var config = cell?.defaultContentConfiguration()
+            config?.text = event?.procedure?.name
+            cell?.contentConfiguration = config
+        @unknown default:
+            print("Unexpected NSFetchedResultsChangeType")
+        }
+    }
+    
+    func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
+        eventsTableView.endUpdates()
+    }
     
 }
 

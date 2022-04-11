@@ -9,7 +9,7 @@ import Foundation
 import UIKit
 
 
-class SettingsTableViewCell: UITableViewCell {
+class TimeChangeOptionCell: UITableViewCell {
     
     static let identifier = "SettingsViewControllerCell"
     

@@ -41,7 +41,6 @@ class SalonTypesDB: ObservableObject {
     
     static let shared = SalonTypesDB()
     
-    private let viewContext = CoreDataStack.shared.context
     private let types = ["Эпиляция", "Ноготочки", "Визажыст"]
     private let epilationProcedures = ["Шугаринг", "Электроэпиляция", "Восковая эпиляция", "Лазерная эпиляция"]
     private let epilationZones = ["Бикини", "Лысина", "Джеппа", "Ляшки"]
@@ -53,16 +52,16 @@ class SalonTypesDB: ObservableObject {
     
     public func createAndSaveSalonTypes () {
         
-        let managedSalonType = SalonType(context: viewContext)
+        let managedSalonType = SalonType(context: CoreDataStack.shared.context)
         managedSalonType.type = types[0]
         
         epilationProcedures.forEach { procedure in
-            let managedProcedure = Procedure(context: viewContext)
+            let managedProcedure = Procedure(context: CoreDataStack.shared.context)
             managedProcedure.name = procedure
             managedProcedure.salonType = managedSalonType
             
             epilationZones.forEach { zone in
-                let managedZone = ProcedureZone(context: viewContext)
+                let managedZone = ProcedureZone(context: CoreDataStack.shared.context)
                 managedZone.name = zone
                 managedZone.procedure = managedProcedure
             }
@@ -71,12 +70,12 @@ class SalonTypesDB: ObservableObject {
         fetchSalonTypes()
     }
     
-    private func fetchSalonTypes () {
+    public func fetchSalonTypes () {
         
         let request: NSFetchRequest<SalonType> = SalonType.fetchRequest()
         
         do {
-            let result = try viewContext.fetch(request)
+            let result = try CoreDataStack.shared.context.fetch(request)
             salonTypes = result
 
         } catch let error as NSError {
@@ -85,13 +84,15 @@ class SalonTypesDB: ObservableObject {
         
     }
     
-    public func fetchProceduresForSalonType (_ type: SalonType) {
+    public func fetchProceduresForSalonType () {
+        
+        let chosenSalonType = UserDefaults.standard.string(forKey: "SALON-TYPE")
         
         let request: NSFetchRequest<Procedure> = Procedure.fetchRequest()
-        request.predicate = NSPredicate(format: "%K == %@", #keyPath(Procedure.salonType.type), type.type!)
+        request.predicate = NSPredicate(format: "%K == %@", #keyPath(Procedure.salonType.type), chosenSalonType!)
 
         do {
-            let procedures = try viewContext.fetch(request)
+            let procedures = try CoreDataStack.shared.context.fetch(request)
             self.procedures = procedures
         } catch let error as NSError {
             print(SalonTypesFetchingErrors.fetchProceduresError(error))
@@ -101,25 +102,25 @@ class SalonTypesDB: ObservableObject {
     
     public func deleteProcedure (_ delete: Procedure) {
        
-            viewContext.delete(delete)
+        CoreDataStack.shared.context.delete(delete)
             CoreDataStack.shared.saveContext()
         
     }
     
     public func addProcedure (procedureName: String, for salonType: SalonType) {
         
-        let newProcedure = Procedure(context: viewContext)
+        let newProcedure = Procedure(context: CoreDataStack.shared.context)
         newProcedure.name = procedureName
         
         salonType.addToProcedures(newProcedure)
         CoreDataStack.shared.saveContext()
-        fetchProceduresForSalonType(salonType)
+        fetchProceduresForSalonType()
         
     }
     
     public func addNewSalonType (salonName: String) {
         
-        let salon = SalonType(context: viewContext)
+        let salon = SalonType(context: CoreDataStack.shared.context)
         salon.type = salonName
         
         CoreDataStack.shared.saveContext()

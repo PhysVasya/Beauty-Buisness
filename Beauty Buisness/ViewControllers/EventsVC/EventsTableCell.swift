@@ -9,9 +9,9 @@ import Foundation
 import UIKit
 
 
-class MainTableViewCell: UITableViewCell {
+class EventsTableCell: UITableViewCell {
     
-    static let cellIdentifier = "MainTableViewCellIdentifier"
+    static let cellIdentifier = "EventsTableCell"
 
     
     

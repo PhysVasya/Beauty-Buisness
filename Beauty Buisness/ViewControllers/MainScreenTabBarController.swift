@@ -20,25 +20,6 @@ class MainScreenTabBarController: UITabBarController {
         
     }
     
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        
-        
-        
-        
-    }
-    
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-    }
-    
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
-        
-        
-        
-    }
-    
     private func setupTabBar () {
         
         //setting this appearance let us visually differ the starting of tabBarVC
@@ -47,21 +28,21 @@ class MainScreenTabBarController: UITabBarController {
         tabBar.scrollEdgeAppearance = appearance
         
         //Setuping TabBar
-        let vc1 = UINavigationController(rootViewController: MainViewController())
-        let vc2 = MainViewController()
+        let vc1 = UINavigationController(rootViewController: EventsViewController())
+        let vc2 = UINavigationController(rootViewController: CustomersViewController())
+        let vc3 = UINavigationController(rootViewController: MastersViewController())
+        let vc4 = UINavigationController(rootViewController: SettingsViewController())
         vc1.navigationBar.prefersLargeTitles = true
-        vc1.title = "Главная"
-        vc2.title = "Записать"
-        vc1.tabBarItem.image = UIImage(systemName: "house")
-        vc2.tabBarItem.image = UIImage(systemName: "square.and.pencil")
-        setViewControllers([vc1, vc2], animated: false)
-        
+        vc1.title = "Запись"
+        vc2.title = "Клиенты"
+        vc3.title = "Мастера"
+        vc4.title = "Настройки"
+        vc1.tabBarItem.image = UIImage(systemName: "square.and.pencil")
+        vc2.tabBarItem.image = UIImage(systemName: "person.3")
+        vc3.tabBarItem.image = UIImage(systemName: "brain.head.profile")
+        vc4.tabBarItem.image = UIImage(systemName: "gear")
+        setViewControllers([vc1, vc2, vc3, vc4], animated: false)
     }
-    
-    
-    
-    
-    
 }
 
 

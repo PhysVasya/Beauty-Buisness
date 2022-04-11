@@ -19,8 +19,8 @@ struct SalonTypesChooseView: View {
             ForEach(types.salonTypes) { type in
                 
                 NavigationLink(type.type!) {
-                    ProcedureTypesChooseView(salonType: type, salonTypesDB: SalonTypesDB.shared)
                     
+                    ProcedureTypesChooseView(salonType: type, salonTypesDB: SalonTypesDB.shared)
                 }
                 .swipeActions(edge: .trailing, allowsFullSwipe: true) {
                     Button {

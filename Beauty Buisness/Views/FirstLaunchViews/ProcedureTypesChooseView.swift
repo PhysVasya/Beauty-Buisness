@@ -28,6 +28,7 @@ struct ProcedureTypesChooseView: View {
     @State private(set) var showMainTabBarController: Bool = false
     @State private(set) var addProcedurePressed: Bool = false
     @State private(set) var newProcedureName: String = ""
+    @State private(set) var setupProcessFinished: Bool = false
     
     var body: some View {
         ZStack {
@@ -48,33 +49,29 @@ struct ProcedureTypesChooseView: View {
                             .tint(Color.myAccentColor)
                         }
                 }
-                
                 withAnimation(.linear(duration: 0.4)) {
                     AddNewProcedureRow(salonType: salonType, addButtonPressed: addProcedurePressed, newName: $newProcedureName)
                 }
-                
             }
-            .padding(.top, 30)
+            .navigationTitle(Text("Перечень услуг"))
+            //            .navigationBarHidden(setupProcessFinished)
+            .padding(setupProcessFinished ? .init() : .top, 30)
             .listStyle(.plain)
             .onAppear {
-                SalonTypesDB.shared.fetchProceduresForSalonType(salonType)
+                UserDefaults.standard.set(salonType.type, forKey: "SALON-TYPE")
+                SalonTypesDB.shared.fetchProceduresForSalonType()
             }
             .fullScreenCover(isPresented: $showMainTabBarController) {
                 MainScreenRabBarControllerRepresented()
                     .ignoresSafeArea()
-                
             }
-            .toolbar {
+            .toolbar { if setupProcessFinished != true {
                 Button("Готово") {
                     showMainTabBarController = true
                 }
                 .font(.system(size: 16, weight: .bold, design: .default))
-                
             }
-            .navigationTitle("Перечень услуг")
-            
-            
-            
+            }
         }
     }
 }

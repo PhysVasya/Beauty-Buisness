@@ -9,7 +9,7 @@ import Foundation
 import UIKit
 
 
-class NewEventTableViewCell: UITableViewCell {
+class NewEventTableCell: UITableViewCell {
     
     static let identifier = "NewEventTableViewCell"
     
@@ -20,6 +20,8 @@ class NewEventTableViewCell: UITableViewCell {
     required init?(coder: NSCoder) {
         super.init(coder: coder)
     }
+    
+    public var newText: ((String) -> Void)?
     
     public func configure (with view: UIView, secondView: UIView? = nil) {
         
@@ -55,8 +57,21 @@ class NewEventTableViewCell: UITableViewCell {
                 stackView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -5)
             ])  
         }
+       
         
         
         
+    }
+    
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        let subviews = contentView.subviews
+        if !subviews.isEmpty {
+            subviews.forEach { view in
+                view.removeFromSuperview()
+            }
+        }
+        
+  
     }
 }

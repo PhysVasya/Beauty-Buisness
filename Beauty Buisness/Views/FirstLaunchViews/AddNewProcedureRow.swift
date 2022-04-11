@@ -21,7 +21,6 @@ struct AddNewProcedureRow: View {
             if addButtonPressed {
                 TextField("", text: $newName, prompt: Text("Название"))
                     .textFieldStyle(.plain)
-                    .keyboardType(.alphabet)
                     .focused($isEditing)
                     .onSubmit {
                         if newName != "" {
@@ -51,11 +50,11 @@ struct AddNewProcedureRow: View {
                     .foregroundColor(Color.myAccentColor)
                 }
                 .offset(x: addButtonPressed ? -50 : 0)
-
+                
             }
         }
         .animation(.easeIn(duration: 0.2), value: addButtonPressed)
-    
+        
         
     }
     

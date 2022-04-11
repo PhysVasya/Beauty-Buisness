@@ -23,7 +23,6 @@ struct NameSetupView: View {
             VStack (alignment: .center) {
                 NavigationLink(isActive: $showSecondStep) {
                     WorkingHoursSetupView ()
-                    
                 } label: {
                     Text("")
                 }
@@ -44,7 +43,6 @@ struct NameSetupView: View {
                               prompt: Text(placeholder).font(.system(size: 16))
                     )
                     .font(.system(size: 32, weight: .semibold, design: .rounded))
-                    .keyboardType(.alphabet)
                     .textInputAutocapitalization(.characters)
                     .disableAutocorrection(true)
                     .textFieldStyle(.plain)
@@ -58,7 +56,6 @@ struct NameSetupView: View {
                     .onTapGesture {
                         animate = true
                     }
-                    
                 }
                 .padding()
                 
@@ -80,8 +77,7 @@ struct NameSetupView: View {
             .sheet(isPresented: $isFirstTimeLaunched) {
                 OnboardingView()
             }
-            .padding()
-            
+            .padding() 
         }
         .background(Color.myBackgroundColor)
         
