@@ -31,8 +31,11 @@ class EventsViewController: UIViewController {
         super.viewDidLoad()
         
         newProcedureButtonTapped = { [weak self] in
-            let newEventVC = NewEventViewController()
-            self?.navigationController?.present(UINavigationController(rootViewController: newEventVC), animated: true)
+            let newEventVC = UINavigationController(rootViewController: NewEventViewController())
+            if let sheet = newEventVC.sheetPresentationController {
+                sheet.detents = [.large()]
+            }
+            self?.navigationController?.present(newEventVC, animated: true)
                
         }
         
@@ -47,15 +50,18 @@ class EventsViewController: UIViewController {
         super.viewWillAppear(animated)
         
         //Each time the view appears (i.e. after changing settings also, the next methods are called to reload tableView
-       reloadEvents()
+        reloadEvents { [weak self] in
+            self?.eventsTableView.reloadData()
+        }
     }
     
-    private func reloadEvents () {
+    private func reloadEvents (reload: (() -> Void)? = nil) {
         Task {
             fetchedEvents = await EventsFetchingManager.shared.fetchEventsForToday(Date())
             fetchedEvents?.delegate = self
+            newEventObservableElements.events = fetchedEvents?.sections?[0].numberOfObjects
+            reload?()
             setupBGView()
-            eventsTableView.reloadData()
         }
     }
     
@@ -67,7 +73,6 @@ class EventsViewController: UIViewController {
     }
     
     private func setupAddNewProcedureButton () {
-        newEventObservableElements.events = fetchedEvents?.sections?.count
         let newButton = UIHostingController(rootView: NewProcedureButton(name: "Новая запись", elements: newEventObservableElements, tap: newProcedureButtonTapped)).view!
         view.addSubview(newButton)
         newButton.frame = CGRect(x: 0, y: 0, width: 200, height: 50)
@@ -169,8 +174,22 @@ extension EventsViewController: UITableViewDelegate, UITableViewDataSource {
         return 50
     }
     
-    func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        newEventObservableElements.offset = scrollView.contentOffset.y
+    func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
+        return true
+    }
+    
+    func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+        let deleteAction = UIContextualAction(style: .destructive, title: "Удалить") { [weak self] action, view, handler in
+            guard let event = self?.fetchedEvents?.object(at: indexPath) else { return }
+            
+            EventsFetchingManager.shared.deleteEvent(event)
+        }
+        
+        deleteAction.image = UIImage(systemName: "trash.fill")
+        deleteAction.backgroundColor = .myAccentColor
+        let config = UISwipeActionsConfiguration(actions: [deleteAction])
+        
+        return config
     }
     
     
@@ -185,6 +204,7 @@ extension EventsViewController: NSFetchedResultsControllerDelegate {
     }
     
     func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChange anObject: Any, at indexPath: IndexPath?, for type: NSFetchedResultsChangeType, newIndexPath: IndexPath?) {
+        reloadEvents()
         switch type {
         case .insert:
             eventsTableView.insertRows(at: [newIndexPath!], with: .automatic)
@@ -210,3 +230,9 @@ extension EventsViewController: NSFetchedResultsControllerDelegate {
     
 }
 
+extension EventsViewController {
+    
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        newEventObservableElements.offset = scrollView.contentOffset.y
+    }
+}

@@ -13,9 +13,6 @@ import SwiftUI
 
 class CustomersViewController: UIViewController {
     
-    private var fetchedCustomers: NSFetchedResultsController<Customer>?
-    private let newCustomerObservableElements = ObservableElementsForNewProcedureButton()
-    
     private let customersTableView: UITableView = {
         let tableView = UITableView()
         tableView.register(CustomersTableCell.self, forCellReuseIdentifier: CustomersTableCell.identifier)
@@ -23,6 +20,8 @@ class CustomersViewController: UIViewController {
         return tableView
     }()
     
+    private var fetchedCustomers: NSFetchedResultsController<Customer>?
+    private let newCustomerObservableElements = ObservableElementsForNewProcedureButton()
     private var newCustomerButtonPressed: (() -> Void)?
     
     override func viewDidLoad() {
@@ -45,14 +44,17 @@ class CustomersViewController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        reloadCustomers()
+        reloadCustomers { [weak self] in
+            self?.customersTableView.reloadData()
+        }
     }
     
-    public func reloadCustomers () {
+    public func reloadCustomers (reload: (() -> Void)? = nil) {
         Task {
             fetchedCustomers = await CustomersFetchingManager.shared.fetchCustomers()
             fetchedCustomers?.delegate = self
-            customersTableView.reloadData()
+            newCustomerObservableElements.events = fetchedCustomers?.sections?[0].numberOfObjects
+            reload?()
             setupBGView()
         }
     }
@@ -65,7 +67,6 @@ class CustomersViewController: UIViewController {
     }
     
     private func setupNewCustomerButton () {
-        newCustomerObservableElements.events = fetchedCustomers?.sections?.count
         let button = UIHostingController(rootView: NewProcedureButton(name: "Добавить клиента", elements: newCustomerObservableElements, tap: newCustomerButtonPressed)).view!
         view.addSubview(button)
         button.frame = CGRect(x: 0, y: 0, width: 200, height: 50)
@@ -128,6 +129,9 @@ extension CustomersViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
+        guard let chosenCustomer = fetchedCustomers?.object(at: indexPath),
+              let customerPhoneNumber = URL(string: "telprompt://\(chosenCustomer.phone!)") else { return }
+        UIApplication.shared.open(customerPhoneNumber, options: [:], completionHandler: nil)
     }
     
     func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
@@ -142,10 +146,13 @@ extension CustomersViewController: UITableViewDelegate, UITableViewDataSource {
             CustomersFetchingManager.shared.deleteCustomer(customerToDelete)
             handler(true)
         }
-        deleteAction.image = UIImage(systemName: "trash")
+        deleteAction.image = UIImage(systemName: "trash.fill")
+        deleteAction.backgroundColor = .myAccentColor
+
         let config = UISwipeActionsConfiguration(actions: [deleteAction])
         return config
     }
+    
     
 }
 
@@ -157,6 +164,7 @@ extension CustomersViewController: NSFetchedResultsControllerDelegate {
     }
     
     func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChange anObject: Any, at indexPath: IndexPath?, for type: NSFetchedResultsChangeType, newIndexPath: IndexPath?) {
+        reloadCustomers()
         switch type {
         case .insert:
             customersTableView.insertRows(at: [newIndexPath!], with: .automatic)

@@ -98,3 +98,16 @@ extension UIDatePicker {
     
 }
 
+extension UITextField {
+    
+    public var textFieldIndexPath: IndexPath {
+        if self.tag == 0 {
+            return IndexPath(row: 0, section: 0)
+        } else {
+            return IndexPath(row: 0, section: 1)
+        }
+    }
+    
+    
+}
+

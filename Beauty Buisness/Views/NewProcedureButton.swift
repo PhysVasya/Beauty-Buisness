@@ -34,12 +34,14 @@ struct NewProcedureButton: View {
         .offset(y: appeared ? 0 : 20)
         .animation(.easeIn(duration: 0.2), value: appeared)
         .onChange(of: elements.offset) { newValue in
-            if elements.events != 0 && elements.events != nil {
+            if elements.events! >= 7 && elements.events != nil {
                 appeared = true
                 Timer.scheduledTimer(withTimeInterval: 3, repeats: false) { _ in
                     appeared = false
                     
                 }
+            } else {
+                appeared = true
             }
         }
         .onAppear {

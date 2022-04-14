@@ -302,26 +302,22 @@ extension NewEventViewController: UITextFieldDelegate {
             }
         }
     }
-    
-    
+        
     @objc private func onTextChanged (_ sender: UITextField) {
         
-        if sender.text != "" {
-            
-            
-            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) { [weak self] in
                 
                 if sender.tag == 1 {
-                    self.makeCoreDataSearch(using: sender.tag, on: .firstSection(with: sender.text))
+                    self?.makeCoreDataSearch(using: sender.tag, on: .firstSection(with: sender.text))
                 }
                 if sender.tag == 2 {
-                    self.makeCoreDataSearch(using: sender.tag, on: .secondSection(with: sender.text))
+                    self?.makeCoreDataSearch(using: sender.tag, on: .secondSection(with: sender.text))
                 }
                 if sender.tag == 3 {
-                    self.makeCoreDataSearch(using: sender.tag, on: .thirdSection(with: sender.text))
+                    self?.makeCoreDataSearch(using: sender.tag, on: .thirdSection(with: sender.text))
                 }
             }
-        }
+        
         
     }
     

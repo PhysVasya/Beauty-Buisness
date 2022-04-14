@@ -8,6 +8,7 @@
 import UIKit
 import CoreData
 import SwiftUI
+import Contacts
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -15,7 +16,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-                
+        
         //Presents onboarding every launch
 //        UserDefaults.standard.set(false, forKey: "SEEN-TUTORIAL")
         
@@ -33,10 +34,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         window.makeKeyAndVisible()
         self.window = window
         
-        
-        
-        
-//        print(FileManager.default.urls(for: .documentDirectory, in: .userDomainMask))
+        CNContactStore().requestAccess(for: .contacts) { access, error in
+            print(access)
+        }
+            
+//      print(FileManager.default.urls(for: .documentDirectory, in: .userDomainMask))
         
         return true
     }

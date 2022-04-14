@@ -69,10 +69,9 @@ class EventsFetchingManager {
     public func deleteEvent(_ event: Event) {
         
         let request: NSFetchRequest<Event> = Event.fetchRequest()
-        request.predicate = NSPredicate(format: "SELF == \(event)")
+        request.predicate = NSPredicate(format: "SELF == %@", event)
         do {
             let results = try managedObjectContext.fetch(request)
-            print(results)
             if results.count > 0 {
                 managedObjectContext.delete(event)
                 CoreDataStack.shared.saveContext()

@@ -50,8 +50,10 @@ extension SettingsViewController: UITableViewDelegate, UITableViewDataSource {
         
         if indexPath.row == 0 {
             config.text = "Часы работы"
+            config.image = UIImage(systemName: "clock")
         } else if indexPath.row == 1 {
             config.text = "Перечень услуг"
+            config.image = UIImage(systemName: "list.bullet.rectangle.portrait")
         }
         cell.contentConfiguration = config
         return cell

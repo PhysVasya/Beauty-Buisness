@@ -28,6 +28,12 @@
 		FF5A0381280024E900F8FB24 /* SalonTypesChooseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF5A0380280024E900F8FB24 /* SalonTypesChooseView.swift */; };
 		FF5A038328003AD400F8FB24 /* ProcedureTypesChooseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF5A038228003AD400F8FB24 /* ProcedureTypesChooseView.swift */; };
 		FF8DDD5F2800F25A0075B2FA /* AddNewProcedureRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF8DDD5E2800F25A0075B2FA /* AddNewProcedureRow.swift */; };
+		FFEC2E99280729F800CE1E2F /* PhoneNumberKit in Frameworks */ = {isa = PBXBuildFile; productRef = FFEC2E98280729F800CE1E2F /* PhoneNumberKit */; };
+		FFEC2E9C2807743F00CE1E2F /* ContactsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFEC2E9B2807743F00CE1E2F /* ContactsViewController.swift */; };
+		FFEC2E9E2807809700CE1E2F /* ContactTableCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFEC2E9D2807809700CE1E2F /* ContactTableCell.swift */; };
+		FFEC2EA0280804B500CE1E2F /* Contact.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFEC2E9F280804B500CE1E2F /* Contact.swift */; };
+		FFEC2EA228080E5B00CE1E2F /* ContactsFetchingManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFEC2EA128080E5B00CE1E2F /* ContactsFetchingManager.swift */; };
+		FFEC2EA4280861CC00CE1E2F /* Protocols.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFEC2EA3280861CC00CE1E2F /* Protocols.swift */; };
 		FFFAA2F327EFA3CA002EC74B /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFFAA2F227EFA3CA002EC74B /* AppDelegate.swift */; };
 		FFFAA2F527EFA3CA002EC74B /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFFAA2F427EFA3CA002EC74B /* SceneDelegate.swift */; };
 		FFFAA2F727EFA3CA002EC74B /* MainScreenTabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFFAA2F627EFA3CA002EC74B /* MainScreenTabBarController.swift */; };
@@ -70,6 +76,11 @@
 		FF5A0380280024E900F8FB24 /* SalonTypesChooseView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SalonTypesChooseView.swift; sourceTree = "<group>"; };
 		FF5A038228003AD400F8FB24 /* ProcedureTypesChooseView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProcedureTypesChooseView.swift; sourceTree = "<group>"; };
 		FF8DDD5E2800F25A0075B2FA /* AddNewProcedureRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddNewProcedureRow.swift; sourceTree = "<group>"; };
+		FFEC2E9B2807743F00CE1E2F /* ContactsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactsViewController.swift; sourceTree = "<group>"; };
+		FFEC2E9D2807809700CE1E2F /* ContactTableCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactTableCell.swift; sourceTree = "<group>"; };
+		FFEC2E9F280804B500CE1E2F /* Contact.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Contact.swift; sourceTree = "<group>"; };
+		FFEC2EA128080E5B00CE1E2F /* ContactsFetchingManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactsFetchingManager.swift; sourceTree = "<group>"; };
+		FFEC2EA3280861CC00CE1E2F /* Protocols.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Protocols.swift; sourceTree = "<group>"; };
 		FFFAA2EF27EFA3CA002EC74B /* Beauty Buisness.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Beauty Buisness.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		FFFAA2F227EFA3CA002EC74B /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		FFFAA2F427EFA3CA002EC74B /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -97,6 +108,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FFEC2E99280729F800CE1E2F /* PhoneNumberKit in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -108,6 +120,7 @@
 			children = (
 				FFFAA32C27F9955C002EC74B /* WorkingDay.swift */,
 				FF512D052803F6E400D661B5 /* FetchingErrors.swift */,
+				FFEC2E9F280804B500CE1E2F /* Contact.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -174,6 +187,7 @@
 				FF512D012803F61900D661B5 /* CustomersFetchingManager.swift */,
 				FF512D032803F68300D661B5 /* MastersFetchingManager.swift */,
 				FF512D072803FB3300D661B5 /* ProceduresFetchingManager.swift */,
+				FFEC2EA128080E5B00CE1E2F /* ContactsFetchingManager.swift */,
 			);
 			path = Managers;
 			sourceTree = "<group>";
@@ -190,6 +204,15 @@
 				FF512CEA2801797800D661B5 /* AddNewSalonTypeRow.swift */,
 			);
 			path = FirstLaunchViews;
+			sourceTree = "<group>";
+		};
+		FFEC2E9A2807742F00CE1E2F /* ContactsVC */ = {
+			isa = PBXGroup;
+			children = (
+				FFEC2E9B2807743F00CE1E2F /* ContactsViewController.swift */,
+				FFEC2E9D2807809700CE1E2F /* ContactTableCell.swift */,
+			);
+			path = ContactsVC;
 			sourceTree = "<group>";
 		};
 		FFFAA2E627EFA3CA002EC74B = {
@@ -237,6 +260,7 @@
 				FFFAA2F427EFA3CA002EC74B /* SceneDelegate.swift */,
 				FFFAA31927F0B77C002EC74B /* Extensions.swift */,
 				FFFAA2FE27EFA3CC002EC74B /* Assets.xcassets */,
+				FFEC2EA3280861CC00CE1E2F /* Protocols.swift */,
 			);
 			path = "Supporting Files";
 			sourceTree = "<group>";
@@ -254,6 +278,7 @@
 		FFFAA30C27EFA5AF002EC74B /* ViewControllers */ = {
 			isa = PBXGroup;
 			children = (
+				FFEC2E9A2807742F00CE1E2F /* ContactsVC */,
 				FFFAA2F627EFA3CA002EC74B /* MainScreenTabBarController.swift */,
 				FFFAA33727F996D5002EC74B /* EventsVC */,
 				FF512CF42802CE9E00D661B5 /* CustomersVC */,
@@ -326,6 +351,9 @@
 			dependencies = (
 			);
 			name = "Beauty Buisness";
+			packageProductDependencies = (
+				FFEC2E98280729F800CE1E2F /* PhoneNumberKit */,
+			);
 			productName = "Beauty Buisness";
 			productReference = FFFAA2EF27EFA3CA002EC74B /* Beauty Buisness.app */;
 			productType = "com.apple.product-type.application";
@@ -354,6 +382,9 @@
 				Base,
 			);
 			mainGroup = FFFAA2E627EFA3CA002EC74B;
+			packageReferences = (
+				FFEC2E97280729F800CE1E2F /* XCRemoteSwiftPackageReference "PhoneNumberKit" */,
+			);
 			productRefGroup = FFFAA2F027EFA3CA002EC74B /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -383,14 +414,17 @@
 				FFFAA32527F3A44D002EC74B /* WorkingHoursSetupView.swift in Sources */,
 				FF512D022803F61900D661B5 /* CustomersFetchingManager.swift in Sources */,
 				FFFAA2F727EFA3CA002EC74B /* MainScreenTabBarController.swift in Sources */,
+				FFEC2E9C2807743F00CE1E2F /* ContactsViewController.swift in Sources */,
 				FF512D0E2804809300D661B5 /* ServiceChangeOption.swift in Sources */,
 				FF512CF328021AC200D661B5 /* MastersTableCell.swift in Sources */,
 				FFFAA2FD27EFA3CA002EC74B /* Beauty_Buisness.xcdatamodeld in Sources */,
 				FFFAA32127F391F7002EC74B /* TimeChangeOptionCell.swift in Sources */,
 				FF512CFE2803F21100D661B5 /* NewCustomerViewController.swift in Sources */,
+				FFEC2EA4280861CC00CE1E2F /* Protocols.swift in Sources */,
 				FF512CEE280200B200D661B5 /* MastersViewController.swift in Sources */,
 				FFFAA33927F99C87002EC74B /* NewEventViewController.swift in Sources */,
 				FF512CF0280200C500D661B5 /* CustomersViewController.swift in Sources */,
+				FFEC2EA0280804B500CE1E2F /* Contact.swift in Sources */,
 				FFFAA33C27F9A453002EC74B /* NewEventTableCell.swift in Sources */,
 				FF512CF62802CEB600D661B5 /* CustomersTableCell.swift in Sources */,
 				FFFAA32927F48DE8002EC74B /* EventsTableCell.swift in Sources */,
@@ -411,7 +445,9 @@
 				FF5A034727FC6D3F00F8FB24 /* CoreDataStack.swift in Sources */,
 				FFFAA32B27F4B53A002EC74B /* NewProcedureButton.swift in Sources */,
 				FFFAA2F527EFA3CA002EC74B /* SceneDelegate.swift in Sources */,
+				FFEC2E9E2807809700CE1E2F /* ContactTableCell.swift in Sources */,
 				FF512D042803F68300D661B5 /* MastersFetchingManager.swift in Sources */,
+				FFEC2EA228080E5B00CE1E2F /* ContactsFetchingManager.swift in Sources */,
 				FF512D062803F6E400D661B5 /* FetchingErrors.swift in Sources */,
 				FF512D002803F21C00D661B5 /* NewCustomerTableCell.swift in Sources */,
 				FF5A037F27FF66DB00F8FB24 /* SalonTypesDB.swift in Sources */,
@@ -558,7 +594,7 @@
 				DEVELOPMENT_TEAM = A2JRL4D922;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "Beauty Buisness/Info.plist";
-				INFOPLIST_KEY_NSContactsUsageDescription = "$(PRODUCT_NAME) contact use";
+				INFOPLIST_KEY_NSContactsUsageDescription = "The contacts usage is needed for better ";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
@@ -587,7 +623,7 @@
 				DEVELOPMENT_TEAM = A2JRL4D922;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "Beauty Buisness/Info.plist";
-				INFOPLIST_KEY_NSContactsUsageDescription = "$(PRODUCT_NAME) contact use";
+				INFOPLIST_KEY_NSContactsUsageDescription = "The contacts usage is needed for better ";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
@@ -628,6 +664,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		FFEC2E97280729F800CE1E2F /* XCRemoteSwiftPackageReference "PhoneNumberKit" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/marmelroy/PhoneNumberKit.git";
+			requirement = {
+				kind = upToNextMinorVersion;
+				minimumVersion = 3.3.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		FFEC2E98280729F800CE1E2F /* PhoneNumberKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = FFEC2E97280729F800CE1E2F /* XCRemoteSwiftPackageReference "PhoneNumberKit" */;
+			productName = PhoneNumberKit;
+		};
+/* End XCSwiftPackageProductDependency section */
 
 /* Begin XCVersionGroup section */
 		FFFAA2FB27EFA3CA002EC74B /* Beauty_Buisness.xcdatamodeld */ = {

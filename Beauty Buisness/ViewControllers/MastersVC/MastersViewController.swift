@@ -44,14 +44,17 @@ class MastersViewController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        reloadMasters()
+        reloadMasters { [weak self] in
+            self?.mastersTableView.reloadData()
+        }
     }
     
-    private func reloadMasters () {
+    private func reloadMasters (reload: (() -> Void)? = nil ) {
         Task {
             fetchedMasters = await MastersFetchingManager.shared.fetchMasters()
             fetchedMasters?.delegate = self
-            mastersTableView.reloadData()
+            newMasterObservableElements.events = fetchedMasters?.sections?[0].numberOfObjects
+            reload?()
             setupBGView()
         }
     }
@@ -64,10 +67,9 @@ class MastersViewController: UIViewController {
     }
     
     private func setupAddNewMasterButton () {
-        newMasterObservableElements.events = fetchedMasters?.sections?.count
         let newMasterButton = UIHostingController(rootView: NewProcedureButton(name: "Добавить мастера", elements: newMasterObservableElements, tap: addNewMasterButtonPressed)).view!
         view.addSubview(newMasterButton)
-        newMasterButton.frame = CGRect(x: 0, y: 0, width: 250, height: 50)
+        newMasterButton.frame = CGRect(x: 0, y: 0, width: 200, height: 50)
         newMasterButton.backgroundColor = .clear
         newMasterButton.translatesAutoresizingMaskIntoConstraints = false
         newMasterButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -view.frame.height / 8).isActive = true
@@ -100,6 +102,8 @@ class MastersViewController: UIViewController {
             }
         }
     }
+    
+    
 }
 
 extension MastersViewController: UITableViewDelegate, UITableViewDataSource {
@@ -124,7 +128,13 @@ extension MastersViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        
+        
         tableView.deselectRow(at: indexPath, animated: true)
+        
+        guard let chosenMaster = fetchedMasters?.object(at: indexPath),
+              let masterNumber = URL(string: "telprompt://\(chosenMaster.phone!)" ) else { return }
+        UIApplication.shared.open(masterNumber, options: [:], completionHandler: nil)
     }
     
     func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
@@ -139,7 +149,8 @@ extension MastersViewController: UITableViewDelegate, UITableViewDataSource {
             MastersFetchingManager.shared.deleteMaster(masterToDelete)
             
         }
-        deleteAction.image = UIImage(systemName: "trash")
+        deleteAction.image = UIImage(systemName: "trash.fill")
+        deleteAction.backgroundColor = .myAccentColor
         let config = UISwipeActionsConfiguration(actions: [deleteAction])
         return config
     }
@@ -153,6 +164,8 @@ extension MastersViewController: NSFetchedResultsControllerDelegate {
     }
     
     func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChange anObject: Any, at indexPath: IndexPath?, for type: NSFetchedResultsChangeType, newIndexPath: IndexPath?) {
+        reloadMasters()
+
         switch type {
         case .insert:
             mastersTableView.insertRows(at: [newIndexPath!], with: .automatic)
@@ -177,4 +190,10 @@ extension MastersViewController: NSFetchedResultsControllerDelegate {
         mastersTableView.endUpdates()
     }
     
+}
+
+extension MastersViewController {
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        newMasterObservableElements.offset = scrollView.contentOffset.y 
+    }
 }
