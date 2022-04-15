@@ -35,7 +35,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         self.window = window
         
         CNContactStore().requestAccess(for: .contacts) { access, error in
-            print(access)
+//            print(access)
         }
             
 //      print(FileManager.default.urls(for: .documentDirectory, in: .userDomainMask))

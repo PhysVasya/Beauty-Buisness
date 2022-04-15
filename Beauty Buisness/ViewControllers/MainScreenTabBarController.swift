@@ -25,8 +25,10 @@ class MainScreenTabBarController: UITabBarController {
         //setting this appearance let us visually differ the starting of tabBarVC
         let appearance = UITabBarAppearance()
         appearance.backgroundColor = .mySecondaryAccentColor
+        appearance.shadowImage = nil
+        appearance.shadowColor = nil
         tabBar.scrollEdgeAppearance = appearance
-        
+                
         //Setuping TabBar
         let vc1 = UINavigationController(rootViewController: EventsViewController())
         let vc2 = UINavigationController(rootViewController: CustomersViewController())

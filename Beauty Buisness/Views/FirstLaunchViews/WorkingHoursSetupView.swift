@@ -121,6 +121,7 @@ struct WorkingHoursSetupView: View {
         UserDefaults.standard.set(startingMinute, forKey: "STARTING-MINUTE")
         UserDefaults.standard.set(endingHour, forKey: "ENDING-HOUR")
         UserDefaults.standard.set(endingMinute, forKey: "ENDING-MINUTE")
+        UserDefaults.standard.set(Date(), forKey: "FIRST-TIME-LAUNCH")
     }
 }
 

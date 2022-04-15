@@ -18,12 +18,12 @@ class NewEventViewController: UIViewController {
         return tableView
     }()
     
+    public var day: Day? 
+    
     private var fetchedProcedures: [Procedure]?
     private var fetchedCustomers: [Customer]?
     private var fetchedMasters: [Master]?
-    
-    private let calendar = Calendar.current
-    
+        
     private var chosenStartHour: Int?
     private var chosenEndHour: Int?
     private var chosenStartMinute: Int?
@@ -45,11 +45,18 @@ class NewEventViewController: UIViewController {
     private func setupTableView() {
         view.addSubview(newEventTableView)
         newEventTableView.frame = view.bounds
+        newEventTableView.translatesAutoresizingMaskIntoConstraints = false
+        
+   
+        
+        newEventTableView.backgroundColor = .myBackgroundColor
         newEventTableView.delegate = self
         newEventTableView.dataSource = self
         
         
     }
+    
+
     
     private func setupCancelBarButton() {
         let cancelBarButton = UIBarButtonItem(title: "Отмена", style: .plain, target: self, action: #selector(cancelBarButtonPressed))
@@ -74,11 +81,12 @@ class NewEventViewController: UIViewController {
               let chosenEndMinute = chosenEndMinute,
               let chosenProcedure = chosenProcedure,
               let chosenClient = chosenClient,
-              let chosenMaster = chosenMaster else {
+              let chosenMaster = chosenMaster,
+              let chosenDay = day else {
             return
         }
         
-        EventsFetchingManager.shared.saveEvent(chosenStartHour, chosenStartMinute, chosenEndHour, chosenEndMinute, chosenProcedure, chosenClient, chosenMaster)
+        EventsFetchingManager.shared.saveEvent(chosenStartHour, chosenStartMinute, chosenEndHour, chosenEndMinute, chosenDay, chosenProcedure, chosenClient, chosenMaster)
         
         dismiss(animated: true)
     }
@@ -249,12 +257,17 @@ extension NewEventViewController {
         
         let endingHour = Int.endingHour
         let endingMinute = Int.endingMinute
+        let startingHour = Int.startingHour
+        let startingMinute = Int.startingMinute
+        
+        let components = DateComponents(year: day?.year, month: day?.month, day: day?.day)
+        guard let currentDay = Calendar.current.date(from: components) else { return nil }
         
         let secondView = UIDatePicker()
         secondView.datePickerMode = .time
-        secondView.minuteInterval = 15
-        secondView.minimumDate = Date.now
-        secondView.maximumDate = calendar.date(bySettingHour: endingHour, minute: endingMinute, second: 0, of: Date.now)
+        secondView.minuteInterval = 5
+        secondView.minimumDate = Calendar.current.date(bySettingHour: startingHour, minute: startingMinute, second: 0, of: currentDay)
+        secondView.maximumDate = Calendar.current.date(bySettingHour: endingHour, minute: endingMinute, second: 0, of: currentDay)
         
         if indexPath == IndexPath(row: 0, section: 0) {
             let firstView = UILabel()
@@ -270,7 +283,6 @@ extension NewEventViewController {
             firstView.font = .systemFont(ofSize: 16)
             chosenEndHour = secondView.hour
             chosenEndMinute = secondView.minute
-            secondView.date = calendar.date(bySettingHour: 1, minute: 0, second: 0, of: Date.now)!
             secondView.addTarget(self, action: #selector(eventEndTime(_:)), for: .allEvents)
             return [firstView, secondView]
             

@@ -22,7 +22,8 @@ class ProceduresFetchingManager {
         }
         
         let request: NSFetchRequest<Procedure> = Procedure.fetchRequest()
-        request.predicate = NSPredicate(format: "name CONTAINS [cd] %@", procedure)
+        let salonType = UserDefaults.standard.string(forKey: "SALON-TYPE")
+        request.predicate = NSPredicate(format: "%K == %@ AND %K CONTAINS [cd] %@", #keyPath(Procedure.salonType.type), salonType!, #keyPath(Procedure.name), procedure)
         
         return await withCheckedContinuation { continuation in
             do {

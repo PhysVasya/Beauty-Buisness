@@ -24,7 +24,7 @@ extension UIColor {
     }
     
     open class var myHighlightColor: UIColor? {
-        return UIColor(named: "HightlightColor")
+        return UIColor(named: "HighlightColor")
     }
 }
 
@@ -43,7 +43,7 @@ extension Color {
     }
     
     public static var myHightLightColor: Color {
-        return Color("HightlightColor")
+        return Color("HighlightColor")
     }
     
 }
@@ -109,5 +109,32 @@ extension UITextField {
     }
     
     
+}
+
+extension DateComponents {
+    
+    var workingDay: Day? {
+        return Day(day: self.day, month: self.month, year: self.year)
+    }
+    
+}
+
+extension Date {
+    
+    public static var today: DateComponents {
+        return Calendar.current.dateComponents([.day, .month, .year], from: Date())
+    }
+    
+    public static var tomorrow: DateComponents {
+        return Calendar.current.dateComponents([.day, .month, .year], from: Calendar.current.date(byAdding: .day, value: 1, to: Date())!)
+    }
+    
+     static func todayAsDay () -> Day {
+         return Day(day: today.day, month: today.month, year: today.year)
+    }
+    
+    static func tomorrowAsDay () -> Day {
+        return Day(day: tomorrow.day, month: tomorrow.month, year: tomorrow.year)
+   }
 }
 

@@ -16,12 +16,10 @@ class EventsFetchingManager {
     
     private init () {}
     
-    public func fetchEventsForToday (_ day: Date) async -> NSFetchedResultsController<Event> {
+    public func fetchEventsForToday (_ day: Day) async -> NSFetchedResultsController<Event> {
         
         let request: NSFetchRequest<Event> = Event.fetchRequest()
-        let currentDay = DayOfWork(context: managedObjectContext)
-        currentDay.date = Date()
-//        request.predicate = NSPredicate(format: "day == \(currentDay)")
+        request.predicate = NSPredicate(format: "%K == \(day.day!) AND %K == \(day.month!)", #keyPath(Event.day.day), #keyPath(Event.day.month))
         let sort = NSSortDescriptor(key: #keyPath(Event.startHour), ascending: true)
         request.sortDescriptors = [sort]
         let fetchEventsController = NSFetchedResultsController(fetchRequest: request, managedObjectContext: managedObjectContext, sectionNameKeyPath: nil, cacheName: nil)
@@ -37,7 +35,7 @@ class EventsFetchingManager {
         }
     }
     
-    public func saveEvent (_ eventStartHour: Int, _ eventStartMinute: Int, _ eventEndHour: Int, _ eventEndMinute: Int, _ eventProcedure: Procedure, _ eventCustomer: Customer, _ eventMaster: Master ) {
+    public func saveEvent (_ eventStartHour: Int, _ eventStartMinute: Int, _ eventEndHour: Int, _ eventEndMinute: Int, _ eventDay: Day, _ eventProcedure: Procedure, _ eventCustomer: Customer, _ eventMaster: Master ) {
 
         //Classic approach
         let request: NSFetchRequest<Event> = Event.fetchRequest()
@@ -56,7 +54,12 @@ class EventsFetchingManager {
                 newEvent.customer = eventCustomer
                 newEvent.master = eventMaster
                 let day = DayOfWork(context: managedObjectContext)
-                day.date = Date()
+                
+                //Here day is definitely not nil, checked in calling of the function
+                day.day = Int16(eventDay.day!)
+                day.month = Int16(eventDay.month!)
+                day.year = Int16(eventDay.year!)
+                newEvent.day = day
                 
                 CoreDataStack.shared.saveContext()
             }

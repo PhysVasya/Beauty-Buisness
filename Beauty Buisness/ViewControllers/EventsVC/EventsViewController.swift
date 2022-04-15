@@ -14,16 +14,33 @@ import CoreData
 
 class EventsViewController: UIViewController {
     
-    private var newProcedureButtonTapped: (() -> Void)?
-    private var newEventObservableElements = ObservableElementsForNewProcedureButton()
-    private var workingDay: WorkingDay?
-    
     private let eventsTableView: UITableView = {
         let tv = UITableView()
         tv.register(EventsTableCell.self, forCellReuseIdentifier: EventsTableCell.cellIdentifier)
         tv.backgroundColor = .myBackgroundColor
         return tv
     }()
+    private let segmentedControl = UISegmentedControl()
+    
+    private var dateForEvents: Day? {
+        didSet {
+            reloadEvents { [weak self] in
+                self?.updateSegmentedControl()
+                self?.eventsTableView.reloadData()
+            }
+        }
+    }
+    private var selectedDayString: String? {
+        if (dateForEvents?.month)! < 10 {
+            return "\((dateForEvents?.day)!).0\((dateForEvents?.month)!)"
+        } else {
+            return "\((dateForEvents?.day)!).\((dateForEvents?.month)!)"
+        }
+    }
+
+    private var newProcedureButtonTapped: (() -> Void)?
+    private var newEventObservableElements = ObservableElementsForNewProcedureButton()
+    private var workingDay: WorkingDay?
     
     private var fetchedEvents: NSFetchedResultsController<Event>?
     
@@ -31,38 +48,46 @@ class EventsViewController: UIViewController {
         super.viewDidLoad()
         
         newProcedureButtonTapped = { [weak self] in
-            let newEventVC = UINavigationController(rootViewController: NewEventViewController())
+            let newEventVC = NewEventViewController()
+            newEventVC.day = self?.dateForEvents
             if let sheet = newEventVC.sheetPresentationController {
                 sheet.detents = [.large()]
             }
-            self?.navigationController?.present(newEventVC, animated: true)
-               
+            self?.navigationController?.present(UINavigationController(rootViewController: newEventVC), animated: true)
+            
         }
         
         navigationItem.title = UserDefaults.standard.string(forKey: "SALON-NAME")
         
         setupTableView()
         setupAddNewProcedureButton()
+        setupSegmentedControl()
+        setupNavigationBar()
         
-    }
-    
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        
-        //Each time the view appears (i.e. after changing settings also, the next methods are called to reload tableView
-        reloadEvents { [weak self] in
-            self?.eventsTableView.reloadData()
-        }
     }
     
     private func reloadEvents (reload: (() -> Void)? = nil) {
         Task {
-            fetchedEvents = await EventsFetchingManager.shared.fetchEventsForToday(Date())
+            guard let dateForEvents = dateForEvents else {
+                return
+            }
+            fetchedEvents = await EventsFetchingManager.shared.fetchEventsForToday(dateForEvents)
             fetchedEvents?.delegate = self
             newEventObservableElements.events = fetchedEvents?.sections?[0].numberOfObjects
             reload?()
             setupBGView()
         }
+        
+    }
+    
+    private func setupSegmentedControl () {
+        segmentedControl.insertSegment(withTitle: "Сегодня", at: 0, animated: false)
+        segmentedControl.insertSegment(withTitle: "Завтра", at: 1, animated: false)
+        segmentedControl.selectedSegmentIndex = 0
+        dateForEvents = Date.todayAsDay()
+        segmentedControl.translatesAutoresizingMaskIntoConstraints = false
+        navigationItem.titleView = segmentedControl
+        segmentedControl.addTarget(self, action: #selector(segmentedControlChanged(_:)), for: .valueChanged)
     }
     
     private func setupTableView () {
@@ -70,6 +95,7 @@ class EventsViewController: UIViewController {
         eventsTableView.delegate = self
         view.addSubview(eventsTableView)
         eventsTableView.frame = view.bounds
+        
     }
     
     private func setupAddNewProcedureButton () {
@@ -109,6 +135,61 @@ class EventsViewController: UIViewController {
         }
     }
     
+    private func setupNavigationBar () {
+        let calendarPickerButton = UIBarButtonItem(image: .init(systemName: "calendar"), style: .plain, target: self, action: #selector(calendarPickerButtonPressed(_:)))
+        navigationItem.rightBarButtonItem = calendarPickerButton
+    }
+    
+    private func updateSegmentedControl () {
+        if Date.todayAsDay() != dateForEvents && Date.tomorrowAsDay() != dateForEvents {
+            if segmentedControl.numberOfSegments >= 3 {
+                segmentedControl.removeSegment(at: 2, animated: false)
+                segmentedControl.insertSegment(withTitle: selectedDayString, at: 2, animated: false)
+                segmentedControl.selectedSegmentIndex = 2
+
+            } else {
+                segmentedControl.insertSegment(withTitle: selectedDayString, at: 2, animated: true)
+                segmentedControl.selectedSegmentIndex = 2
+            }
+        } else if Date.todayAsDay() == dateForEvents {
+            segmentedControl.removeSegment(at: 2, animated: true)
+            segmentedControl.selectedSegmentIndex = 0
+            
+        } else {
+            segmentedControl.removeSegment(at: 2, animated: true)
+            segmentedControl.selectedSegmentIndex = 1
+        }
+        
+    }
+    
+    @objc private func segmentedControlChanged (_ sender: UISegmentedControl) {
+        if sender.selectedSegmentIndex == 1 {
+            dateForEvents = Date.tomorrowAsDay()
+        }
+        if sender.selectedSegmentIndex == 0 {
+            dateForEvents = Date.todayAsDay()
+        }
+    }
+    
+    @objc private func calendarPickerButtonPressed (_ sender: UIBarButtonItem) {
+        let datePickerController = DatePickerViewController()
+        datePickerController.datePickerDelegate = self
+        datePickerController.showingDate = Calendar.current.date(from: DateComponents(year: dateForEvents?.year, month: dateForEvents?.month, day: dateForEvents?.day))
+        datePickerController.modalPresentationStyle = .popover
+        datePickerController.popoverPresentationController?.permittedArrowDirections = .up
+        datePickerController.preferredContentSize = CGSize(width: 320, height: 320)
+        datePickerController.popoverPresentationController?.delegate = self
+        datePickerController.popoverPresentationController?.barButtonItem = sender
+        
+        present(datePickerController, animated: true)
+        
+        
+    }
+    
+    @objc private func dateSelected (_ sender: UIDatePicker) {
+        let components = Calendar.current.dateComponents([.day, .month, .year], from: sender.date)
+        print(components)
+    }
 }
 
 
@@ -130,8 +211,14 @@ extension EventsViewController: UITableViewDelegate, UITableViewDataSource {
         //CAREFUL force unwrap! But should always not be nil. Here we access the starting hour and depending on the number of rows, just add 1 hour each new row.
         config.text = event?.procedure?.name
         
-        //Just a blank.
-        config.secondaryText = "TEXT"
+        if let masterName = event?.master?.name,
+           let clientName = event?.customer?.name,
+           let eventStartHour = event?.startHour,
+           let eventStartMinute = event?.startMinute,
+           let eventEndHour = event?.endHour,
+           let eventEndMinute = event?.endMinute {
+            config.secondaryText = "У \(masterName) с \(eventStartHour):\(eventStartMinute) до \(eventEndHour):\(eventEndMinute)"
+        }
         cell.contentConfiguration = config
         return cell
     }
@@ -152,10 +239,11 @@ extension EventsViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         
-        let date = Date()
+        guard let date = dateForEvents,
+              let eventDate = Calendar.current.date(from: DateComponents(year: date.year, month: date.month, day: date.day)) else { return nil }
         let formatter = DateFormatter()
         formatter.dateFormat = "EEEE, dd/MM"
-        let formattedDate = formatter.string(from: date)
+        let formattedDate = formatter.string(from: eventDate)
         let dateLabel = UILabel()
         dateLabel.backgroundColor = .myBackgroundColor
         dateLabel.frame = CGRect(x: 0, y: 0, width: 200, height: 50)
@@ -189,6 +277,16 @@ extension EventsViewController: UITableViewDelegate, UITableViewDataSource {
         deleteAction.backgroundColor = .myAccentColor
         let config = UISwipeActionsConfiguration(actions: [deleteAction])
         
+        return config
+    }
+    
+    func tableView(_ tableView: UITableView, leadingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+        let editAction = UIContextualAction(style: .normal, title: "Редактировать") { [weak self] action, view, handler in
+            guard let event = self?.fetchedEvents?.object(at: indexPath) else { return }
+        }
+        editAction.backgroundColor = .myHighlightColor
+        editAction.image = UIImage(systemName: "pencil")
+        let config = UISwipeActionsConfiguration(actions: [editAction])
         return config
     }
     
@@ -236,3 +334,23 @@ extension EventsViewController {
         newEventObservableElements.offset = scrollView.contentOffset.y
     }
 }
+
+
+extension EventsViewController: UIPopoverPresentationControllerDelegate {
+    func adaptivePresentationStyle(for controller: UIPresentationController) -> UIModalPresentationStyle {
+        return .none
+    }
+}
+
+extension EventsViewController: UIDatePickerDelegate {
+    func selectedDate(_ inPicker: UIDatePicker) {
+        
+        let selectedDate = Calendar.current.dateComponents([.day, .month, .year], from: inPicker.date)
+        
+        dateForEvents = selectedDate.workingDay
+        navigationController?.dismiss(animated: true)
+    }
+    
+}
+
+

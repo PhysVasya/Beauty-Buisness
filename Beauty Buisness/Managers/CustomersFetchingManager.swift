@@ -72,7 +72,6 @@ class CustomersFetchingManager  {
         
         do {
             let result = try managedObjectContext.fetch(request)
-            print(result)
             if result.count > 0 {
                 managedObjectContext.delete(customer)
                 CoreDataStack.shared.saveContext()

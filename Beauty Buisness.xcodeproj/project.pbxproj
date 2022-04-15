@@ -34,6 +34,8 @@
 		FFEC2EA0280804B500CE1E2F /* Contact.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFEC2E9F280804B500CE1E2F /* Contact.swift */; };
 		FFEC2EA228080E5B00CE1E2F /* ContactsFetchingManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFEC2EA128080E5B00CE1E2F /* ContactsFetchingManager.swift */; };
 		FFEC2EA4280861CC00CE1E2F /* Protocols.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFEC2EA3280861CC00CE1E2F /* Protocols.swift */; };
+		FFEC2EA62808836600CE1E2F /* Day.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFEC2EA52808836600CE1E2F /* Day.swift */; };
+		FFEC2EA92809708400CE1E2F /* DatePickerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFEC2EA82809708400CE1E2F /* DatePickerViewController.swift */; };
 		FFFAA2F327EFA3CA002EC74B /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFFAA2F227EFA3CA002EC74B /* AppDelegate.swift */; };
 		FFFAA2F527EFA3CA002EC74B /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFFAA2F427EFA3CA002EC74B /* SceneDelegate.swift */; };
 		FFFAA2F727EFA3CA002EC74B /* MainScreenTabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFFAA2F627EFA3CA002EC74B /* MainScreenTabBarController.swift */; };
@@ -81,6 +83,8 @@
 		FFEC2E9F280804B500CE1E2F /* Contact.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Contact.swift; sourceTree = "<group>"; };
 		FFEC2EA128080E5B00CE1E2F /* ContactsFetchingManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactsFetchingManager.swift; sourceTree = "<group>"; };
 		FFEC2EA3280861CC00CE1E2F /* Protocols.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Protocols.swift; sourceTree = "<group>"; };
+		FFEC2EA52808836600CE1E2F /* Day.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Day.swift; sourceTree = "<group>"; };
+		FFEC2EA82809708400CE1E2F /* DatePickerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatePickerViewController.swift; sourceTree = "<group>"; };
 		FFFAA2EF27EFA3CA002EC74B /* Beauty Buisness.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Beauty Buisness.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		FFFAA2F227EFA3CA002EC74B /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		FFFAA2F427EFA3CA002EC74B /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -121,6 +125,7 @@
 				FFFAA32C27F9955C002EC74B /* WorkingDay.swift */,
 				FF512D052803F6E400D661B5 /* FetchingErrors.swift */,
 				FFEC2E9F280804B500CE1E2F /* Contact.swift */,
+				FFEC2EA52808836600CE1E2F /* Day.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -215,6 +220,14 @@
 			path = ContactsVC;
 			sourceTree = "<group>";
 		};
+		FFEC2EA72809706D00CE1E2F /* AdditionalVCs */ = {
+			isa = PBXGroup;
+			children = (
+				FFEC2EA82809708400CE1E2F /* DatePickerViewController.swift */,
+			);
+			path = AdditionalVCs;
+			sourceTree = "<group>";
+		};
 		FFFAA2E627EFA3CA002EC74B = {
 			isa = PBXGroup;
 			children = (
@@ -259,8 +272,8 @@
 				FFFAA2F227EFA3CA002EC74B /* AppDelegate.swift */,
 				FFFAA2F427EFA3CA002EC74B /* SceneDelegate.swift */,
 				FFFAA31927F0B77C002EC74B /* Extensions.swift */,
-				FFFAA2FE27EFA3CC002EC74B /* Assets.xcassets */,
 				FFEC2EA3280861CC00CE1E2F /* Protocols.swift */,
+				FFFAA2FE27EFA3CC002EC74B /* Assets.xcassets */,
 			);
 			path = "Supporting Files";
 			sourceTree = "<group>";
@@ -278,6 +291,7 @@
 		FFFAA30C27EFA5AF002EC74B /* ViewControllers */ = {
 			isa = PBXGroup;
 			children = (
+				FFEC2EA72809706D00CE1E2F /* AdditionalVCs */,
 				FFEC2E9A2807742F00CE1E2F /* ContactsVC */,
 				FFFAA2F627EFA3CA002EC74B /* MainScreenTabBarController.swift */,
 				FFFAA33727F996D5002EC74B /* EventsVC */,
@@ -414,6 +428,8 @@
 				FFFAA32527F3A44D002EC74B /* WorkingHoursSetupView.swift in Sources */,
 				FF512D022803F61900D661B5 /* CustomersFetchingManager.swift in Sources */,
 				FFFAA2F727EFA3CA002EC74B /* MainScreenTabBarController.swift in Sources */,
+				FFEC2EA62808836600CE1E2F /* Day.swift in Sources */,
+				FFEC2EA92809708400CE1E2F /* DatePickerViewController.swift in Sources */,
 				FFEC2E9C2807743F00CE1E2F /* ContactsViewController.swift in Sources */,
 				FF512D0E2804809300D661B5 /* ServiceChangeOption.swift in Sources */,
 				FF512CF328021AC200D661B5 /* MastersTableCell.swift in Sources */,
