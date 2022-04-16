@@ -18,13 +18,13 @@ class MastersFetchingManager {
     private init () {}
 
     
-    public func fetchMasters () async -> NSFetchedResultsController<Master> {
+    public func fetchMasters (_ delegate: NSFetchedResultsControllerDelegate) async -> NSFetchedResultsController<Master> {
         
         let request: NSFetchRequest<Master> = Master.fetchRequest()
         let sort = NSSortDescriptor(key: #keyPath(Master.name), ascending: true)
         request.sortDescriptors = [sort]
         let resultsController = NSFetchedResultsController(fetchRequest: request, managedObjectContext: managedObjectContext, sectionNameKeyPath: nil, cacheName: nil)
-        
+        resultsController.delegate = delegate
         return await withCheckedContinuation { continuation in
             do {
                 try resultsController.performFetch()

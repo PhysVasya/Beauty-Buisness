@@ -16,14 +16,14 @@ class EventsFetchingManager {
     
     private init () {}
     
-    public func fetchEventsForToday (_ day: Day) async -> NSFetchedResultsController<Event> {
+    public func fetchEventsForToday (_ day: Day, delegate: NSFetchedResultsControllerDelegate?) async -> NSFetchedResultsController<Event> {
         
         let request: NSFetchRequest<Event> = Event.fetchRequest()
         request.predicate = NSPredicate(format: "%K == \(day.day!) AND %K == \(day.month!)", #keyPath(Event.day.day), #keyPath(Event.day.month))
         let sort = NSSortDescriptor(key: #keyPath(Event.startHour), ascending: true)
         request.sortDescriptors = [sort]
         let fetchEventsController = NSFetchedResultsController(fetchRequest: request, managedObjectContext: managedObjectContext, sectionNameKeyPath: nil, cacheName: nil)
-        
+        fetchEventsController.delegate = delegate
         return await withCheckedContinuation { continuation in
             do {
                 try fetchEventsController.performFetch()

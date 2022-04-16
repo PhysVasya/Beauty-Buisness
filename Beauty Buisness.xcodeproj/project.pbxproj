@@ -10,9 +10,7 @@
 		FF512CEB2801797800D661B5 /* AddNewSalonTypeRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF512CEA2801797800D661B5 /* AddNewSalonTypeRow.swift */; };
 		FF512CEE280200B200D661B5 /* MastersViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF512CED280200B200D661B5 /* MastersViewController.swift */; };
 		FF512CF0280200C500D661B5 /* CustomersViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF512CEF280200C500D661B5 /* CustomersViewController.swift */; };
-		FF512CF328021AC200D661B5 /* MastersTableCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF512CF228021AC200D661B5 /* MastersTableCell.swift */; };
 		FF512CFA2803F1E400D661B5 /* NewMasterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF512CF92803F1E400D661B5 /* NewMasterViewController.swift */; };
-		FF512CFC2803F1FD00D661B5 /* NewMasterTableCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF512CFB2803F1FD00D661B5 /* NewMasterTableCell.swift */; };
 		FF512CFE2803F21100D661B5 /* NewCustomerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF512CFD2803F21100D661B5 /* NewCustomerViewController.swift */; };
 		FF512D002803F21C00D661B5 /* NewCustomerTableCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF512CFF2803F21C00D661B5 /* NewCustomerTableCell.swift */; };
 		FF512D022803F61900D661B5 /* CustomersFetchingManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF512D012803F61900D661B5 /* CustomersFetchingManager.swift */; };
@@ -35,6 +33,7 @@
 		FFEC2EA4280861CC00CE1E2F /* Protocols.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFEC2EA3280861CC00CE1E2F /* Protocols.swift */; };
 		FFEC2EA62808836600CE1E2F /* Day.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFEC2EA52808836600CE1E2F /* Day.swift */; };
 		FFEC2EA92809708400CE1E2F /* DatePickerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFEC2EA82809708400CE1E2F /* DatePickerViewController.swift */; };
+		FFEC2EAB280B1E9B00CE1E2F /* NewMasterTableCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFEC2EAA280B1E9B00CE1E2F /* NewMasterTableCell.swift */; };
 		FFFAA2F327EFA3CA002EC74B /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFFAA2F227EFA3CA002EC74B /* AppDelegate.swift */; };
 		FFFAA2F527EFA3CA002EC74B /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFFAA2F427EFA3CA002EC74B /* SceneDelegate.swift */; };
 		FFFAA2F727EFA3CA002EC74B /* MainScreenTabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFFAA2F627EFA3CA002EC74B /* MainScreenTabBarController.swift */; };
@@ -48,7 +47,6 @@
 		FFFAA31F27F36A32002EC74B /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFFAA31E27F36A32002EC74B /* SettingsViewController.swift */; };
 		FFFAA32127F391F7002EC74B /* TimeChangeOptionCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFFAA32027F391F7002EC74B /* TimeChangeOptionCell.swift */; };
 		FFFAA32527F3A44D002EC74B /* WorkingHoursSetupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFFAA32427F3A44D002EC74B /* WorkingHoursSetupView.swift */; };
-		FFFAA32927F48DE8002EC74B /* EventsTableCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFFAA32827F48DE8002EC74B /* EventsTableCell.swift */; };
 		FFFAA32B27F4B53A002EC74B /* NewProcedureButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFFAA32A27F4B53A002EC74B /* NewProcedureButton.swift */; };
 		FFFAA32D27F9955C002EC74B /* WorkingDay.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFFAA32C27F9955C002EC74B /* WorkingDay.swift */; };
 		FFFAA33927F99C87002EC74B /* NewEventViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFFAA33827F99C87002EC74B /* NewEventViewController.swift */; };
@@ -59,9 +57,7 @@
 		FF512CEA2801797800D661B5 /* AddNewSalonTypeRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddNewSalonTypeRow.swift; sourceTree = "<group>"; };
 		FF512CED280200B200D661B5 /* MastersViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MastersViewController.swift; sourceTree = "<group>"; };
 		FF512CEF280200C500D661B5 /* CustomersViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomersViewController.swift; sourceTree = "<group>"; };
-		FF512CF228021AC200D661B5 /* MastersTableCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MastersTableCell.swift; sourceTree = "<group>"; };
 		FF512CF92803F1E400D661B5 /* NewMasterViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewMasterViewController.swift; sourceTree = "<group>"; };
-		FF512CFB2803F1FD00D661B5 /* NewMasterTableCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewMasterTableCell.swift; sourceTree = "<group>"; };
 		FF512CFD2803F21100D661B5 /* NewCustomerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewCustomerViewController.swift; sourceTree = "<group>"; };
 		FF512CFF2803F21C00D661B5 /* NewCustomerTableCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewCustomerTableCell.swift; sourceTree = "<group>"; };
 		FF512D012803F61900D661B5 /* CustomersFetchingManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomersFetchingManager.swift; sourceTree = "<group>"; };
@@ -83,6 +79,7 @@
 		FFEC2EA3280861CC00CE1E2F /* Protocols.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Protocols.swift; sourceTree = "<group>"; };
 		FFEC2EA52808836600CE1E2F /* Day.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Day.swift; sourceTree = "<group>"; };
 		FFEC2EA82809708400CE1E2F /* DatePickerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatePickerViewController.swift; sourceTree = "<group>"; };
+		FFEC2EAA280B1E9B00CE1E2F /* NewMasterTableCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewMasterTableCell.swift; sourceTree = "<group>"; };
 		FFFAA2EF27EFA3CA002EC74B /* Beauty Buisness.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Beauty Buisness.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		FFFAA2F227EFA3CA002EC74B /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		FFFAA2F427EFA3CA002EC74B /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -98,7 +95,6 @@
 		FFFAA31E27F36A32002EC74B /* SettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
 		FFFAA32027F391F7002EC74B /* TimeChangeOptionCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeChangeOptionCell.swift; sourceTree = "<group>"; };
 		FFFAA32427F3A44D002EC74B /* WorkingHoursSetupView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkingHoursSetupView.swift; sourceTree = "<group>"; };
-		FFFAA32827F48DE8002EC74B /* EventsTableCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventsTableCell.swift; sourceTree = "<group>"; };
 		FFFAA32A27F4B53A002EC74B /* NewProcedureButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewProcedureButton.swift; sourceTree = "<group>"; };
 		FFFAA32C27F9955C002EC74B /* WorkingDay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkingDay.swift; sourceTree = "<group>"; };
 		FFFAA33827F99C87002EC74B /* NewEventViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewEventViewController.swift; sourceTree = "<group>"; };
@@ -133,7 +129,6 @@
 			children = (
 				FF512CF72803F1C300D661B5 /* NewMasterVC */,
 				FF512CED280200B200D661B5 /* MastersViewController.swift */,
-				FF512CF228021AC200D661B5 /* MastersTableCell.swift */,
 			);
 			path = MastersVC;
 			sourceTree = "<group>";
@@ -151,7 +146,7 @@
 			isa = PBXGroup;
 			children = (
 				FF512CF92803F1E400D661B5 /* NewMasterViewController.swift */,
-				FF512CFB2803F1FD00D661B5 /* NewMasterTableCell.swift */,
+				FFEC2EAA280B1E9B00CE1E2F /* NewMasterTableCell.swift */,
 			);
 			path = NewMasterVC;
 			sourceTree = "<group>";
@@ -332,7 +327,6 @@
 			children = (
 				FFFAA33A27F9A43D002EC74B /* NewEventVC */,
 				FFFAA31027F09AA5002EC74B /* EventsViewController.swift */,
-				FFFAA32827F48DE8002EC74B /* EventsTableCell.swift */,
 			);
 			path = EventsVC;
 			sourceTree = "<group>";
@@ -429,7 +423,7 @@
 				FFEC2EA92809708400CE1E2F /* DatePickerViewController.swift in Sources */,
 				FFEC2E9C2807743F00CE1E2F /* ContactsViewController.swift in Sources */,
 				FF512D0E2804809300D661B5 /* ServiceChangeOption.swift in Sources */,
-				FF512CF328021AC200D661B5 /* MastersTableCell.swift in Sources */,
+				FFEC2EAB280B1E9B00CE1E2F /* NewMasterTableCell.swift in Sources */,
 				FFFAA2FD27EFA3CA002EC74B /* Beauty_Buisness.xcdatamodeld in Sources */,
 				FFFAA32127F391F7002EC74B /* TimeChangeOptionCell.swift in Sources */,
 				FF512CFE2803F21100D661B5 /* NewCustomerViewController.swift in Sources */,
@@ -439,7 +433,6 @@
 				FF512CF0280200C500D661B5 /* CustomersViewController.swift in Sources */,
 				FFEC2EA0280804B500CE1E2F /* Contact.swift in Sources */,
 				FFFAA33C27F9A453002EC74B /* NewEventTableCell.swift in Sources */,
-				FFFAA32927F48DE8002EC74B /* EventsTableCell.swift in Sources */,
 				FFFAA31F27F36A32002EC74B /* SettingsViewController.swift in Sources */,
 				FFFAA30F27EFA65C002EC74B /* OnboardingView.swift in Sources */,
 				FF5A038328003AD400F8FB24 /* ProcedureTypesChooseView.swift in Sources */,
@@ -453,7 +446,6 @@
 				FF512D082803FB3300D661B5 /* ProceduresFetchingManager.swift in Sources */,
 				FF512CFA2803F1E400D661B5 /* NewMasterViewController.swift in Sources */,
 				FFFAA31A27F0B77C002EC74B /* Extensions.swift in Sources */,
-				FF512CFC2803F1FD00D661B5 /* NewMasterTableCell.swift in Sources */,
 				FF5A034727FC6D3F00F8FB24 /* CoreDataStack.swift in Sources */,
 				FFFAA32B27F4B53A002EC74B /* NewProcedureButton.swift in Sources */,
 				FFFAA2F527EFA3CA002EC74B /* SceneDelegate.swift in Sources */,

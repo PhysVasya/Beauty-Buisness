@@ -70,10 +70,11 @@ class CustomersViewController: UIViewController {
     private func setupCustomersCollectionView () {
         
         var layoutConfig = UICollectionLayoutListConfiguration(appearance: .plain)
+        layoutConfig.backgroundColor = .myBackgroundColor
         
         layoutConfig.trailingSwipeActionsConfigurationProvider = { [weak self] indexPath -> UISwipeActionsConfiguration in
             
-            let action = UIContextualAction(style: .destructive, title: "Удалить") { action, view, completion in
+            let deleteAction = UIContextualAction(style: .destructive, title: "Удалить") { action, view, completion in
                 guard let customerToDelete = self?.fetchedCustomers?.object(at: indexPath),
                       var currentSnapshot = self?.dataSource?.snapshot() else { return }
                 
@@ -85,9 +86,9 @@ class CustomersViewController: UIViewController {
                 
                 
             }
-            action.image = UIImage(systemName: "trash.fill")
-            action.backgroundColor = .myAccentColor
-            return UISwipeActionsConfiguration(actions: [action])
+            deleteAction.image = UIImage(systemName: "trash.fill")
+            deleteAction.backgroundColor = .myAccentColor
+            return UISwipeActionsConfiguration(actions: [deleteAction])
         }
         
         let layout = UICollectionViewCompositionalLayout.list(using: layoutConfig)

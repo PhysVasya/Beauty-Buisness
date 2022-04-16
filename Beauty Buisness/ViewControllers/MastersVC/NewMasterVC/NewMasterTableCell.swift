@@ -1,14 +1,13 @@
 //
-//  NewMasterTableViewCell.swift
+//  NewMasterTableCell.swift
 //  Beauty Buisness
 //
-//  Created by Vasiliy Andreyev on 11.04.2022.
+//  Created by Vasiliy Andreyev on 16.04.2022.
 //
 
 import Foundation
 import UIKit
 
 class NewMasterTableCell: UITableViewCell {
-    
     static let identifier = "NewMasterTableCell"
 }

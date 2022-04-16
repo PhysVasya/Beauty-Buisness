@@ -14,20 +14,14 @@ import CoreData
 
 class EventsViewController: UIViewController {
     
-    private let eventsTableView: UITableView = {
-        let tv = UITableView()
-        tv.register(EventsTableCell.self, forCellReuseIdentifier: EventsTableCell.cellIdentifier)
-        tv.backgroundColor = .myBackgroundColor
-        return tv
-    }()
+    private var eventsCollectionView: UICollectionView!
     private let segmentedControl = UISegmentedControl()
     
     private var dateForEvents: Day? {
         didSet {
-            reloadEvents { [weak self] in
-                self?.updateSegmentedControl()
-                self?.eventsTableView.reloadData()
-            }
+            reloadEvents()
+            updateSegmentedControl()
+            
         }
     }
     private var selectedDayString: String? {
@@ -36,14 +30,15 @@ class EventsViewController: UIViewController {
         } else {
             return "\((dateForEvents?.day)!).\((dateForEvents?.month)!)"
         }
-
+        
     }
-
+    
     private var newProcedureButtonTapped: (() -> Void)?
     private var newEventObservableElements = ObservableElementsForNewProcedureButton()
     private var workingDay: WorkingDay?
     
     private var fetchedEvents: NSFetchedResultsController<Event>?
+    private var dataSource: UICollectionViewDiffableDataSource<String, Event>?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -58,27 +53,49 @@ class EventsViewController: UIViewController {
             
         }
         
-        navigationItem.title = UserDefaults.standard.string(forKey: "SALON-NAME")
         
-        setupTableView()
+        setupEventsCollectionView()
+        dataSource = configureDataSource()
         setupAddNewProcedureButton()
         setupSegmentedControl()
         setupNavigationBar()
         
     }
     
-    private func reloadEvents (reload: (() -> Void)? = nil) {
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        reloadEvents()
+    }
+    
+    private func reloadEvents () {
         Task {
             guard let dateForEvents = dateForEvents else {
                 return
             }
-            fetchedEvents = await EventsFetchingManager.shared.fetchEventsForToday(dateForEvents)
-            fetchedEvents?.delegate = self
-            newEventObservableElements.events = fetchedEvents?.sections?[0].numberOfObjects
-            reload?()
-            setupBGView()
+            fetchedEvents = await EventsFetchingManager.shared.fetchEventsForToday(dateForEvents, delegate: self)
         }
         
+    }
+    
+    private func configureDataSource() -> UICollectionViewDiffableDataSource<String, Event> {
+        let cellRegistration = UICollectionView.CellRegistration<UICollectionViewListCell, Event> { cell, indexPath, itemIdentifier in
+            var config = cell.defaultContentConfiguration()
+            config.text = itemIdentifier.procedure?.name
+            
+            let masterName = itemIdentifier.master?.name
+            //            let clientName = itemIdentifier.customer?.name
+            let eventStartHour = itemIdentifier.startHour
+            let eventStartMinute = itemIdentifier.startMinute
+            let eventEndHour = itemIdentifier.endHour
+            let eventEndMinute = itemIdentifier.endMinute
+            config.secondaryText = "У \(masterName ?? "") с \(eventStartHour):\(eventStartMinute) до \(eventEndHour):\(eventEndMinute)"
+            cell.contentConfiguration = config
+        }
+        
+        return UICollectionViewDiffableDataSource(collectionView: eventsCollectionView) { collectionView, indexPath, itemIdentifier in
+            collectionView.dequeueConfiguredReusableCell(using: cellRegistration, for: indexPath, item: itemIdentifier)
+        }
     }
     
     private func setupSegmentedControl () {
@@ -91,11 +108,35 @@ class EventsViewController: UIViewController {
         segmentedControl.addTarget(self, action: #selector(segmentedControlChanged(_:)), for: .valueChanged)
     }
     
-    private func setupTableView () {
-        eventsTableView.dataSource = self
-        eventsTableView.delegate = self
-        view.addSubview(eventsTableView)
-        eventsTableView.frame = view.bounds
+    private func setupEventsCollectionView () {
+        
+        var listConfig = UICollectionLayoutListConfiguration(appearance: .plain)
+        
+        listConfig.trailingSwipeActionsConfigurationProvider = { indexPath -> UISwipeActionsConfiguration in
+            
+            let deleteAction = UIContextualAction(style: .destructive, title: "Удалить") { [weak self] action, view, completion in
+                
+                guard let eventToDelete = self?.fetchedEvents?.object(at: indexPath),
+                      var currentSnapshot = self?.dataSource?.snapshot() else { return }
+                
+                currentSnapshot.deleteItems([eventToDelete])
+                self?.dataSource?.apply(currentSnapshot, animatingDifferences: true) {
+                    EventsFetchingManager.shared.deleteEvent(eventToDelete)
+                }
+                
+            }
+            deleteAction.backgroundColor = .myAccentColor
+            deleteAction.image = UIImage(systemName: "trash.fill")
+            
+            return UISwipeActionsConfiguration(actions: [deleteAction])
+        }
+        
+        let layout = UICollectionViewCompositionalLayout.list(using: listConfig)
+        eventsCollectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        view.addSubview(eventsCollectionView)
+        eventsCollectionView.frame = view.bounds
+        eventsCollectionView.delegate = self
+        eventsCollectionView.backgroundColor = .myBackgroundColor
         
     }
     
@@ -109,10 +150,10 @@ class EventsViewController: UIViewController {
         newButton.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
     }
     
-    private func setupBGView () {
+    private func setupBGView (usingResultsFrom controller: NSFetchedResultsController<NSFetchRequestResult>) {
         let subviews = view.subviews
         
-        if fetchedEvents?.sections?.count == 0 || fetchedEvents?.sections == nil || fetchedEvents?.sections?[0].objects?.count == 0 {
+        if controller.sections?.count == 0 || controller.sections == nil || controller.fetchedObjects?.count == 0 {
             if let noEventsView = subviews.first(where: {$0.restorationIdentifier == "NoEvents"}) {
                 if subviews.contains(noEventsView) {
                     //                    noEventsView.removeFromSuperview()
@@ -137,6 +178,8 @@ class EventsViewController: UIViewController {
     }
     
     private func setupNavigationBar () {
+        navigationItem.title = UserDefaults.standard.string(forKey: "SALON-NAME")
+        
         let calendarPickerButton = UIBarButtonItem(image: .init(systemName: "calendar"), style: .plain, target: self, action: #selector(calendarPickerButtonPressed(_:)))
         navigationItem.rightBarButtonItem = calendarPickerButton
     }
@@ -147,7 +190,7 @@ class EventsViewController: UIViewController {
                 segmentedControl.removeSegment(at: 2, animated: false)
                 segmentedControl.insertSegment(withTitle: selectedDayString, at: 2, animated: false)
                 segmentedControl.selectedSegmentIndex = 2
-
+                
             } else {
                 segmentedControl.insertSegment(withTitle: selectedDayString, at: 2, animated: true)
                 segmentedControl.selectedSegmentIndex = 2
@@ -194,137 +237,62 @@ class EventsViewController: UIViewController {
 }
 
 
-extension EventsViewController: UITableViewDelegate, UITableViewDataSource {
+extension EventsViewController: UICollectionViewDelegate {
     
-    func numberOfSections(in tableView: UITableView) -> Int {
-        return fetchedEvents?.sections?.count ?? 0
-    }
-    
-    
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        
-        let event = fetchedEvents?.object(at: indexPath)
-        
-        let cell = tableView.dequeueReusableCell(withIdentifier: EventsTableCell.cellIdentifier, for: indexPath) as! EventsTableCell
-        cell.backgroundColor = .myBackgroundColor
-        var config = cell.defaultContentConfiguration()
-        
-        //CAREFUL force unwrap! But should always not be nil. Here we access the starting hour and depending on the number of rows, just add 1 hour each new row.
-        config.text = event?.procedure?.name
-        
-        if let masterName = event?.master?.name,
-           let clientName = event?.customer?.name,
-           let eventStartHour = event?.startHour,
-           let eventStartMinute = event?.startMinute,
-           let eventEndHour = event?.endHour,
-           let eventEndMinute = event?.endMinute {
-            config.secondaryText = "У \(masterName) с \(eventStartHour):\(eventStartMinute) до \(eventEndHour):\(eventEndMinute)"
-        }
-        cell.contentConfiguration = config
-        return cell
-    }
-    
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        
-        //CAREFUL!
-        
-        guard let sectionInfo = fetchedEvents?.sections?[section] else {
-            return 0
-        }
-        return sectionInfo.numberOfObjects
-    }
-    
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        tableView.deselectRow(at: indexPath, animated: true)
-    }
-    
-    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        
-        guard let date = dateForEvents,
-              let eventDate = Calendar.current.date(from: DateComponents(year: date.year, month: date.month, day: date.day)) else { return nil }
-        let formatter = DateFormatter()
-        formatter.dateFormat = "EEEE, dd/MM"
-        let formattedDate = formatter.string(from: eventDate)
-        let dateLabel = UILabel()
-        dateLabel.backgroundColor = .myBackgroundColor
-        dateLabel.frame = CGRect(x: 0, y: 0, width: 200, height: 50)
-        dateLabel.text = formattedDate.capitalized
-        dateLabel.font = .systemFont(ofSize: 24, weight: .bold)
-        dateLabel.textColor = .label
-        dateLabel.textAlignment = .center
-        dateLabel.backgroundColor = .myHighlightColor
-        
-        return dateLabel
-        
-        
-    }
-    
-    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        return 50
-    }
-    
-    func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
+    func collectionView(_ collectionView: UICollectionView, canEditItemAt indexPath: IndexPath) -> Bool {
         return true
     }
     
-    func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
-        let deleteAction = UIContextualAction(style: .destructive, title: "Удалить") { [weak self] action, view, handler in
-            guard let event = self?.fetchedEvents?.object(at: indexPath) else { return }
-            
-            EventsFetchingManager.shared.deleteEvent(event)
-        }
-        
-        deleteAction.image = UIImage(systemName: "trash.fill")
-        deleteAction.backgroundColor = .myAccentColor
-        let config = UISwipeActionsConfiguration(actions: [deleteAction])
-        
-        return config
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        collectionView.deselectItem(at: indexPath, animated: true)
     }
-    
-    func tableView(_ tableView: UITableView, leadingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
-        let editAction = UIContextualAction(style: .normal, title: "Редактировать") { [weak self] action, view, handler in
-            guard let event = self?.fetchedEvents?.object(at: indexPath) else { return }
-        }
-        editAction.backgroundColor = .myHighlightColor
-        editAction.image = UIImage(systemName: "pencil")
-        let config = UISwipeActionsConfiguration(actions: [editAction])
-        return config
-    }
-    
-    
-    
+
+    //
+    //    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+    //
+    //        guard let date = dateForEvents,
+    //              let eventDate = Calendar.current.date(from: DateComponents(year: date.year, month: date.month, day: date.day)) else { return nil }
+    //        let formatter = DateFormatter()
+    //        formatter.dateFormat = "EEEE, dd/MM"
+    //        let formattedDate = formatter.string(from: eventDate)
+    //        let dateLabel = UILabel()
+    //        dateLabel.backgroundColor = .myBackgroundColor
+    //        dateLabel.frame = CGRect(x: 0, y: 0, width: 200, height: 50)
+    //        dateLabel.text = formattedDate.capitalized
+    //        dateLabel.font = .systemFont(ofSize: 24, weight: .bold)
+    //        dateLabel.textColor = .label
+    //        dateLabel.textAlignment = .center
+    //        dateLabel.backgroundColor = .myHighlightColor
+    //
+    //        return dateLabel
+    //
+    //
+    //    }
     
 }
 
 extension EventsViewController: NSFetchedResultsControllerDelegate {
     
-    func controllerWillChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
-        eventsTableView.beginUpdates()
-    }
-    
-    func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChange anObject: Any, at indexPath: IndexPath?, for type: NSFetchedResultsChangeType, newIndexPath: IndexPath?) {
-        reloadEvents()
-        switch type {
-        case .insert:
-            eventsTableView.insertRows(at: [newIndexPath!], with: .automatic)
-        case .delete:
-            eventsTableView.deleteRows(at: [indexPath!], with: .automatic)
-        case .move:
-            eventsTableView.deleteRows(at: [indexPath!], with: .automatic)
-            eventsTableView.insertRows(at: [newIndexPath!], with: .automatic)
-        case .update:
-            let cell = eventsTableView.cellForRow(at: indexPath!)
-            let event = fetchedEvents?.object(at: indexPath!)
-            var config = cell?.defaultContentConfiguration()
-            config?.text = event?.procedure?.name
-            cell?.contentConfiguration = config
-        @unknown default:
-            print("Unexpected NSFetchedResultsChangeType")
+    func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChangeContentWith snapshot: NSDiffableDataSourceSnapshotReference) {
+        
+        var diffSnapshot = NSDiffableDataSourceSnapshot<String, Event>()
+        
+        snapshot.sectionIdentifiers.forEach { section in
+            diffSnapshot.appendSections([section as! String])
+            
+            let items = snapshot.itemIdentifiersInSection(withIdentifier: section).map { (objectID: Any) -> Event in
+                let oid = objectID as! NSManagedObjectID
+                
+                return controller.managedObjectContext.object(with: oid) as! Event
+            }
+            diffSnapshot.appendItems(items, toSection: section as? String)
         }
-    }
-    
-    func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
-        eventsTableView.endUpdates()
+        
+        dataSource?.apply(diffSnapshot)
+        
+        setupBGView(usingResultsFrom: controller)
+        newEventObservableElements.events = controller.fetchedObjects?.count
+        
     }
     
 }
