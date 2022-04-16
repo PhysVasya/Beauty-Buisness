@@ -13,13 +13,9 @@ import SwiftUI
 
 class CustomersViewController: UIViewController {
     
-    private let customersTableView: UITableView = {
-        let tableView = UITableView()
-        tableView.register(CustomersTableCell.self, forCellReuseIdentifier: CustomersTableCell.identifier)
-        tableView.backgroundColor = .myBackgroundColor
-        return tableView
-    }()
+    private var customersCollectionView: UICollectionView!
     
+    private var dataSource: UICollectionViewDiffableDataSource<String, Customer>?
     private var fetchedCustomers: NSFetchedResultsController<Customer>?
     private let newCustomerObservableElements = ObservableElementsForNewProcedureButton()
     private var newCustomerButtonPressed: (() -> Void)?
@@ -28,7 +24,7 @@ class CustomersViewController: UIViewController {
         super.viewDidLoad()
         title = "Клиенты"
         navigationController?.navigationBar.prefersLargeTitles = true
-  
+        
         newCustomerButtonPressed = { [weak self] in
             let newCustomerVC = UINavigationController(rootViewController: NewCustomerViewController())
             if let sheet = newCustomerVC.sheetPresentationController {
@@ -38,33 +34,72 @@ class CustomersViewController: UIViewController {
             self?.navigationController?.present(newCustomerVC, animated: true)
         }
         
-        setupCustomersTableView()
+        setupCustomersCollectionView()
+        setupDataSource()
         setupNewCustomerButton()
+        
     }
     
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        reloadCustomers { [weak self] in
-            self?.customersTableView.reloadData()
-        }
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        reloadCustomers()
     }
     
-    public func reloadCustomers (reload: (() -> Void)? = nil) {
+    public func reloadCustomers () {
         Task {
-            fetchedCustomers = await CustomersFetchingManager.shared.fetchCustomers()
-            fetchedCustomers?.delegate = self
-            newCustomerObservableElements.events = fetchedCustomers?.sections?[0].numberOfObjects
-            reload?()
-            setupBGView()
+            fetchedCustomers = await CustomersFetchingManager.shared.fetchCustomers(delegate: self)
         }
     }
     
-    private func setupCustomersTableView () {
-        view.addSubview(customersTableView)
-        customersTableView.frame = view.bounds
-        customersTableView.delegate = self
-        customersTableView.dataSource = self
+    
+    private func setupDataSource () {
+        let cellRegistration = UICollectionView.CellRegistration<UICollectionViewListCell, Customer> { cell, indexPath, item in
+            var content = cell.defaultContentConfiguration()
+            content.text = item.name
+            content.secondaryText = item.phone
+            cell.contentConfiguration = content
+            
+        }
+        
+        dataSource = UICollectionViewDiffableDataSource(collectionView: customersCollectionView) { collectionView, indexPath, itemIdentifier in
+            return collectionView.dequeueConfiguredReusableCell(using: cellRegistration, for: indexPath, item: itemIdentifier)
+        }
+        
     }
+    
+    private func setupCustomersCollectionView () {
+        
+        var layoutConfig = UICollectionLayoutListConfiguration(appearance: .plain)
+        
+        layoutConfig.trailingSwipeActionsConfigurationProvider = { [weak self] indexPath -> UISwipeActionsConfiguration in
+            
+            let action = UIContextualAction(style: .destructive, title: "Удалить") { action, view, completion in
+                guard let customerToDelete = self?.fetchedCustomers?.object(at: indexPath),
+                      var currentSnapshot = self?.dataSource?.snapshot() else { return }
+                
+                currentSnapshot.deleteItems([customerToDelete])
+                self?.dataSource?.apply(currentSnapshot, animatingDifferences: true) {
+                    CustomersFetchingManager.shared.deleteCustomer(customerToDelete)
+                    
+                }
+                
+                
+            }
+            action.image = UIImage(systemName: "trash.fill")
+            action.backgroundColor = .myAccentColor
+            return UISwipeActionsConfiguration(actions: [action])
+        }
+        
+        let layout = UICollectionViewCompositionalLayout.list(using: layoutConfig)
+        customersCollectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        customersCollectionView.backgroundColor = .myBackgroundColor
+        customersCollectionView.collectionViewLayout = layout
+        
+        view.addSubview(customersCollectionView)
+        customersCollectionView.frame = view.bounds
+        customersCollectionView.delegate = self
+    }
+    
     
     private func setupNewCustomerButton () {
         let button = UIHostingController(rootView: NewProcedureButton(name: "Добавить клиента", elements: newCustomerObservableElements, tap: newCustomerButtonPressed)).view!
@@ -76,10 +111,10 @@ class CustomersViewController: UIViewController {
         button.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -view.frame.height / 8).isActive = true
     }
     
-    private func setupBGView () {
+    private func setupBGView (withReceivedResultsFrom controller: NSFetchedResultsController<NSFetchRequestResult>) {
         let subviews = view.subviews
         
-        if fetchedCustomers?.sections?.count == 0 || fetchedCustomers?.sections == nil || fetchedCustomers?.sections?[0].objects?.count == 0 {
+        if controller.sections?.count == 0 || controller.sections == nil || controller.fetchedObjects?.count == 0 {
             if let noEventsView = subviews.first(where: {$0.restorationIdentifier == "NoClients"}) {
                 if subviews.contains(noEventsView) {
                     //                    noEventsView.removeFromSuperview()
@@ -105,89 +140,49 @@ class CustomersViewController: UIViewController {
 }
 
 
-extension CustomersViewController: UITableViewDelegate, UITableViewDataSource {
+extension CustomersViewController: UICollectionViewDelegate {
     
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        
-        let cell = tableView.dequeueReusableCell(withIdentifier: CustomersTableCell.identifier, for: indexPath)
-        let customer = fetchedCustomers?.object(at: indexPath)
-        var config = cell.defaultContentConfiguration()
-        config.text = customer?.name
-        config.secondaryText = customer?.phone
-        cell.contentConfiguration = config
-        return cell
-    }
-    
-    func numberOfSections(in tableView: UITableView) -> Int {
-        return fetchedCustomers?.sections?.count ?? 1
-    }
-    
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return fetchedCustomers?.sections?[section].numberOfObjects ?? 0
-        
-    }
-    
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        tableView.deselectRow(at: indexPath, animated: true)
-        guard let chosenCustomer = fetchedCustomers?.object(at: indexPath),
-              let customerPhoneNumber = URL(string: "telprompt://\(chosenCustomer.phone!)") else { return }
-        UIApplication.shared.open(customerPhoneNumber, options: [:], completionHandler: nil)
-    }
-    
-    func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
+    func collectionView(_ collectionView: UICollectionView, canEditItemAt indexPath: IndexPath) -> Bool {
         return true
     }
     
-    func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
-        let deleteAction = UIContextualAction(style: .destructive, title: "Удалить") { [weak self] action, view, handler in
-            guard let customerToDelete = self?.fetchedCustomers?.object(at: indexPath) else {
-                return
-            }
-            CustomersFetchingManager.shared.deleteCustomer(customerToDelete)
-            handler(true)
-        }
-        deleteAction.image = UIImage(systemName: "trash.fill")
-        deleteAction.backgroundColor = .myAccentColor
-
-        let config = UISwipeActionsConfiguration(actions: [deleteAction])
-        return config
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        
+        collectionView.deselectItem(at: indexPath, animated: true)
+        
+        guard let chosenCustomer = fetchedCustomers?.object(at: indexPath),
+              let chosenCustomerNumber = chosenCustomer.phone,
+              let phoneURL = URL(string: "telprompt://\(chosenCustomerNumber)") else { return }
+        
+        
+        UIApplication.shared.open(phoneURL, options: [:], completionHandler: nil)
+        
     }
-    
     
 }
 
 
+
 extension CustomersViewController: NSFetchedResultsControllerDelegate {
     
-    func controllerWillChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
-        customersTableView.beginUpdates()
-    }
-    
-    func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChange anObject: Any, at indexPath: IndexPath?, for type: NSFetchedResultsChangeType, newIndexPath: IndexPath?) {
-        reloadCustomers()
-        switch type {
-        case .insert:
-            customersTableView.insertRows(at: [newIndexPath!], with: .automatic)
-        case .delete:
-            customersTableView.deleteRows(at: [indexPath!], with: .automatic)
-        case .move:
-            customersTableView.deleteRows(at: [indexPath!], with: .automatic)
-            customersTableView.insertRows(at: [newIndexPath!], with: .automatic)
-        case .update:
-            let cell = customersTableView.cellForRow(at: indexPath!)
-            let customer = controller.object(at: indexPath!) as? Customer
+    func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChangeContentWith snapshot: NSDiffableDataSourceSnapshotReference) {
+        var diff = NSDiffableDataSourceSnapshot<String, Customer>()
+        
+        snapshot.sectionIdentifiers.forEach { section in
+            diff.appendSections([section as! String])
             
-            var config = cell?.defaultContentConfiguration()
-            config?.text = customer?.name
-            config?.secondaryText = customer?.phone
-            cell?.contentConfiguration = config
-        @unknown default:
-            print("Unexpected NSFetchResultsChangeType")
+            let items = snapshot.itemIdentifiersInSection(withIdentifier: section).map { (objectID: Any) -> Customer in
+                let oid = objectID as! NSManagedObjectID
+                return controller.managedObjectContext.object(with: oid) as! Customer
+            }
+            
+            diff.appendItems(items, toSection: section as? String)
         }
-    }
-    
-    func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
-        customersTableView.endUpdates()
+        
+        self.dataSource?.apply(diff)
+        newCustomerObservableElements.events = controller.fetchedObjects?.count
+        setupBGView(withReceivedResultsFrom: controller)
+        
     }
     
 }

@@ -11,7 +11,6 @@
 		FF512CEE280200B200D661B5 /* MastersViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF512CED280200B200D661B5 /* MastersViewController.swift */; };
 		FF512CF0280200C500D661B5 /* CustomersViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF512CEF280200C500D661B5 /* CustomersViewController.swift */; };
 		FF512CF328021AC200D661B5 /* MastersTableCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF512CF228021AC200D661B5 /* MastersTableCell.swift */; };
-		FF512CF62802CEB600D661B5 /* CustomersTableCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF512CF52802CEB600D661B5 /* CustomersTableCell.swift */; };
 		FF512CFA2803F1E400D661B5 /* NewMasterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF512CF92803F1E400D661B5 /* NewMasterViewController.swift */; };
 		FF512CFC2803F1FD00D661B5 /* NewMasterTableCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF512CFB2803F1FD00D661B5 /* NewMasterTableCell.swift */; };
 		FF512CFE2803F21100D661B5 /* NewCustomerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF512CFD2803F21100D661B5 /* NewCustomerViewController.swift */; };
@@ -61,7 +60,6 @@
 		FF512CED280200B200D661B5 /* MastersViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MastersViewController.swift; sourceTree = "<group>"; };
 		FF512CEF280200C500D661B5 /* CustomersViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomersViewController.swift; sourceTree = "<group>"; };
 		FF512CF228021AC200D661B5 /* MastersTableCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MastersTableCell.swift; sourceTree = "<group>"; };
-		FF512CF52802CEB600D661B5 /* CustomersTableCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomersTableCell.swift; sourceTree = "<group>"; };
 		FF512CF92803F1E400D661B5 /* NewMasterViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewMasterViewController.swift; sourceTree = "<group>"; };
 		FF512CFB2803F1FD00D661B5 /* NewMasterTableCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewMasterTableCell.swift; sourceTree = "<group>"; };
 		FF512CFD2803F21100D661B5 /* NewCustomerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewCustomerViewController.swift; sourceTree = "<group>"; };
@@ -145,7 +143,6 @@
 			children = (
 				FF512CF82803F1D300D661B5 /* NewCustomerVC */,
 				FF512CEF280200C500D661B5 /* CustomersViewController.swift */,
-				FF512CF52802CEB600D661B5 /* CustomersTableCell.swift */,
 			);
 			path = CustomersVC;
 			sourceTree = "<group>";
@@ -442,7 +439,6 @@
 				FF512CF0280200C500D661B5 /* CustomersViewController.swift in Sources */,
 				FFEC2EA0280804B500CE1E2F /* Contact.swift in Sources */,
 				FFFAA33C27F9A453002EC74B /* NewEventTableCell.swift in Sources */,
-				FF512CF62802CEB600D661B5 /* CustomersTableCell.swift in Sources */,
 				FFFAA32927F48DE8002EC74B /* EventsTableCell.swift in Sources */,
 				FFFAA31F27F36A32002EC74B /* SettingsViewController.swift in Sources */,
 				FFFAA30F27EFA65C002EC74B /* OnboardingView.swift in Sources */,

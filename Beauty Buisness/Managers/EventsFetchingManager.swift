@@ -71,14 +71,19 @@ class EventsFetchingManager {
     
     public func deleteEvent(_ event: Event) {
         
-        let request: NSFetchRequest<Event> = Event.fetchRequest()
+        let request: NSFetchRequest<NSFetchRequestResult> = Event.fetchRequest()
         request.predicate = NSPredicate(format: "SELF == %@", event)
+        
+        let deleteRequest = NSBatchDeleteRequest(fetchRequest: request)
+        deleteRequest.resultType = .resultTypeObjectIDs
+        
         do {
-            let results = try managedObjectContext.fetch(request)
-            if results.count > 0 {
-                managedObjectContext.delete(event)
-                CoreDataStack.shared.saveContext()
-            }
+            let batchDelete = try managedObjectContext.execute(deleteRequest) as? NSBatchDeleteResult
+            guard let deleteResult = batchDelete?.result as? [NSManagedObjectID] else { return }
+            
+            let deletedObjects : [AnyHashable : Any] = [NSDeletedObjectsKey: deleteResult]
+            NSManagedObjectContext.mergeChanges(fromRemoteContextSave: deletedObjects, into: [managedObjectContext])
+           
         } catch let error as NSError {
             print("Error deleting event: \(error), \(error.userInfo)")
         }

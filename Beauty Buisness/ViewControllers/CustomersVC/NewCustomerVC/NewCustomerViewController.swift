@@ -15,7 +15,7 @@ class NewCustomerViewController: UIViewController {
     private let newCustomerTableView: UITableView = {
         let tableView = UITableView()
         tableView.allowsSelection = true
-        tableView.register(CustomersTableCell.self, forCellReuseIdentifier: CustomersTableCell.identifier)
+        tableView.register(NewCustomerTableCell.self, forCellReuseIdentifier: NewCustomerTableCell.identifier)
         tableView.backgroundColor = .myBackgroundColor
         return tableView
     }()
@@ -97,7 +97,7 @@ extension NewCustomerViewController: UITableViewDelegate, UITableViewDataSource 
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
-        let cell = tableView.dequeueReusableCell(withIdentifier: CustomersTableCell.identifier, for: indexPath)
+        let cell = tableView.dequeueReusableCell(withIdentifier: NewCustomerTableCell.identifier, for: indexPath)
         
         nameTextField.autocorrectionType = .no
         

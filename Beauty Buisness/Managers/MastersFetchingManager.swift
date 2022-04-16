@@ -67,17 +67,23 @@ class MastersFetchingManager {
         
     }
     
+    //Batch Delete
+    
     public func deleteMaster (_ master: Master) {
         
-        let request: NSFetchRequest<Master> = Master.fetchRequest()
+        let request: NSFetchRequest<NSFetchRequestResult> = Master.fetchRequest()
         request.predicate = NSPredicate(format: "SELF == %@", master)
         
+        let deleteRequest = NSBatchDeleteRequest(fetchRequest: request)
+        request.resultType = .managedObjectIDResultType
+        
         do {
-            let result = try managedObjectContext.fetch(request)
-            if result.count > 0 {
-                managedObjectContext.delete(master)
-                CoreDataStack.shared.saveContext()
-            }
+            let batchDelete = try managedObjectContext.execute(deleteRequest) as? NSBatchDeleteResult
+            guard let deleteResult = batchDelete?.result as? [NSManagedObjectID] else  { return }
+         
+            let results: [AnyHashable: Any] = [NSDeletedObjectsKey: deleteResult]
+            NSManagedObjectContext.mergeChanges(fromRemoteContextSave: results, into: [managedObjectContext])
+            
         } catch let error as NSError {
             print("Error deleting master \(error)")
         }

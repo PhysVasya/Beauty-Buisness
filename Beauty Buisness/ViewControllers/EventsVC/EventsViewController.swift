@@ -36,6 +36,7 @@ class EventsViewController: UIViewController {
         } else {
             return "\((dateForEvents?.day)!).\((dateForEvents?.month)!)"
         }
+
     }
 
     private var newProcedureButtonTapped: (() -> Void)?

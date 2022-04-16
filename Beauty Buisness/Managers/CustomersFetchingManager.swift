@@ -17,13 +17,13 @@ class CustomersFetchingManager  {
     
     private init () {}
     
-    public func fetchCustomers () async -> NSFetchedResultsController<Customer> {
+    public func fetchCustomers (delegate: NSFetchedResultsControllerDelegate?) async -> NSFetchedResultsController<Customer> {
         
         let request: NSFetchRequest<Customer> = Customer.fetchRequest()
         let sort = NSSortDescriptor(key: #keyPath(Customer.name), ascending: true)
         request.sortDescriptors = [sort]
-        let resultsController = NSFetchedResultsController(fetchRequest: request, managedObjectContext: managedObjectContext, sectionNameKeyPath: nil, cacheName: nil)
-        
+        let resultsController = NSFetchedResultsController(fetchRequest: request, managedObjectContext: managedObjectContext, sectionNameKeyPath: #keyPath(Customer.name), cacheName: nil)
+        resultsController.delegate = delegate
         return await withCheckedContinuation { continuation in
             do {
                 try resultsController.performFetch()
@@ -67,15 +67,19 @@ class CustomersFetchingManager  {
     
     public func deleteCustomer (_ customer: Customer) {
         
-        let request: NSFetchRequest<Customer> = Customer.fetchRequest()
+        let request: NSFetchRequest<NSFetchRequestResult> = Customer.fetchRequest()
         request.predicate = NSPredicate(format: "SELF == %@", customer)
         
+        let deleteRequest = NSBatchDeleteRequest(fetchRequest: request)
+        deleteRequest.resultType = .resultTypeObjectIDs
+        
         do {
-            let result = try managedObjectContext.fetch(request)
-            if result.count > 0 {
-                managedObjectContext.delete(customer)
-                CoreDataStack.shared.saveContext()
-            }
+            let batchDelete = try managedObjectContext.execute(deleteRequest) as? NSBatchDeleteResult
+            guard let deleteResult = batchDelete?.result as? [NSManagedObjectID] else { return }
+            
+            let deletedObjects: [AnyHashable: Any] = [NSDeletedObjectsKey: deleteResult]
+            NSManagedObjectContext.mergeChanges(fromRemoteContextSave: deletedObjects, into: [managedObjectContext])
+
         } catch let error as NSError {
             print("Error deleting customer \(error)")
         }
