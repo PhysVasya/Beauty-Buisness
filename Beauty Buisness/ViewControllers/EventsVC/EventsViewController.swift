@@ -305,13 +305,16 @@ extension EventsViewController: NSFetchedResultsControllerDelegate {
         //Creating snapshot
         var diffSnapshot = NSDiffableDataSourceSnapshot<Section, Event>()
         
+        //Looping through providedSnapSHIT section identifiers which are provided by sectionKeyPathIdentifier from NSFetchResultsController, WHICH is == #keyPath(Event.isCompleted), so the IDs are 0 and 1 (only 2)
         providedSnapShit.sectionIdentifiers.forEach { sectionID in
             
+            //Kind of casting down sectionIDs to my custom created enum cases
             var section: Section {
                 return sectionID == "0" ? Section.main : Section.completed
             }
             print(section)
             
+            //Getting the events casted down from general NSManagedObjectID by accessing managedObjectContext
             let events = snapshot.itemIdentifiersInSection(withIdentifier: sectionID).compactMap { (objectID: Any) -> Event? in
                 let event = controller.managedObjectContext.object(with: objectID as! NSManagedObjectID) as! Event
                 return event
@@ -323,6 +326,7 @@ extension EventsViewController: NSFetchedResultsControllerDelegate {
             diffSnapshot.appendItems(events, toSection: section)
         }
         
+        //Applying snapSHIT
         dataSource.apply(diffSnapshot)
         setupBGView(usingResultsFrom: controller)
         newEventObservableElements.events = controller.fetchedObjects?.count
