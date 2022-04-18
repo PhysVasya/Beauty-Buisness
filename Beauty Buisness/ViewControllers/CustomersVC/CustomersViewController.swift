@@ -46,9 +46,7 @@ class CustomersViewController: UIViewController {
     }
     
     public func reloadCustomers () {
-        Task {
-            fetchedCustomers = await CustomersFetchingManager.shared.fetchCustomers(delegate: self)
-        }
+            fetchedCustomers =  CustomersFetchingManager.shared.fetchCustomers(delegate: self)
     }
     
     
@@ -79,7 +77,7 @@ class CustomersViewController: UIViewController {
                       var currentSnapshot = self?.dataSource?.snapshot() else { return }
                 
                 currentSnapshot.deleteItems([customerToDelete])
-                self?.dataSource?.apply(currentSnapshot, animatingDifferences: true) {
+                self?.dataSource?.apply(currentSnapshot, animatingDifferences: view.window != nil) {
                     CustomersFetchingManager.shared.deleteCustomer(customerToDelete)
                     
                 }

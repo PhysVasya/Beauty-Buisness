@@ -16,23 +16,25 @@ class EventsFetchingManager {
     
     private init () {}
     
-    public func fetchEventsForToday (_ day: Day, delegate: NSFetchedResultsControllerDelegate?) async -> NSFetchedResultsController<Event> {
+    public func fetchEventsForToday (_ day: Day, delegate: NSFetchedResultsControllerDelegate?) -> NSFetchedResultsController<Event>? {
         
         let request: NSFetchRequest<Event> = Event.fetchRequest()
-        request.predicate = NSPredicate(format: "%K == \(day.day!) AND %K == \(day.month!)", #keyPath(Event.day.day), #keyPath(Event.day.month))
+        request.predicate = NSPredicate(format: "%K == \(day.day) AND %K == \(day.month)", #keyPath(Event.day.day), #keyPath(Event.day.month))
         let sort = NSSortDescriptor(key: #keyPath(Event.startHour), ascending: true)
-        request.sortDescriptors = [sort]
-        let fetchEventsController = NSFetchedResultsController(fetchRequest: request, managedObjectContext: managedObjectContext, sectionNameKeyPath: nil, cacheName: nil)
+        let anotherSort = NSSortDescriptor(key: #keyPath(Event.isCompleted), ascending: true)
+        request.sortDescriptors = [anotherSort, sort]
+        let fetchEventsController = NSFetchedResultsController(fetchRequest: request, managedObjectContext: managedObjectContext, sectionNameKeyPath: #keyPath(Event.isCompleted), cacheName: nil)
         fetchEventsController.delegate = delegate
-        return await withCheckedContinuation { continuation in
+
             do {
                 try fetchEventsController.performFetch()
-                continuation.resume(returning: fetchEventsController)
+                return fetchEventsController
                 
             }   catch let error as NSError {
                 print(FetchingErrors.errorFetchingEventsForToday(error))
+                return nil
             }
-        }
+        
     }
     
     public func saveEvent (_ eventStartHour: Int, _ eventStartMinute: Int, _ eventEndHour: Int, _ eventEndMinute: Int, _ eventDay: Day, _ eventProcedure: Procedure, _ eventCustomer: Customer, _ eventMaster: Master ) {
@@ -53,12 +55,13 @@ class EventsFetchingManager {
                 newEvent.procedure = eventProcedure
                 newEvent.customer = eventCustomer
                 newEvent.master = eventMaster
+                newEvent.isCompleted = false
                 let day = DayOfWork(context: managedObjectContext)
                 
                 //Here day is definitely not nil, checked in calling of the function
-                day.day = Int16(eventDay.day!)
-                day.month = Int16(eventDay.month!)
-                day.year = Int16(eventDay.year!)
+                day.day = Int16(eventDay.day)
+                day.month = Int16(eventDay.month)
+                day.year = Int16(eventDay.year)
                 newEvent.day = day
                 
                 CoreDataStack.shared.saveContext()
@@ -90,7 +93,24 @@ class EventsFetchingManager {
     }
     
     
-   
+    public func updateEvent (_ event: Event) {
+        
+//        let request = NSBatchUpdateRequest(entityName: "Event")
+//        request.predicate = NSPredicate(format: "SELF == %@", event)
+//
+//
+//        do {
+//            let result = try managedObjectContext.execute(request)
+//
+//
+//        } catch let error as NSError {
+//            print("Error updating event \(error), \(error.userInfo)")
+//        }
+
+        event.isCompleted = true
+        CoreDataStack.shared.saveContext()
+        
+    }
     
     
     

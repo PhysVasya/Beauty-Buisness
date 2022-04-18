@@ -113,8 +113,8 @@ extension UITextField {
 
 extension DateComponents {
     
-    var workingDay: Day? {
-        return Day(day: self.day, month: self.month, year: self.year)
+    var workingDay: Day {
+        return Day(day: self.day!, month: self.month!, year: self.year!)
     }
     
 }
@@ -130,11 +130,23 @@ extension Date {
     }
     
      static func todayAsDay () -> Day {
-         return Day(day: today.day, month: today.month, year: today.year)
+         return Day(day: today.day!, month: today.month!, year: today.year!)
     }
     
     static func tomorrowAsDay () -> Day {
-        return Day(day: tomorrow.day, month: tomorrow.month, year: tomorrow.year)
+        return Day(day: tomorrow.day!, month: tomorrow.month!, year: tomorrow.year!)
    }
+}
+
+extension Day {
+    
+    public func dateFormatted () -> String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "EEEE, dd.MM"
+        let dateFromComponents = DateComponents(year: year, month: month, day: day)
+        let date = Calendar.current.date(from: dateFromComponents)!
+        return formatter.string(from: date).capitalized
+    }
+    
 }
 

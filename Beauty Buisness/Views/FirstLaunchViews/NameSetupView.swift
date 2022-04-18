@@ -43,7 +43,7 @@ struct NameSetupView: View {
                               prompt: Text(placeholder).font(.system(size: 16))
                     )
                     .font(.system(size: 32, weight: .semibold, design: .rounded))
-                    .textInputAutocapitalization(.characters)
+                    .textInputAutocapitalization(.words)
                     .disableAutocorrection(true)
                     .textFieldStyle(.plain)
                     .multilineTextAlignment(.center)

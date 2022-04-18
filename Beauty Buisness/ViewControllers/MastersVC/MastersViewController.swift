@@ -45,9 +45,9 @@ class MastersViewController: UIViewController {
     }
     
     private func reloadMasters () {
-        Task {
-            fetchedMasters = await MastersFetchingManager.shared.fetchMasters(self)
-        }
+
+            fetchedMasters = MastersFetchingManager.shared.fetchMasters(self)
+        
     }
     
     private func configureDataSource () -> UICollectionViewDiffableDataSource<String, Master> {
@@ -67,9 +67,19 @@ class MastersViewController: UIViewController {
         
         var layoutConfig = UICollectionLayoutListConfiguration(appearance: .plain)
         layoutConfig.trailingSwipeActionsConfigurationProvider = { indexPath -> UISwipeActionsConfiguration in
-            let deleteAction = UIContextualAction(style: .destructive, title: "Удалить") { action, view, completion in
+            let deleteAction = UIContextualAction(style: .destructive, title: "Удалить") { [weak self] action, view, completion in
+                
+                guard let masterToDelete = self?.fetchedMasters?.object(at: indexPath),
+                      var currentSnapshot = self?.dataSource?.snapshot() else { return }
+                
+                currentSnapshot.deleteItems([masterToDelete])
+                self?.dataSource?.apply(currentSnapshot, animatingDifferences: view.window != nil) {
+                    MastersFetchingManager.shared.deleteMaster(masterToDelete)
+                }
                 
             }
+            deleteAction.backgroundColor = .myAccentColor
+            deleteAction.image = UIImage(systemName: "trash.fill")
             return UISwipeActionsConfiguration(actions: [deleteAction])
         }
         layoutConfig.backgroundColor = .myBackgroundColor

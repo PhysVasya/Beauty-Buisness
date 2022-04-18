@@ -25,6 +25,7 @@
 		FF5A0381280024E900F8FB24 /* SalonTypesChooseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF5A0380280024E900F8FB24 /* SalonTypesChooseView.swift */; };
 		FF5A038328003AD400F8FB24 /* ProcedureTypesChooseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF5A038228003AD400F8FB24 /* ProcedureTypesChooseView.swift */; };
 		FF8DDD5F2800F25A0075B2FA /* AddNewProcedureRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF8DDD5E2800F25A0075B2FA /* AddNewProcedureRow.swift */; };
+		FFCB990D280C2D39005A9E77 /* HeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFCB990C280C2D39005A9E77 /* HeaderView.swift */; };
 		FFEC2E99280729F800CE1E2F /* PhoneNumberKit in Frameworks */ = {isa = PBXBuildFile; productRef = FFEC2E98280729F800CE1E2F /* PhoneNumberKit */; };
 		FFEC2E9C2807743F00CE1E2F /* ContactsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFEC2E9B2807743F00CE1E2F /* ContactsViewController.swift */; };
 		FFEC2E9E2807809700CE1E2F /* ContactTableCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFEC2E9D2807809700CE1E2F /* ContactTableCell.swift */; };
@@ -72,6 +73,7 @@
 		FF5A0380280024E900F8FB24 /* SalonTypesChooseView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SalonTypesChooseView.swift; sourceTree = "<group>"; };
 		FF5A038228003AD400F8FB24 /* ProcedureTypesChooseView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProcedureTypesChooseView.swift; sourceTree = "<group>"; };
 		FF8DDD5E2800F25A0075B2FA /* AddNewProcedureRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddNewProcedureRow.swift; sourceTree = "<group>"; };
+		FFCB990C280C2D39005A9E77 /* HeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeaderView.swift; sourceTree = "<group>"; };
 		FFEC2E9B2807743F00CE1E2F /* ContactsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactsViewController.swift; sourceTree = "<group>"; };
 		FFEC2E9D2807809700CE1E2F /* ContactTableCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactTableCell.swift; sourceTree = "<group>"; };
 		FFEC2E9F280804B500CE1E2F /* Contact.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Contact.swift; sourceTree = "<group>"; };
@@ -120,6 +122,7 @@
 				FF512D052803F6E400D661B5 /* FetchingErrors.swift */,
 				FFEC2E9F280804B500CE1E2F /* Contact.swift */,
 				FFEC2EA52808836600CE1E2F /* Day.swift */,
+				FFCB990C280C2D39005A9E77 /* HeaderView.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -429,6 +432,7 @@
 				FF512CFE2803F21100D661B5 /* NewCustomerViewController.swift in Sources */,
 				FFEC2EA4280861CC00CE1E2F /* Protocols.swift in Sources */,
 				FF512CEE280200B200D661B5 /* MastersViewController.swift in Sources */,
+				FFCB990D280C2D39005A9E77 /* HeaderView.swift in Sources */,
 				FFFAA33927F99C87002EC74B /* NewEventViewController.swift in Sources */,
 				FF512CF0280200C500D661B5 /* CustomersViewController.swift in Sources */,
 				FFEC2EA0280804B500CE1E2F /* Contact.swift in Sources */,

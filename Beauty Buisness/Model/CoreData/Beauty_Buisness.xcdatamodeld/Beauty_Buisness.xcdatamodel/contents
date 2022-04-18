@@ -21,6 +21,7 @@
     <entity name="Event" representedClassName=".Event" syncable="YES" codeGenerationType="class">
         <attribute name="endHour" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="endMinute" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="isCompleted" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="startHour" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="startMinute" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
         <relationship name="customer" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Customer" inverseName="events" inverseEntity="Customer"/>
@@ -62,8 +63,8 @@
     <fetchRequest name="FetchEvents" entity="Event" predicateString="endHour == 0"/>
     <elements>
         <element name="Customer" positionX="-182.640625" positionY="-193.89453125" width="128" height="133"/>
-        <element name="DayOfWork" positionX="-630.69921875" positionY="-193.640625" width="128" height="163"/>
-        <element name="Event" positionX="-398.23046875" positionY="-207.8515625" width="128" height="149"/>
+        <element name="DayOfWork" positionX="-630.69921875" positionY="-193.640625" width="128" height="149"/>
+        <element name="Event" positionX="-398.23046875" positionY="-207.8515625" width="128" height="164"/>
         <element name="Master" positionX="-111.79296875" positionY="46.55078125" width="128" height="133"/>
         <element name="Procedure" positionX="177.51171875" positionY="-96.12890625" width="128" height="133"/>
         <element name="ProcedureZone" positionX="224.2421875" positionY="-312.63671875" width="128" height="73"/>

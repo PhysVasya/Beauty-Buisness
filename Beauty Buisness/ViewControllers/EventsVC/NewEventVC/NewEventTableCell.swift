@@ -33,12 +33,14 @@ class NewEventTableCell: UITableViewCell {
             contentView.addSubview(stackView)
             
             stackView.translatesAutoresizingMaskIntoConstraints = false
+            stackView.layoutMargins = UIEdgeInsets(top: 0, left: 20, bottom: 0, right: 20)
+            stackView.isLayoutMarginsRelativeArrangement = true
             
             NSLayoutConstraint.activate([
-                stackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20),
-                stackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -20),
-                stackView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 5),
-                stackView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -5)
+                stackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
+                stackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
+                stackView.topAnchor.constraint(equalTo: contentView.topAnchor),
+                stackView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor)
             ])
 
         } else {
@@ -49,12 +51,14 @@ class NewEventTableCell: UITableViewCell {
             contentView.addSubview(stackView)
             
             stackView.translatesAutoresizingMaskIntoConstraints = false
+            stackView.layoutMargins = UIEdgeInsets(top: 0, left: 20, bottom: 0, right: 20)
+            stackView.isLayoutMarginsRelativeArrangement = true
             
             NSLayoutConstraint.activate([
-                stackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20),
-                stackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -20),
-                stackView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 5),
-                stackView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -5)
+                stackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
+                stackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
+                stackView.topAnchor.constraint(equalTo: contentView.topAnchor),
+                stackView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor)
             ])  
         }
        

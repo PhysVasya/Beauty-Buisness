@@ -17,21 +17,21 @@ class CustomersFetchingManager  {
     
     private init () {}
     
-    public func fetchCustomers (delegate: NSFetchedResultsControllerDelegate?) async -> NSFetchedResultsController<Customer> {
+    public func fetchCustomers (delegate: NSFetchedResultsControllerDelegate?)  -> NSFetchedResultsController<Customer>? {
         
         let request: NSFetchRequest<Customer> = Customer.fetchRequest()
         let sort = NSSortDescriptor(key: #keyPath(Customer.name), ascending: true)
         request.sortDescriptors = [sort]
         let resultsController = NSFetchedResultsController(fetchRequest: request, managedObjectContext: managedObjectContext, sectionNameKeyPath: #keyPath(Customer.name), cacheName: nil)
         resultsController.delegate = delegate
-        return await withCheckedContinuation { continuation in
             do {
                 try resultsController.performFetch()
-                continuation.resume(returning: resultsController)
+                return resultsController
             } catch let error as NSError {
                 print(FetchingErrors.errorFetchingCustomers(error))
+                return nil
             }
-        }
+        
     }
     
     public func fetchExistingCustomer (customerName: String?) async -> [Customer]? {

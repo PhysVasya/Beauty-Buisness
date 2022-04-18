@@ -8,9 +8,12 @@
 import Foundation
 import UIKit
 import SwiftUI
-import Combine
 import CoreData
 
+public enum Section: Hashable {
+    case main
+    case completed
+}
 
 class EventsViewController: UIViewController {
     
@@ -21,9 +24,9 @@ class EventsViewController: UIViewController {
         didSet {
             reloadEvents()
             updateSegmentedControl()
-            
         }
     }
+    
     private var selectedDayString: String? {
         if (dateForEvents?.month)! < 10 {
             return "\((dateForEvents?.day)!).0\((dateForEvents?.month)!)"
@@ -35,10 +38,10 @@ class EventsViewController: UIViewController {
     
     private var newProcedureButtonTapped: (() -> Void)?
     private var newEventObservableElements = ObservableElementsForNewProcedureButton()
-    private var workingDay: WorkingDay?
+    //    private var workingDay: WorkingDay?
     
-    private var fetchedEvents: NSFetchedResultsController<Event>?
-    private var dataSource: UICollectionViewDiffableDataSource<String, Event>?
+    private var fetchedEventsResultsController: NSFetchedResultsController<Event>?
+    private var dataSource: UICollectionViewDiffableDataSource<Section, Event>!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -50,12 +53,10 @@ class EventsViewController: UIViewController {
                 sheet.detents = [.large()]
             }
             self?.navigationController?.present(UINavigationController(rootViewController: newEventVC), animated: true)
-            
         }
         
-        
         setupEventsCollectionView()
-        dataSource = configureDataSource()
+        configureDataSource()
         setupAddNewProcedureButton()
         setupSegmentedControl()
         setupNavigationBar()
@@ -65,38 +66,63 @@ class EventsViewController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        reloadEvents()
+//        reloadEvents()
     }
     
     private func reloadEvents () {
-        Task {
-            guard let dateForEvents = dateForEvents else {
-                return
-            }
-            fetchedEvents = await EventsFetchingManager.shared.fetchEventsForToday(dateForEvents, delegate: self)
-        }
-        
+        fetchedEventsResultsController = EventsFetchingManager.shared.fetchEventsForToday(dateForEvents!, delegate: self)
     }
     
-    private func configureDataSource() -> UICollectionViewDiffableDataSource<String, Event> {
-        let cellRegistration = UICollectionView.CellRegistration<UICollectionViewListCell, Event> { cell, indexPath, itemIdentifier in
-            var config = cell.defaultContentConfiguration()
-            config.text = itemIdentifier.procedure?.name
+    //Configuring DataSource
+    private func configureDataSource() {
+        
+        //Cell registration for dataSource which is applied using closure, kind of CellForRowAtIndexPath, takes in cell, indexPath and item which is passed to dataSource as 2nd var
+        let cellRegistration = UICollectionView.CellRegistration<UICollectionViewListCell, Event> { cell, indexPath, event in
             
-            let masterName = itemIdentifier.master?.name
+            var config = cell.defaultContentConfiguration()
+            
+            let procedureName =  event.procedure?.name
+            let masterName = event.master?.name
             //            let clientName = itemIdentifier.customer?.name
-            let eventStartHour = itemIdentifier.startHour
-            let eventStartMinute = itemIdentifier.startMinute
-            let eventEndHour = itemIdentifier.endHour
-            let eventEndMinute = itemIdentifier.endMinute
+            let eventStartHour = event.startHour
+            let eventStartMinute = event.startMinute
+            let eventEndHour = event.endHour
+            let eventEndMinute = event.endMinute
+            
+            config.text = procedureName
             config.secondaryText = "У \(masterName ?? "") с \(eventStartHour):\(eventStartMinute) до \(eventEndHour):\(eventEndMinute)"
+            
             cell.contentConfiguration = config
         }
         
-        return UICollectionViewDiffableDataSource(collectionView: eventsCollectionView) { collectionView, indexPath, itemIdentifier in
-            collectionView.dequeueConfiguredReusableCell(using: cellRegistration, for: indexPath, item: itemIdentifier)
+        //Header registration for dataSource whit is AGAIN applied using closure which takes in 1.VIEW, 2. ELEMENTKIND ??? DFQ is this 3. IndexPath.
+        let headerRegistration = UICollectionView.SupplementaryRegistration<HeaderView>(elementKind: UICollectionView.elementKindSectionHeader) { [weak self] headerView, elementKind, indexPath in
+            
+            //MARK: - MISTAKE ? ?
+            //Taking sectionID from dataSource which is passed in as 1st param (custom Section enum) ????
+            
+            print(indexPath.section)
+            guard let sectionID = self?.dataSource.sectionIdentifier(for: indexPath.section) else { return }
+            
+            print(sectionID)
+            //There will be 2 types of sections: label represents the date, second - the event completion
+            switch sectionID {
+            case .main:
+                headerView.label.text = self?.dateForEvents?.dateFormatted()
+            case .completed:
+                headerView.label.text = "Завершенные"
+            }
+        }
+        
+        dataSource = UICollectionViewDiffableDataSource(collectionView: eventsCollectionView) { collectionView, indexPath, event in
+            collectionView.dequeueConfiguredReusableCell(using: cellRegistration, for: indexPath, item: event)
+        }
+        
+        dataSource.supplementaryViewProvider = { collectionView, kind, indexPath in
+            return collectionView.dequeueConfiguredReusableSupplementary(using: headerRegistration , for: indexPath)
         }
     }
+    
     
     private func setupSegmentedControl () {
         segmentedControl.insertSegment(withTitle: "Сегодня", at: 0, animated: false)
@@ -111,18 +137,20 @@ class EventsViewController: UIViewController {
     private func setupEventsCollectionView () {
         
         var listConfig = UICollectionLayoutListConfiguration(appearance: .plain)
+        listConfig.backgroundColor = .myBackgroundColor
+        listConfig.headerMode = .supplementary
         
         listConfig.trailingSwipeActionsConfigurationProvider = { indexPath -> UISwipeActionsConfiguration in
             
             let deleteAction = UIContextualAction(style: .destructive, title: "Удалить") { [weak self] action, view, completion in
                 
-                guard let eventToDelete = self?.fetchedEvents?.object(at: indexPath),
-                      var currentSnapshot = self?.dataSource?.snapshot() else { return }
+                guard let eventToDelete = self?.dataSource.itemIdentifier(for: indexPath),
+                      var currentSnapshot = self?.dataSource.snapshot() else { return }
                 
+                EventsFetchingManager.shared.deleteEvent(eventToDelete)
+
                 currentSnapshot.deleteItems([eventToDelete])
-                self?.dataSource?.apply(currentSnapshot, animatingDifferences: true) {
-                    EventsFetchingManager.shared.deleteEvent(eventToDelete)
-                }
+                self?.dataSource.apply(currentSnapshot, animatingDifferences: view.window != nil)
                 
             }
             deleteAction.backgroundColor = .myAccentColor
@@ -131,7 +159,29 @@ class EventsViewController: UIViewController {
             return UISwipeActionsConfiguration(actions: [deleteAction])
         }
         
+        listConfig.leadingSwipeActionsConfigurationProvider = { indexPath -> UISwipeActionsConfiguration in
+            
+            let completeAction = UIContextualAction(style: .destructive, title: "Выполнено") { [weak self] action, view, completion in
+                
+                guard let eventToComplete = self?.dataSource.itemIdentifier(for: indexPath),
+                      var currentSnapShot = self?.dataSource.snapshot() else { return }
+                
+                EventsFetchingManager.shared.updateEvent(eventToComplete)
+                
+                currentSnapShot.reconfigureItems([eventToComplete])
+//                currentSnapShot.reloadSections([.completed])
+
+                self?.dataSource.apply(currentSnapShot, animatingDifferences: view.window != nil)
+                
+            }
+            completeAction.backgroundColor = .myHighlightColor
+            
+            completeAction.image = UIImage(systemName: "eye.slash.fill")
+            return UISwipeActionsConfiguration(actions: [completeAction])
+        }
+        
         let layout = UICollectionViewCompositionalLayout.list(using: listConfig)
+        
         eventsCollectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
         view.addSubview(eventsCollectionView)
         eventsCollectionView.frame = view.bounds
@@ -169,7 +219,7 @@ class EventsViewController: UIViewController {
                 view.addSubview(noEventsLabel)
             }
         } else {
-            if let noEventsView = subviews.first(where: {$0.restorationIdentifier == "NoEvents"}) {
+            if let noEventsView = subviews.first(where: { $0.restorationIdentifier == "NoEvents" }) {
                 if subviews.contains(noEventsView) {
                     noEventsView.removeFromSuperview()
                 }
@@ -230,10 +280,6 @@ class EventsViewController: UIViewController {
         
     }
     
-    @objc private func dateSelected (_ sender: UIDatePicker) {
-        let components = Calendar.current.dateComponents([.day, .month, .year], from: sender.date)
-        print(components)
-    }
 }
 
 
@@ -246,28 +292,6 @@ extension EventsViewController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         collectionView.deselectItem(at: indexPath, animated: true)
     }
-
-    //
-    //    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-    //
-    //        guard let date = dateForEvents,
-    //              let eventDate = Calendar.current.date(from: DateComponents(year: date.year, month: date.month, day: date.day)) else { return nil }
-    //        let formatter = DateFormatter()
-    //        formatter.dateFormat = "EEEE, dd/MM"
-    //        let formattedDate = formatter.string(from: eventDate)
-    //        let dateLabel = UILabel()
-    //        dateLabel.backgroundColor = .myBackgroundColor
-    //        dateLabel.frame = CGRect(x: 0, y: 0, width: 200, height: 50)
-    //        dateLabel.text = formattedDate.capitalized
-    //        dateLabel.font = .systemFont(ofSize: 24, weight: .bold)
-    //        dateLabel.textColor = .label
-    //        dateLabel.textAlignment = .center
-    //        dateLabel.backgroundColor = .myHighlightColor
-    //
-    //        return dateLabel
-    //
-    //
-    //    }
     
 }
 
@@ -275,25 +299,36 @@ extension EventsViewController: NSFetchedResultsControllerDelegate {
     
     func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChangeContentWith snapshot: NSDiffableDataSourceSnapshotReference) {
         
-        var diffSnapshot = NSDiffableDataSourceSnapshot<String, Event>()
+        //Cast down to general type
+        let providedSnapShit = snapshot as NSDiffableDataSourceSnapshot<String, NSManagedObjectID>
         
-        snapshot.sectionIdentifiers.forEach { section in
-            diffSnapshot.appendSections([section as! String])
+        //Creating snapshot
+        var diffSnapshot = NSDiffableDataSourceSnapshot<Section, Event>()
+        
+        providedSnapShit.sectionIdentifiers.forEach { sectionID in
             
-            let items = snapshot.itemIdentifiersInSection(withIdentifier: section).map { (objectID: Any) -> Event in
-                let oid = objectID as! NSManagedObjectID
-                
-                return controller.managedObjectContext.object(with: oid) as! Event
+            var section: Section {
+                return sectionID == "0" ? Section.main : Section.completed
             }
-            diffSnapshot.appendItems(items, toSection: section as? String)
+            print(section)
+            
+            let events = snapshot.itemIdentifiersInSection(withIdentifier: sectionID).compactMap { (objectID: Any) -> Event? in
+                let event = controller.managedObjectContext.object(with: objectID as! NSManagedObjectID) as! Event
+                return event
+            }
+            
+            print(events.count)
+            
+            diffSnapshot.appendSections([section])
+            diffSnapshot.appendItems(events, toSection: section)
         }
         
-        dataSource?.apply(diffSnapshot)
-        
+        dataSource.apply(diffSnapshot)
         setupBGView(usingResultsFrom: controller)
         newEventObservableElements.events = controller.fetchedObjects?.count
         
     }
+    
     
 }
 

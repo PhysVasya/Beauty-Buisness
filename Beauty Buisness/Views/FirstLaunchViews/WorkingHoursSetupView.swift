@@ -18,7 +18,7 @@ struct DatePickerRepresentable: UIViewRepresentable {
     func makeUIView(context: Context) -> UIDatePicker {
         let datePicker = UIDatePicker()
         datePicker.datePickerMode = .time
-        datePicker.minuteInterval = 15
+        datePicker.minuteInterval = 5
         datePicker.addTarget(context.coordinator, action: #selector(Coordinator.changed(_:)), for: .valueChanged)
         return datePicker
     }
@@ -49,7 +49,7 @@ struct WorkingHoursSetupView: View {
     
     @State private var presentThirdStep: Bool = false
     @State private var startingHour: Date = Date()
-    @State private var endingHour: Date = Date()
+    @State private var endingHour: Date = Date() + 200
     @State private var timeIsEqual: Bool = true
     @State private var isActive: Bool = false
     
