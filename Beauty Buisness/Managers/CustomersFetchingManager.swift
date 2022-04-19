@@ -21,8 +21,10 @@ class CustomersFetchingManager  {
         
         let request: NSFetchRequest<Customer> = Customer.fetchRequest()
         let sort = NSSortDescriptor(key: #keyPath(Customer.name), ascending: true)
-        request.sortDescriptors = [sort]
-        let resultsController = NSFetchedResultsController(fetchRequest: request, managedObjectContext: managedObjectContext, sectionNameKeyPath: #keyPath(Customer.name), cacheName: nil)
+        let sort2 = NSSortDescriptor(key: #keyPath(Customer.rating), ascending: true)
+        request.sortDescriptors = [sort2, sort]
+        let resultsController = NSFetchedResultsController(fetchRequest: request, managedObjectContext: managedObjectContext, sectionNameKeyPath: #keyPath(Customer.rating), cacheName: nil)
+        
         resultsController.delegate = delegate
             do {
                 try resultsController.performFetch()
@@ -34,7 +36,7 @@ class CustomersFetchingManager  {
         
     }
     
-    public func fetchExistingCustomer (customerName: String?) async -> [Customer]? {
+    public func fetchExistingCustomer (customerName: String?) -> [Customer]? {
         
         guard let customerName = customerName else {
             return nil
@@ -43,16 +45,14 @@ class CustomersFetchingManager  {
         let request: NSFetchRequest<Customer> = Customer.fetchRequest()
         request.predicate = NSPredicate(format: "name CONTAINS [cd] %@", customerName)
         
-        return await withCheckedContinuation { continuation in
             do {
                 let result = try managedObjectContext.fetch(request)
-                continuation.resume(returning: result)
+                return result
             } catch let error as NSError {
                 print(FetchingErrors.errorFetchingExistingCustomer(error))
-                continuation.resume(returning: nil)
+                return nil
             }
-        }
-        
+
     }
     
     public func saveNewCustomer (_ name: String, _ phoneNumber: String) {

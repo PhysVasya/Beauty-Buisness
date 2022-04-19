@@ -13,10 +13,31 @@ import SwiftUI
 
 class CustomersViewController: UIViewController {
     
+    private enum CustomersSection: Hashable {
+        case highPriorityCustomer
+        case lowPriorityCustomers
+        case casualCustomers
+        case unidentified
+        
+        var title: String? {
+            switch self {
+            case .highPriorityCustomer:
+                return "Приоритетные"
+            case .lowPriorityCustomers:
+                return "Низкоприоритетные"
+            case .casualCustomers:
+                return "Обычные"
+            case .unidentified:
+                return nil
+            }
+        }
+    }
+    
     private var customersCollectionView: UICollectionView!
     
-    private var dataSource: UICollectionViewDiffableDataSource<String, Customer>?
-    private var fetchedCustomers: NSFetchedResultsController<Customer>?
+    private var customersDataSource: UICollectionViewDiffableDataSource<CustomersSection, Customer>!
+    private var fetchedCustomerResultsController: NSFetchedResultsController<Customer>?
+    
     private let newCustomerObservableElements = ObservableElementsForNewProcedureButton()
     private var newCustomerButtonPressed: (() -> Void)?
     
@@ -40,17 +61,18 @@ class CustomersViewController: UIViewController {
         
     }
     
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
         reloadCustomers()
     }
     
-    public func reloadCustomers () {
-            fetchedCustomers =  CustomersFetchingManager.shared.fetchCustomers(delegate: self)
+    private func reloadCustomers () {
+        fetchedCustomerResultsController = CustomersFetchingManager.shared.fetchCustomers(delegate: self)
     }
     
-    
     private func setupDataSource () {
+        
+        
         let cellRegistration = UICollectionView.CellRegistration<UICollectionViewListCell, Customer> { cell, indexPath, item in
             var content = cell.defaultContentConfiguration()
             content.text = item.name
@@ -59,31 +81,37 @@ class CustomersViewController: UIViewController {
             
         }
         
-        dataSource = UICollectionViewDiffableDataSource(collectionView: customersCollectionView) { collectionView, indexPath, itemIdentifier in
-            return collectionView.dequeueConfiguredReusableCell(using: cellRegistration, for: indexPath, item: itemIdentifier)
+        let headerRegistration = UICollectionView.SupplementaryRegistration<HeaderView>(elementKind: UICollectionView.elementKindSectionHeader) { [weak self] headerView, elementKind, indexPath in
+            
+            guard let sectionID = self?.customersDataSource.sectionIdentifier(for: indexPath.section) else { return }
+            
+            headerView.configureHeader(text: sectionID.title)
+        }
+        
+        customersDataSource = UICollectionViewDiffableDataSource(collectionView: customersCollectionView) { (collectionView, indexPath, itemIdentifier) -> UICollectionViewCell? in
+            collectionView.dequeueConfiguredReusableCell(using: cellRegistration, for: indexPath, item: itemIdentifier)
+        }
+        
+        customersDataSource.supplementaryViewProvider = { (collectionView, elementKind, indexPath) -> UICollectionReusableView? in
+            collectionView.dequeueConfiguredReusableSupplementary(using: headerRegistration, for: indexPath)
         }
         
     }
     
     private func setupCustomersCollectionView () {
         
-        var layoutConfig = UICollectionLayoutListConfiguration(appearance: .plain)
+        var layoutConfig = UICollectionLayoutListConfiguration(appearance: .grouped)
         layoutConfig.backgroundColor = .myBackgroundColor
+        layoutConfig.headerMode = .supplementary
         
         layoutConfig.trailingSwipeActionsConfigurationProvider = { [weak self] indexPath -> UISwipeActionsConfiguration in
             
             let deleteAction = UIContextualAction(style: .destructive, title: "Удалить") { action, view, completion in
-                guard let customerToDelete = self?.fetchedCustomers?.object(at: indexPath),
-                      var currentSnapshot = self?.dataSource?.snapshot() else { return }
+                guard let customerToDelete = self?.fetchedCustomerResultsController?.object(at: indexPath) else { return }
                 
-                currentSnapshot.deleteItems([customerToDelete])
-                self?.dataSource?.apply(currentSnapshot, animatingDifferences: view.window != nil) {
-                    CustomersFetchingManager.shared.deleteCustomer(customerToDelete)
-                    
-                }
-                
-                
+                CustomersFetchingManager.shared.deleteCustomer(customerToDelete)
             }
+            
             deleteAction.image = UIImage(systemName: "trash.fill")
             deleteAction.backgroundColor = .myAccentColor
             return UISwipeActionsConfiguration(actions: [deleteAction])
@@ -107,7 +135,7 @@ class CustomersViewController: UIViewController {
         button.backgroundColor = .clear
         button.translatesAutoresizingMaskIntoConstraints = false
         button.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
-        button.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -view.frame.height / 8).isActive = true
+        button.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -view.frame.height / 7).isActive = true
     }
     
     private func setupBGView (withReceivedResultsFrom controller: NSFetchedResultsController<NSFetchRequestResult>) {
@@ -149,7 +177,7 @@ extension CustomersViewController: UICollectionViewDelegate {
         
         collectionView.deselectItem(at: indexPath, animated: true)
         
-        guard let chosenCustomer = fetchedCustomers?.object(at: indexPath),
+        guard let chosenCustomer = fetchedCustomerResultsController?.object(at: indexPath),
               let chosenCustomerNumber = chosenCustomer.phone,
               let phoneURL = URL(string: "telprompt://\(chosenCustomerNumber)") else { return }
         
@@ -165,29 +193,44 @@ extension CustomersViewController: UICollectionViewDelegate {
 extension CustomersViewController: NSFetchedResultsControllerDelegate {
     
     func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChangeContentWith snapshot: NSDiffableDataSourceSnapshotReference) {
-        var diff = NSDiffableDataSourceSnapshot<String, Customer>()
         
-        snapshot.sectionIdentifiers.forEach { section in
-            diff.appendSections([section as! String])
+        let providedSnapshot = snapshot as NSDiffableDataSourceSnapshot<String, NSManagedObjectID>
+        
+        var diffSnapShit = NSDiffableDataSourceSnapshot<CustomersSection, Customer>()
+        
+        providedSnapshot.sectionIdentifiers.forEach { sectionID in
             
-            let items = snapshot.itemIdentifiersInSection(withIdentifier: section).map { (objectID: Any) -> Customer in
-                let oid = objectID as! NSManagedObjectID
-                return controller.managedObjectContext.object(with: oid) as! Customer
+            var section: CustomersSection {
+                if sectionID == "5" {
+                    return .highPriorityCustomer
+                } else if sectionID == "4" || sectionID == "3" {
+                    return .casualCustomers
+                } else if sectionID == "2" || sectionID == "1" {
+                    return .lowPriorityCustomers
+                } else {
+                    return .unidentified
+                }
             }
             
-            diff.appendItems(items, toSection: section as? String)
+            let customers = snapshot.itemIdentifiersInSection(withIdentifier: sectionID).compactMap { (objectID: Any) -> Customer? in
+                let customer = controller.managedObjectContext.object(with: objectID as! NSManagedObjectID) as! Customer
+                return customer
+            }
+                        
+            diffSnapShit.appendSections([section])
+            diffSnapShit.appendItems(customers, toSection: section)
         }
-        
-        self.dataSource?.apply(diff)
-        newCustomerObservableElements.events = controller.fetchedObjects?.count
+        customersDataSource.apply(diffSnapShit)
         setupBGView(withReceivedResultsFrom: controller)
-        
+        newCustomerObservableElements.events = controller.fetchedObjects?.count
     }
     
 }
 
 extension CustomersViewController {
+    
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         newCustomerObservableElements.offset = scrollView.contentOffset.y
     }
+    
 }

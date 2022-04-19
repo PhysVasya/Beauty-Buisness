@@ -10,12 +10,14 @@ import UIKit
 import SwiftUI
 import CoreData
 
-public enum Section: Hashable {
-    case main
-    case completed
-}
+
 
 class EventsViewController: UIViewController {
+    
+    private enum Section: Hashable {
+        case pendingEvents
+        case completedEvents
+    }
     
     private var eventsCollectionView: UICollectionView!
     private let segmentedControl = UISegmentedControl()
@@ -41,7 +43,7 @@ class EventsViewController: UIViewController {
     //    private var workingDay: WorkingDay?
     
     private var fetchedEventsResultsController: NSFetchedResultsController<Event>?
-    private var dataSource: UICollectionViewDiffableDataSource<Section, Event>!
+    private var eventsDataSource: UICollectionViewDiffableDataSource<Section, Event>!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -66,7 +68,7 @@ class EventsViewController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-//        reloadEvents()
+        //        reloadEvents()
     }
     
     private func reloadEvents () {
@@ -98,28 +100,24 @@ class EventsViewController: UIViewController {
         //Header registration for dataSource whit is AGAIN applied using closure which takes in 1.VIEW, 2. ELEMENTKIND ??? DFQ is this 3. IndexPath.
         let headerRegistration = UICollectionView.SupplementaryRegistration<HeaderView>(elementKind: UICollectionView.elementKindSectionHeader) { [weak self] headerView, elementKind, indexPath in
             
-            //MARK: - MISTAKE ? ?
             //Taking sectionID from dataSource which is passed in as 1st param (custom Section enum) ????
+            guard let sectionID = self?.eventsDataSource.sectionIdentifier(for: indexPath.section) else { return }
             
-            print(indexPath.section)
-            guard let sectionID = self?.dataSource.sectionIdentifier(for: indexPath.section) else { return }
-            
-            print(sectionID)
-            //There will be 2 types of sections: label represents the date, second - the event completion
+            //There will be 2 types of sections: 1st where label represents the date, second - the event completion
             switch sectionID {
-            case .main:
-                headerView.label.text = self?.dateForEvents?.dateFormatted()
-            case .completed:
-                headerView.label.text = "Завершенные"
+            case .pendingEvents:
+                headerView.configureHeader(text: self?.dateForEvents?.dateFormatted())
+            case .completedEvents:
+                headerView.configureHeader(text: "Завершенные")
             }
         }
         
-        dataSource = UICollectionViewDiffableDataSource(collectionView: eventsCollectionView) { collectionView, indexPath, event in
+        eventsDataSource = UICollectionViewDiffableDataSource(collectionView: eventsCollectionView) { collectionView, indexPath, event in
             collectionView.dequeueConfiguredReusableCell(using: cellRegistration, for: indexPath, item: event)
         }
         
-        dataSource.supplementaryViewProvider = { collectionView, kind, indexPath in
-            return collectionView.dequeueConfiguredReusableSupplementary(using: headerRegistration , for: indexPath)
+        eventsDataSource.supplementaryViewProvider = { collectionView, kind, indexPath in
+             collectionView.dequeueConfiguredReusableSupplementary(using: headerRegistration , for: indexPath)
         }
     }
     
@@ -144,15 +142,12 @@ class EventsViewController: UIViewController {
             
             let deleteAction = UIContextualAction(style: .destructive, title: "Удалить") { [weak self] action, view, completion in
                 
-                guard let eventToDelete = self?.dataSource.itemIdentifier(for: indexPath),
-                      var currentSnapshot = self?.dataSource.snapshot() else { return }
+                guard let eventToDelete = self?.eventsDataSource.itemIdentifier(for: indexPath) else { return }
                 
                 EventsFetchingManager.shared.deleteEvent(eventToDelete)
-
-                currentSnapshot.deleteItems([eventToDelete])
-                self?.dataSource.apply(currentSnapshot, animatingDifferences: view.window != nil)
                 
             }
+            
             deleteAction.backgroundColor = .myAccentColor
             deleteAction.image = UIImage(systemName: "trash.fill")
             
@@ -163,19 +158,13 @@ class EventsViewController: UIViewController {
             
             let completeAction = UIContextualAction(style: .destructive, title: "Выполнено") { [weak self] action, view, completion in
                 
-                guard let eventToComplete = self?.dataSource.itemIdentifier(for: indexPath),
-                      var currentSnapShot = self?.dataSource.snapshot() else { return }
+                guard let eventToComplete = self?.eventsDataSource.itemIdentifier(for: indexPath) else { return }
                 
                 EventsFetchingManager.shared.updateEvent(eventToComplete)
                 
-                currentSnapShot.reconfigureItems([eventToComplete])
-//                currentSnapShot.reloadSections([.completed])
-
-                self?.dataSource.apply(currentSnapShot, animatingDifferences: view.window != nil)
-                
             }
-            completeAction.backgroundColor = .myHighlightColor
             
+            completeAction.backgroundColor = .myHighlightColor
             completeAction.image = UIImage(systemName: "eye.slash.fill")
             return UISwipeActionsConfiguration(actions: [completeAction])
         }
@@ -196,7 +185,7 @@ class EventsViewController: UIViewController {
         newButton.frame = CGRect(x: 0, y: 0, width: 200, height: 50)
         newButton.backgroundColor = .clear
         newButton.translatesAutoresizingMaskIntoConstraints = false
-        newButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -view.frame.height / 8).isActive = true
+        newButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -view.frame.height / 7).isActive = true
         newButton.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
     }
     
@@ -310,24 +299,21 @@ extension EventsViewController: NSFetchedResultsControllerDelegate {
             
             //Kind of casting down sectionIDs to my custom created enum cases
             var section: Section {
-                return sectionID == "0" ? Section.main : Section.completed
+                return sectionID == "0" ? Section.pendingEvents : Section.completedEvents
             }
-            print(section)
             
             //Getting the events casted down from general NSManagedObjectID by accessing managedObjectContext
             let events = snapshot.itemIdentifiersInSection(withIdentifier: sectionID).compactMap { (objectID: Any) -> Event? in
                 let event = controller.managedObjectContext.object(with: objectID as! NSManagedObjectID) as! Event
                 return event
             }
-            
-            print(events.count)
-            
+                        
             diffSnapshot.appendSections([section])
             diffSnapshot.appendItems(events, toSection: section)
         }
         
         //Applying snapSHIT
-        dataSource.apply(diffSnapshot)
+        eventsDataSource.apply(diffSnapshot)
         setupBGView(usingResultsFrom: controller)
         newEventObservableElements.events = controller.fetchedObjects?.count
         

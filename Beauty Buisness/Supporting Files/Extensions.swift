@@ -148,5 +148,11 @@ extension Day {
         return formatter.string(from: date).capitalized
     }
     
+    public func getDate () -> Date? {
+        
+        let components = DateComponents(year: self.year, month: self.month, day: self.day)
+        return Calendar.current.date(from: components)
+    }
+    
 }
 

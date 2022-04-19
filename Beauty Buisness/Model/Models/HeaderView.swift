@@ -13,7 +13,7 @@ class HeaderView: UICollectionReusableView {
     
     static let identifier = "headerViewIdentifier"
     
-    let label = UILabel()
+    private let label = UILabel()
     
     override init(frame: CGRect) {
         super.init(frame: .zero)
@@ -25,7 +25,7 @@ class HeaderView: UICollectionReusableView {
     }
     
 
-    func configure () {
+    private func configure () {
         self.addSubview(label)
         label.translatesAutoresizingMaskIntoConstraints = false
         label.adjustsFontForContentSizeCategory = true
@@ -41,6 +41,10 @@ class HeaderView: UICollectionReusableView {
         label.numberOfLines = 0
         label.font = UIFont.systemFont(ofSize: 16, weight: .bold)
         self.backgroundColor = .myAccentColor
+    }
+    
+    func configureHeader (text: String? = nil) {
+        label.text = text
     }
     
 }

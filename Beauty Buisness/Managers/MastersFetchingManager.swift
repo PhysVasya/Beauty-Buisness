@@ -16,27 +16,28 @@ class MastersFetchingManager {
     public let managedObjectContext = CoreDataStack.shared.context
     
     private init () {}
-
+    
     
     public func fetchMasters (_ delegate: NSFetchedResultsControllerDelegate) -> NSFetchedResultsController<Master>? {
         
         let request: NSFetchRequest<Master> = Master.fetchRequest()
         let sort = NSSortDescriptor(key: #keyPath(Master.name), ascending: true)
-        request.sortDescriptors = [sort]
-        let resultsController = NSFetchedResultsController(fetchRequest: request, managedObjectContext: managedObjectContext, sectionNameKeyPath: nil, cacheName: nil)
+        let sort2 = NSSortDescriptor(key: #keyPath(Master.rating), ascending: false)
+        request.sortDescriptors = [sort2, sort]
+        let resultsController = NSFetchedResultsController(fetchRequest: request, managedObjectContext: managedObjectContext, sectionNameKeyPath: #keyPath(Master.rating), cacheName: nil)
         resultsController.delegate = delegate
-            do {
-                try resultsController.performFetch()
-                return resultsController
-            } catch let error as NSError {
-                print(FetchingErrors.errorFetchingMasters(error))
-                return nil
-            }
+        do {
+            try resultsController.performFetch()
+            return resultsController
+        } catch let error as NSError {
+            print(FetchingErrors.errorFetchingMasters(error))
+            return nil
+        }
         
         
     }
     
-    public func fetchExistingMaster (masterName: String?) async -> [Master]? {
+    public func fetchExistingMaster (masterName: String?) -> [Master]? {
         
         guard let masterName = masterName else {
             return nil
@@ -45,14 +46,12 @@ class MastersFetchingManager {
         let request: NSFetchRequest<Master> = Master.fetchRequest()
         request.predicate = NSPredicate(format: "name CONTAINS [cd] %@", masterName)
         
-        return await withCheckedContinuation { continuation in
-            do {
-                let result = try managedObjectContext.fetch(request)
-                continuation.resume(returning: result)
-            } catch let error as NSError {
-                print(FetchingErrors.errorFetchingExistingMaster(error))
-                continuation.resume(returning: nil)
-            }
+        do {
+            let result = try managedObjectContext.fetch(request)
+            return result
+        } catch let error as NSError {
+            print(FetchingErrors.errorFetchingExistingMaster(error))
+            return nil
         }
         
     }
@@ -75,18 +74,23 @@ class MastersFetchingManager {
         request.predicate = NSPredicate(format: "SELF == %@", master)
         
         let deleteRequest = NSBatchDeleteRequest(fetchRequest: request)
-        request.resultType = .managedObjectIDResultType
+        deleteRequest.resultType = .resultTypeObjectIDs
         
         do {
             let batchDelete = try managedObjectContext.execute(deleteRequest) as? NSBatchDeleteResult
             guard let deleteResult = batchDelete?.result as? [NSManagedObjectID] else  { return }
-         
+            
             let results: [AnyHashable: Any] = [NSDeletedObjectsKey: deleteResult]
             NSManagedObjectContext.mergeChanges(fromRemoteContextSave: results, into: [managedObjectContext])
             
         } catch let error as NSError {
             print("Error deleting master \(error)")
         }
+    }
+    
+    public func updateMaster (_ master: Master, setRating: Int) {
+        master.rating = Int16(setRating)
+        CoreDataStack.shared.saveContext()
     }
     
 }

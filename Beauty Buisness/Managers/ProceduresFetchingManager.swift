@@ -15,7 +15,7 @@ class ProceduresFetchingManager {
     
     private init () {}
     
-    public func fetchExistingProcedure (procedureName: String?) async -> [Procedure]? {
+    public func fetchExistingProcedure (procedureName: String?) -> [Procedure]? {
         
         guard let procedure = procedureName else {
             return nil
@@ -25,17 +25,14 @@ class ProceduresFetchingManager {
         let salonType = UserDefaults.standard.string(forKey: "SALON-TYPE")
         request.predicate = NSPredicate(format: "%K == %@ AND %K CONTAINS [cd] %@", #keyPath(Procedure.salonType.type), salonType!, #keyPath(Procedure.name), procedure)
         
-        return await withCheckedContinuation { continuation in
             do {
                 let resultsFetch = try CoreDataStack.shared.context.fetch(request)
-                continuation.resume(returning: resultsFetch)
+                return resultsFetch
             } catch let error as NSError {
                 print(FetchingErrors.errorFetchingExistingProcedures(error))
-                continuation.resume(returning: nil)
+                return nil
             }
         }
         
-        
-    }
     
 }

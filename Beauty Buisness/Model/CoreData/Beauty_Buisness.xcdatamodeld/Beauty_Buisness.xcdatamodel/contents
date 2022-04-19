@@ -3,7 +3,7 @@
     <entity name="Customer" representedClassName=".Customer" syncable="YES" codeGenerationType="class">
         <attribute name="name" optional="YES" attributeType="String"/>
         <attribute name="phone" optional="YES" attributeType="String"/>
-        <attribute name="rating" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="rating" optional="YES" attributeType="Integer 16" maxValueString="5" defaultValueString="0" usesScalarValueType="YES"/>
         <relationship name="events" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Event" inverseName="customer" inverseEntity="Event"/>
         <relationship name="preferredMaster" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Master" inverseName="preferredCustomer" inverseEntity="Master"/>
         <relationship name="procedures" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Procedure" inverseName="customers" inverseEntity="Procedure"/>
@@ -32,7 +32,7 @@
     <entity name="Master" representedClassName=".Master" syncable="YES" codeGenerationType="class">
         <attribute name="name" optional="YES" attributeType="String"/>
         <attribute name="phone" optional="YES" attributeType="String"/>
-        <attribute name="rating" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="rating" optional="YES" attributeType="Integer 16" maxValueString="5" defaultValueString="0" usesScalarValueType="YES"/>
         <relationship name="events" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Event" inverseName="master" inverseEntity="Event"/>
         <relationship name="preferredCustomer" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Customer" inverseName="preferredMaster" inverseEntity="Customer"/>
         <relationship name="skills" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Skill" inverseName="masters" inverseEntity="Skill"/>

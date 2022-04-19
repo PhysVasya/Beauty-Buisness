@@ -11,12 +11,41 @@ import CoreData
 import SwiftUI
 
 
+
 class MastersViewController: UIViewController {
+
+    private enum MastersSection: Hashable {
+    
+        case prioritisedMaster
+        case lowPriorityMaster
+        case casualMaster
+        case unidentified
+        
+        var title: String? {
+            switch self {
+            case .prioritisedMaster:
+                return "Лучшие"
+            case .lowPriorityMaster:
+                return "Сомнительные"
+            case .casualMaster:
+                return "Обычные"
+            case .unidentified:
+                return nil
+            }
+        }
+    }
+    
+    private enum SwipeAction {
+        case leading
+        case trailing
+    }
     
     private var mastersCollectionView: UICollectionView!
     
-    private var fetchedMasters: NSFetchedResultsController<Master>?
-    private var dataSource: UICollectionViewDiffableDataSource<String, Master>?
+    private var fetchedMasterResultsController: NSFetchedResultsController<Master>?
+    private var mastersDataSource: UICollectionViewDiffableDataSource<MastersSection, Master>!
+    
+    
     private var addNewMasterButtonPressed: (() -> Void)?
     private var newMasterObservableElements = ObservableElementsForNewProcedureButton()
     
@@ -36,7 +65,7 @@ class MastersViewController: UIViewController {
         
         setupMastersCollectionView()
         setupAddNewMasterButton()
-        dataSource = configureDataSource()
+        configureDataSource()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -45,43 +74,53 @@ class MastersViewController: UIViewController {
     }
     
     private func reloadMasters () {
-
-            fetchedMasters = MastersFetchingManager.shared.fetchMasters(self)
         
+        fetchedMasterResultsController = MastersFetchingManager.shared.fetchMasters(self)
     }
     
-    private func configureDataSource () -> UICollectionViewDiffableDataSource<String, Master> {
+    private func configureDataSource () {
+        
         let cellRegistration = UICollectionView.CellRegistration<UICollectionViewListCell, Master> { cell, indexPath, itemIdentifier in
             var config = cell.defaultContentConfiguration()
             config.text = itemIdentifier.name
             config.secondaryText = itemIdentifier.phone
             cell.contentConfiguration = config
-         
+            
         }
-        return UICollectionViewDiffableDataSource(collectionView: mastersCollectionView) { collectionView, indexPath, itemIdentifier in
-            collectionView.dequeueConfiguredReusableCell(using: cellRegistration, for: indexPath, item: itemIdentifier)
+        
+        let headerRegistration = UICollectionView.SupplementaryRegistration<HeaderView>(elementKind: UICollectionView.elementKindSectionHeader) { [weak self] headerView, elementKind, indexPath in
+            
+            guard let sectionID = self?.mastersDataSource.sectionIdentifier(for: indexPath.section) else { return }
+            
+            headerView.configureHeader(text: sectionID.title)
+   
         }
+        
+        mastersDataSource = UICollectionViewDiffableDataSource(collectionView: mastersCollectionView, cellProvider: { collectionView, indexPath, master -> UICollectionViewCell? in
+            collectionView.dequeueConfiguredReusableCell(using: cellRegistration, for: indexPath, item: master)
+        })
+        
+        mastersDataSource.supplementaryViewProvider = { collectionView, elementKind, indexPath -> UICollectionReusableView? in
+            collectionView.dequeueConfiguredReusableSupplementary(using: headerRegistration, for: indexPath)
+        }
+                
     }
     
     private func setupMastersCollectionView () {
         
-        var layoutConfig = UICollectionLayoutListConfiguration(appearance: .plain)
-        layoutConfig.trailingSwipeActionsConfigurationProvider = { indexPath -> UISwipeActionsConfiguration in
-            let deleteAction = UIContextualAction(style: .destructive, title: "Удалить") { [weak self] action, view, completion in
-                
-                guard let masterToDelete = self?.fetchedMasters?.object(at: indexPath),
-                      var currentSnapshot = self?.dataSource?.snapshot() else { return }
-                
-                currentSnapshot.deleteItems([masterToDelete])
-                self?.dataSource?.apply(currentSnapshot, animatingDifferences: view.window != nil) {
-                    MastersFetchingManager.shared.deleteMaster(masterToDelete)
-                }
-                
-            }
-            deleteAction.backgroundColor = .myAccentColor
-            deleteAction.image = UIImage(systemName: "trash.fill")
-            return UISwipeActionsConfiguration(actions: [deleteAction])
+        var layoutConfig = UICollectionLayoutListConfiguration(appearance: .grouped)
+        layoutConfig.headerMode = .supplementary
+        
+        layoutConfig.trailingSwipeActionsConfigurationProvider = { [weak self] indexPath -> UISwipeActionsConfiguration? in
+            guard let trailingAction = self?.configureSwipeActions(action: .trailing, for: indexPath) else { return nil }
+            return UISwipeActionsConfiguration(actions: [trailingAction])
         }
+        
+        layoutConfig.leadingSwipeActionsConfigurationProvider = { [weak self] indexPath -> UISwipeActionsConfiguration? in
+            guard let leadingAction = self?.configureSwipeActions(action: .leading, for: indexPath) else { return nil }
+            return UISwipeActionsConfiguration(actions: [leadingAction])
+        }
+        
         layoutConfig.backgroundColor = .myBackgroundColor
         
         let layout = UICollectionViewCompositionalLayout.list(using: layoutConfig)
@@ -93,13 +132,50 @@ class MastersViewController: UIViewController {
         mastersCollectionView.delegate = self
     }
     
+    private func configureSwipeActions (action: SwipeAction, for indexPath: IndexPath) -> UIContextualAction? {
+        
+        switch action {
+        case .leading:
+            guard let masterToChangeRating = mastersDataSource.itemIdentifier(for: indexPath) else { return nil }
+            let changeRatingAction = UIContextualAction(style: .normal, title: nil) { action, view, completion in
+                if masterToChangeRating.rating == 5 {
+                    MastersFetchingManager.shared.updateMaster(masterToChangeRating, setRating: 3)
+                } else {
+                    MastersFetchingManager.shared.updateMaster(masterToChangeRating, setRating: 5)
+                }
+            }
+            if masterToChangeRating.rating == 5 {
+                changeRatingAction.image = UIImage(systemName: "star.slash")
+            } else {
+                changeRatingAction.image = UIImage(systemName: "star")
+            }
+            changeRatingAction.backgroundColor = .myHighlightColor
+            return changeRatingAction
+            
+        case .trailing:
+            let deleteAction = UIContextualAction(style: .destructive, title: "Удалить") { [weak self] action, view, completion in
+                
+                guard let masterToDelete = self?.mastersDataSource.itemIdentifier(for: indexPath) else { return }
+                
+                MastersFetchingManager.shared.deleteMaster(masterToDelete)
+                
+            }
+            deleteAction.backgroundColor = .myAccentColor
+            deleteAction.image = UIImage(systemName: "trash.fill")
+            return deleteAction
+        }
+        
+        
+    }
+    
+    
     private func setupAddNewMasterButton () {
         let newMasterButton = UIHostingController(rootView: NewProcedureButton(name: "Добавить мастера", elements: newMasterObservableElements, tap: addNewMasterButtonPressed)).view!
         view.addSubview(newMasterButton)
         newMasterButton.frame = CGRect(x: 0, y: 0, width: 200, height: 50)
         newMasterButton.backgroundColor = .clear
         newMasterButton.translatesAutoresizingMaskIntoConstraints = false
-        newMasterButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -view.frame.height / 8).isActive = true
+        newMasterButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -view.frame.height / 7).isActive = true
         newMasterButton.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
     }
     
@@ -131,6 +207,7 @@ class MastersViewController: UIViewController {
     }
     
     
+    
 }
 
 extension MastersViewController: UICollectionViewDelegate {
@@ -143,112 +220,55 @@ extension MastersViewController: UICollectionViewDelegate {
         collectionView.deselectItem(at: indexPath, animated: true)
     }
     
-//    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-//        return fetchedMasters?.sections?[section].numberOfObjects ?? 0
-//    }
-//
-//    func numberOfSections(in tableView: UITableView) -> Int {
-//        return fetchedMasters?.sections?.count ?? 1
-//    }
-//
-//    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-//        let cell = tableView.dequeueReusableCell(withIdentifier: MastersTableCell.identifier, for: indexPath)
-//        let master = fetchedMasters?.object(at: indexPath)
-//
-//        var config = cell.defaultContentConfiguration()
-//        config.text = master?.name
-//        config.secondaryText = master?.phone
-//        cell.contentConfiguration = config
-//        return cell
-//    }
-//
-//    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-//
-//
-//        tableView.deselectRow(at: indexPath, animated: true)
-//
-//        guard let chosenMaster = fetchedMasters?.object(at: indexPath),
-//              let masterNumber = URL(string: "telprompt://\(chosenMaster.phone!)" ) else { return }
-//        UIApplication.shared.open(masterNumber, options: [:], completionHandler: nil)
-//    }
-//
-//    func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-//        return true
-//    }
-//
-//    func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
-//        let deleteAction = UIContextualAction(style: .destructive, title: "Удалить") { [weak self] action, view, handler in
-//            guard let masterToDelete = self?.fetchedMasters?.object(at: indexPath) else {
-//                return
-//            }
-//            MastersFetchingManager.shared.deleteMaster(masterToDelete)
-//
-//        }
-//        deleteAction.image = UIImage(systemName: "trash.fill")
-//        deleteAction.backgroundColor = .myAccentColor
-//        let config = UISwipeActionsConfiguration(actions: [deleteAction])
-//        return config
-//    }
-//
+
+  
+    
 }
 
 extension MastersViewController: NSFetchedResultsControllerDelegate {
     
     func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChangeContentWith snapshot: NSDiffableDataSourceSnapshotReference) {
         
-        var diffSnapshot = NSDiffableDataSourceSnapshot<String, Master>()
+        let providedSnapshot = snapshot as NSDiffableDataSourceSnapshot<String, NSManagedObjectID>
         
-        snapshot.sectionIdentifiers.forEach { section in
-            diffSnapshot.appendSections([section as! String])
+        
+
+        var diffSnapshot = NSDiffableDataSourceSnapshot<MastersSection, Master>()
+        
+        providedSnapshot.sectionIdentifiers.forEach { sectionID in
+
+            var section: MastersSection {
+                if sectionID == "5" {
+                    return .prioritisedMaster
+                } else if sectionID == "4" || sectionID == "3" {
+                    return .casualMaster
+                } else if sectionID == "2" || sectionID == "1" {
+                    return .lowPriorityMaster
+                } else {
+                    return .unidentified
+                }
+            }
             
-            let items = snapshot.itemIdentifiersInSection(withIdentifier: section).map { (objectID: Any) -> Master in
+            let masters = snapshot.itemIdentifiersInSection(withIdentifier: sectionID).compactMap { (objectID: Any) -> Master in
                 let oid = objectID as! NSManagedObjectID
-                
                 return controller.managedObjectContext.object(with: oid) as! Master
             }
-            diffSnapshot.appendItems(items, toSection: section as? String)
+
+            diffSnapshot.appendSections([section])
+            diffSnapshot.appendItems(masters, toSection: section)
+            
         }
-        dataSource?.apply(diffSnapshot)
+
+        mastersDataSource.apply(diffSnapshot)
         setupBGView(usingResultsFrom: controller)
         newMasterObservableElements.events = controller.fetchedObjects?.count
         
     }
     
-//    func controllerWillChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
-//        mastersCollectionView.beginUpdates()
-//    }
-//
-//    func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChange anObject: Any, at indexPath: IndexPath?, for type: NSFetchedResultsChangeType, newIndexPath: IndexPath?) {
-//        reloadMasters()
-//
-//        switch type {
-//        case .insert:
-//            mastersCollectionView.insertRows(at: [newIndexPath!], with: .automatic)
-//        case .delete:
-//            mastersCollectionView.deleteRows(at: [indexPath!], with: .automatic)
-//        case .move:
-//            mastersCollectionView.deleteRows(at: [indexPath!], with: .automatic)
-//            mastersCollectionView.insertRows(at: [newIndexPath!], with: .automatic)
-//        case .update:
-//            let cell = mastersCollectionView.cellForRow(at: indexPath!)
-//            let master = controller.object(at: indexPath!) as? Master
-//
-//            var config = cell?.defaultContentConfiguration()
-//            config?.text = master?.name
-//            config?.secondaryText = master?.phone
-//        @unknown default:
-//            print("Unknown NSFetchResultsChangeType")
-//        }
-//    }
-//
-//    func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
-//        mastersCollectionView.endUpdates()
-//    }
-    
 }
 
 extension MastersViewController {
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        newMasterObservableElements.offset = scrollView.contentOffset.y 
+        newMasterObservableElements.offset = scrollView.contentOffset.y
     }
 }

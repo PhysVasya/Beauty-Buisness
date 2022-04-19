@@ -259,32 +259,39 @@ extension NewEventViewController {
         let endingMinute = Int.endingMinute
         let startingHour = Int.startingHour
         let startingMinute = Int.startingMinute
+     
+        guard let currentDay = day?.getDate() else { return nil }
         
-        let components = DateComponents(year: day?.year, month: day?.month, day: day?.day)
-        guard let currentDay = Calendar.current.date(from: components) else { return nil }
+        let startDatePicker = UIDatePicker()
+        startDatePicker.datePickerMode = .time
+        startDatePicker.minuteInterval = 5
+        startDatePicker.setDate(currentDay, animated: false)
+        startDatePicker.minimumDate = Calendar.current.date(bySettingHour: startingHour, minute: startingMinute, second: 0, of: currentDay)
+        startDatePicker.maximumDate = Calendar.current.date(bySettingHour: endingHour, minute: endingMinute, second: 0, of: currentDay)
         
-        let secondView = UIDatePicker()
-        secondView.datePickerMode = .time
-        secondView.minuteInterval = 5
-        secondView.minimumDate = Calendar.current.date(bySettingHour: startingHour, minute: startingMinute, second: 0, of: currentDay)
-        secondView.maximumDate = Calendar.current.date(bySettingHour: endingHour, minute: endingMinute, second: 0, of: currentDay)
+        let endDatePicker = UIDatePicker()
+        endDatePicker.datePickerMode = .time
+        endDatePicker.minuteInterval = 5
+        endDatePicker.setDate(currentDay + 100, animated: false)
+        endDatePicker.minimumDate = Calendar.current.date(bySettingHour: startingHour, minute: startingMinute, second: 0, of: currentDay)
+        endDatePicker.maximumDate = Calendar.current.date(bySettingHour: endingHour, minute: endingMinute, second: 0, of: currentDay)
         
         if indexPath == IndexPath(row: 0, section: 0) {
             let firstView = UILabel()
             firstView.text = "Начало процедуры"
             firstView.font = .systemFont(ofSize: 16)
-            chosenStartHour = secondView.hour
-            chosenStartMinute = secondView.minute
-            secondView.addTarget(self, action: #selector(eventStartTime(_:)), for: .allEvents)
-            return [firstView, secondView]
+            chosenStartHour = startDatePicker.hour
+            chosenStartMinute = startDatePicker.minute
+            startDatePicker.addTarget(self, action: #selector(eventStartTime(_:)), for: .allEvents)
+            return [firstView, startDatePicker]
         } else if indexPath == IndexPath(row: 1, section: 0) {
             let firstView = UILabel()
             firstView.text = "Конец процедуры"
             firstView.font = .systemFont(ofSize: 16)
-            chosenEndHour = secondView.hour
-            chosenEndMinute = secondView.minute
-            secondView.addTarget(self, action: #selector(eventEndTime(_:)), for: .allEvents)
-            return [firstView, secondView]
+            chosenEndHour = startDatePicker.hour
+            chosenEndMinute = startDatePicker.minute
+            endDatePicker.addTarget(self, action: #selector(eventEndTime(_:)), for: .allEvents)
+            return [firstView, endDatePicker]
             
         } else {
             return nil
@@ -306,11 +313,11 @@ extension NewEventViewController: UITextFieldDelegate {
             
             switch self {
             case .firstSection(let input):
-                return await ProceduresFetchingManager.shared.fetchExistingProcedure(procedureName: input)
+                return ProceduresFetchingManager.shared.fetchExistingProcedure(procedureName: input)
             case .secondSection(let input):
-                return await CustomersFetchingManager.shared.fetchExistingCustomer(customerName: input)
+                return CustomersFetchingManager.shared.fetchExistingCustomer(customerName: input)
             case .thirdSection(let input):
-                return await MastersFetchingManager.shared.fetchExistingMaster(masterName: input)
+                return MastersFetchingManager.shared.fetchExistingMaster(masterName: input)
             }
         }
     }
