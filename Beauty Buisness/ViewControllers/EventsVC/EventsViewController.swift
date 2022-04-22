@@ -47,7 +47,7 @@ class EventsViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        view.backgroundColor = .myBackgroundColor
         newProcedureButtonTapped = { [weak self] in
             let newEventVC = NewEventViewController()
             newEventVC.day = self?.dateForEvents
@@ -65,12 +65,6 @@ class EventsViewController: UIViewController {
         
     }
     
-    
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        //        reloadEvents()
-    }
-    
     private func reloadEvents () {
         fetchedEventsResultsController = EventsFetchingManager.shared.fetchEventsForToday(dateForEvents!, delegate: self)
     }
@@ -82,7 +76,7 @@ class EventsViewController: UIViewController {
         let cellRegistration = UICollectionView.CellRegistration<UICollectionViewListCell, Event> { cell, indexPath, event in
             
             var config = cell.defaultContentConfiguration()
-            
+
             let procedureName =  event.procedure?.name
             let masterName = event.master?.name
             //            let clientName = itemIdentifier.customer?.name
@@ -95,6 +89,7 @@ class EventsViewController: UIViewController {
             config.secondaryText = "У \(masterName ?? "") с \(eventStartHour):\(eventStartMinute) до \(eventEndHour):\(eventEndMinute)"
             
             cell.contentConfiguration = config
+            cell.accessories = [.disclosureIndicator()]
         }
         
         //Header registration for dataSource whit is AGAIN applied using closure which takes in 1.VIEW, 2. ELEMENTKIND ??? DFQ is this 3. IndexPath.
@@ -138,14 +133,11 @@ class EventsViewController: UIViewController {
         listConfig.backgroundColor = .myBackgroundColor
         listConfig.headerMode = .supplementary
         
-        listConfig.trailingSwipeActionsConfigurationProvider = { indexPath -> UISwipeActionsConfiguration in
+        listConfig.trailingSwipeActionsConfigurationProvider = { [weak self] indexPath -> UISwipeActionsConfiguration? in
             
-            let deleteAction = UIContextualAction(style: .destructive, title: "Удалить") { [weak self] action, view, completion in
-                
-                guard let eventToDelete = self?.eventsDataSource.itemIdentifier(for: indexPath) else { return }
-                
+            guard let eventToDelete = self?.eventsDataSource.itemIdentifier(for: indexPath) else { return nil }
+            let deleteAction = UIContextualAction(style: .destructive, title: "Удалить") { action, view, completion in
                 EventsFetchingManager.shared.deleteEvent(eventToDelete)
-                
             }
             
             deleteAction.backgroundColor = .myAccentColor
@@ -154,18 +146,21 @@ class EventsViewController: UIViewController {
             return UISwipeActionsConfiguration(actions: [deleteAction])
         }
         
-        listConfig.leadingSwipeActionsConfigurationProvider = { indexPath -> UISwipeActionsConfiguration in
+        listConfig.leadingSwipeActionsConfigurationProvider = { [weak self] indexPath -> UISwipeActionsConfiguration? in
             
-            let completeAction = UIContextualAction(style: .destructive, title: "Выполнено") { [weak self] action, view, completion in
-                
-                guard let eventToComplete = self?.eventsDataSource.itemIdentifier(for: indexPath) else { return }
-                
+            guard let eventToComplete = self?.eventsDataSource.itemIdentifier(for: indexPath) else { return nil }
+            
+            let completeAction = UIContextualAction(style: .destructive, title: "Выполнено") { action, view, completion in
                 EventsFetchingManager.shared.updateEvent(eventToComplete)
-                
+            }
+            
+            if eventToComplete.isCompleted {
+                completeAction.image = UIImage(systemName: "eye.fill")
+            } else {
+                completeAction.image = UIImage(systemName: "eye.slash.fill")
             }
             
             completeAction.backgroundColor = .myHighlightColor
-            completeAction.image = UIImage(systemName: "eye.slash.fill")
             return UISwipeActionsConfiguration(actions: [completeAction])
         }
         
@@ -173,9 +168,9 @@ class EventsViewController: UIViewController {
         
         eventsCollectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
         view.addSubview(eventsCollectionView)
+        eventsCollectionView.backgroundColor = .myBackgroundColor
         eventsCollectionView.frame = view.bounds
         eventsCollectionView.delegate = self
-        eventsCollectionView.backgroundColor = .myBackgroundColor
         
     }
     
@@ -217,7 +212,7 @@ class EventsViewController: UIViewController {
     }
     
     private func setupNavigationBar () {
-        navigationItem.title = UserDefaults.standard.string(forKey: "SALON-NAME")
+        navigationItem.title = "Запись"
         
         let calendarPickerButton = UIBarButtonItem(image: .init(systemName: "calendar"), style: .plain, target: self, action: #selector(calendarPickerButtonPressed(_:)))
         navigationItem.rightBarButtonItem = calendarPickerButton
@@ -280,6 +275,17 @@ extension EventsViewController: UICollectionViewDelegate {
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         collectionView.deselectItem(at: indexPath, animated: true)
+
+        //Get selected event
+        guard let selectedEvent = eventsDataSource.itemIdentifier(for: indexPath) else { return }
+        //Get all events from snapshot to populate detailVC
+        let events = eventsDataSource.snapshot().itemIdentifiers
+        let eventDelailVC = EventDetailViewController()
+   
+        eventDelailVC.configureDetail(event: selectedEvent, from: events)
+        navigationController?.pushViewController(eventDelailVC, animated: true)
+
+        
     }
     
 }

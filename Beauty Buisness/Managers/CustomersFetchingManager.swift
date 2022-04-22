@@ -17,6 +17,18 @@ class CustomersFetchingManager  {
     
     private init () {}
     
+    public func fetchCustomers () -> [Customer]? {
+        let request: NSFetchRequest<Customer> = Customer.fetchRequest()
+        
+        do {
+            let results = try managedObjectContext.fetch(request)
+            return results
+        } catch let error as NSError {
+            print("Error fetching customers \(error), \(error.userInfo)")
+            return nil
+        }
+    }
+    
     public func fetchCustomers (delegate: NSFetchedResultsControllerDelegate?)  -> NSFetchedResultsController<Customer>? {
         
         let request: NSFetchRequest<Customer> = Customer.fetchRequest()

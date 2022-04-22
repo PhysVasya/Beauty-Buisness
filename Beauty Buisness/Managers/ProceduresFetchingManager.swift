@@ -12,6 +12,7 @@ import CoreData
 class ProceduresFetchingManager {
     
     static let shared = ProceduresFetchingManager()
+    private let managedObjectContext = CoreDataStack.shared.context
     
     private init () {}
     
@@ -33,6 +34,26 @@ class ProceduresFetchingManager {
                 return nil
             }
         }
+    
+    public func fetchProcedures () -> [Procedure]? {
+        
+        let chosenSalonType = UserDefaults.standard.string(forKey: "SALON-TYPE")
+
+        
+        let request: NSFetchRequest<Procedure> = Procedure.fetchRequest()
+        request.predicate = NSPredicate(format: "%K == %@", #keyPath(Procedure.salonType.type), chosenSalonType!)
+
+        
+        do {
+            let results = try managedObjectContext.fetch(request)
+            return results
+        } catch let error as NSError {
+            print("Error fetching all procedures \(error), \(error.userInfo)")
+            return nil
+
+        }
+        
+    }
         
     
 }

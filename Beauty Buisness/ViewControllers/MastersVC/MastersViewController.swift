@@ -51,7 +51,7 @@ class MastersViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        title = "Мастера"
+        navigationItem.title = "Мастера"
         navigationController?.navigationBar.prefersLargeTitles = true
         
         addNewMasterButtonPressed = { [weak self] in

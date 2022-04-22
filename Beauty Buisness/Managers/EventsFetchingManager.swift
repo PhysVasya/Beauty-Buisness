@@ -95,19 +95,8 @@ class EventsFetchingManager {
     
     public func updateEvent (_ event: Event) {
         
-//        let request = NSBatchUpdateRequest(entityName: "Event")
-//        request.predicate = NSPredicate(format: "SELF == %@", event)
-//
-//
-//        do {
-//            let result = try managedObjectContext.execute(request)
-//
-//
-//        } catch let error as NSError {
-//            print("Error updating event \(error), \(error.userInfo)")
-//        }
 
-        event.isCompleted = true
+        event.isCompleted = !event.isCompleted
         CoreDataStack.shared.saveContext()
         
     }

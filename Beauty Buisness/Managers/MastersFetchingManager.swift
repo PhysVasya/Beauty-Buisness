@@ -18,6 +18,20 @@ class MastersFetchingManager {
     private init () {}
     
     
+    public func fetchMasters () -> [Master]? {
+        
+        let request: NSFetchRequest<Master> = Master.fetchRequest()
+        
+        do {
+            let results = try managedObjectContext.fetch(request)
+            return results
+        } catch let error as NSError {
+            print("Error fetching masters \(error), \(error.userInfo)")
+            return nil
+        }
+        
+    }
+    
     public func fetchMasters (_ delegate: NSFetchedResultsControllerDelegate) -> NSFetchedResultsController<Master>? {
         
         let request: NSFetchRequest<Master> = Master.fetchRequest()

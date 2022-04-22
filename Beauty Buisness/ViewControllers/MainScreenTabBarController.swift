@@ -32,18 +32,20 @@ class MainScreenTabBarController: UITabBarController {
         //Setuping TabBar
         let vc1 = UINavigationController(rootViewController: EventsViewController())
         let vc2 = UINavigationController(rootViewController: CustomersViewController())
-        let vc3 = UINavigationController(rootViewController: MastersViewController())
-        let vc4 = UINavigationController(rootViewController: SettingsViewController())
+        let vc3 = UINavigationController(rootViewController: CustomersViewController())
+        let vc4 = UINavigationController(rootViewController: MastersViewController())
+        let vc5 = UINavigationController(rootViewController: SettingsViewController())
         vc1.navigationBar.prefersLargeTitles = true
         vc1.title = "Запись"
         vc2.title = "Клиенты"
-        vc3.title = "Мастера"
-        vc4.title = "Настройки"
+        vc3.title = UserDefaults.standard.string(forKey: "SALON-NAME")
+        vc4.title = "Мастера"
+        vc5.title = "Настройки"
         vc1.tabBarItem.image = UIImage(systemName: "square.and.pencil")
         vc2.tabBarItem.image = UIImage(systemName: "person.3")
-        vc3.tabBarItem.image = UIImage(systemName: "brain.head.profile")
-        vc4.tabBarItem.image = UIImage(systemName: "gear")
-        setViewControllers([vc1, vc2, vc3, vc4], animated: false)
+        vc4.tabBarItem.image = UIImage(systemName: "brain.head.profile")
+        vc5.tabBarItem.image = UIImage(systemName: "gear")
+        setViewControllers([vc1, vc2, vc3, vc4, vc5], animated: false)
     }
 }
 

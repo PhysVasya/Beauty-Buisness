@@ -43,7 +43,7 @@ class CustomersViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        title = "Клиенты"
+        navigationItem.title = "Клиенты"
         navigationController?.navigationBar.prefersLargeTitles = true
         
         newCustomerButtonPressed = { [weak self] in

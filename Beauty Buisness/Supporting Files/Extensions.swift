@@ -156,3 +156,14 @@ extension Day {
     
 }
 
+extension DayOfWork {
+    
+    public func dateFormatted () -> String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "EEEE, dd.MM"
+        let dateFromComponents = DateComponents(year: Int(year), month: Int(month), day: Int(day))
+        let date = Calendar.current.date(from: dateFromComponents)!
+        return formatter.string(from: date).capitalized
+    }
+}
+

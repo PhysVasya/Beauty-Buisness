@@ -33,7 +33,7 @@ class SettingsViewController: UIViewController {
     }
     
     private func setupNavigationBar () {
-        title = "Настройки"
+        navigationItem.title = "Настройки"
         navigationController?.navigationBar.prefersLargeTitles = true
     }
     
