@@ -27,6 +27,8 @@
 		FF71262228114A0500609F70 /* EventDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF71262128114A0500609F70 /* EventDetailViewController.swift */; };
 		FF7126242811596700609F70 /* EventDetailCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF7126232811596700609F70 /* EventDetailCollectionViewCell.swift */; };
 		FF7126262816B18A00609F70 /* EventDetailCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF7126252816B18A00609F70 /* EventDetailCell.swift */; };
+		FF7126282816F21E00609F70 /* EventDetailSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF7126272816F21E00609F70 /* EventDetailSection.swift */; };
+		FF71262A2817002A00609F70 /* EventDetailItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF7126292817002A00609F70 /* EventDetailItem.swift */; };
 		FF8DDD5F2800F25A0075B2FA /* AddNewProcedureRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF8DDD5E2800F25A0075B2FA /* AddNewProcedureRow.swift */; };
 		FFCB990D280C2D39005A9E77 /* HeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFCB990C280C2D39005A9E77 /* HeaderView.swift */; };
 		FFEC2E99280729F800CE1E2F /* PhoneNumberKit in Frameworks */ = {isa = PBXBuildFile; productRef = FFEC2E98280729F800CE1E2F /* PhoneNumberKit */; };
@@ -78,6 +80,8 @@
 		FF71262128114A0500609F70 /* EventDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventDetailViewController.swift; sourceTree = "<group>"; };
 		FF7126232811596700609F70 /* EventDetailCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventDetailCollectionViewCell.swift; sourceTree = "<group>"; };
 		FF7126252816B18A00609F70 /* EventDetailCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventDetailCell.swift; sourceTree = "<group>"; };
+		FF7126272816F21E00609F70 /* EventDetailSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventDetailSection.swift; sourceTree = "<group>"; };
+		FF7126292817002A00609F70 /* EventDetailItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventDetailItem.swift; sourceTree = "<group>"; };
 		FF8DDD5E2800F25A0075B2FA /* AddNewProcedureRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddNewProcedureRow.swift; sourceTree = "<group>"; };
 		FFCB990C280C2D39005A9E77 /* HeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeaderView.swift; sourceTree = "<group>"; };
 		FFEC2E9B2807743F00CE1E2F /* ContactsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactsViewController.swift; sourceTree = "<group>"; };
@@ -338,6 +342,9 @@
 				FFFAA31027F09AA5002EC74B /* EventsViewController.swift */,
 				FF71262128114A0500609F70 /* EventDetailViewController.swift */,
 				FF7126232811596700609F70 /* EventDetailCollectionViewCell.swift */,
+				FF7126252816B18A00609F70 /* EventDetailCell.swift */,
+				FF7126272816F21E00609F70 /* EventDetailSection.swift */,
+				FF7126292817002A00609F70 /* EventDetailItem.swift */,
 			);
 			path = EventsVC;
 			sourceTree = "<group>";
@@ -347,7 +354,6 @@
 			children = (
 				FFFAA33827F99C87002EC74B /* NewEventViewController.swift */,
 				FFFAA33B27F9A453002EC74B /* NewEventTableCell.swift */,
-				FF7126252816B18A00609F70 /* EventDetailCell.swift */,
 			);
 			path = NewEventVC;
 			sourceTree = "<group>";
@@ -470,7 +476,9 @@
 				FF512D062803F6E400D661B5 /* FetchingErrors.swift in Sources */,
 				FF512D002803F21C00D661B5 /* NewCustomerTableCell.swift in Sources */,
 				FF5A037F27FF66DB00F8FB24 /* SalonTypesDB.swift in Sources */,
+				FF71262A2817002A00609F70 /* EventDetailItem.swift in Sources */,
 				FF71262228114A0500609F70 /* EventDetailViewController.swift in Sources */,
+				FF7126282816F21E00609F70 /* EventDetailSection.swift in Sources */,
 				FFFAA31627F0ACA4002EC74B /* NameSetupView.swift in Sources */,
 				FF512D0B2804671200D661B5 /* TimeChangeOption.swift in Sources */,
 			);

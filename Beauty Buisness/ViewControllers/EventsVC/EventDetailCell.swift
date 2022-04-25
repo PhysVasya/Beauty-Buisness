@@ -22,14 +22,20 @@ class EventDetailCell: UICollectionViewCell {
     let label = UILabel()
     
     
-    public func configure (with text: CellLabel, supplementary: UIView) {
+    public func configure (with text: CellLabel?, supplementary: UIView?) {
         
-        label.text = text.rawValue
+        label.text = text?.rawValue
         label.textColor = .myBackgroundColor
         label.font = .boldSystemFont(ofSize: 18)
         label.textAlignment = .center
         
-        let HStack = UIStackView(arrangedSubviews: [label, supplementary])
+        let HStack = UIStackView()
+        if let supplementary = supplementary {
+            HStack.addArrangedSubview(label)
+            HStack.addArrangedSubview(supplementary)
+        } else {
+            HStack.addArrangedSubview(label)
+        }
         HStack.alignment = .center
         HStack.distribution = .fillEqually
         HStack.axis = .horizontal
@@ -48,4 +54,9 @@ class EventDetailCell: UICollectionViewCell {
         
     }
   
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        let subviews = contentView.subviews
+        subviews.forEach({$0.removeFromSuperview()})
+    }
 }

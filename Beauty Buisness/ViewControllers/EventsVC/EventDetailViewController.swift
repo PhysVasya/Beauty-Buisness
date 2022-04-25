@@ -11,12 +11,9 @@ import UIKit
 
 class EventDetailViewController: UIViewController {
     
-    private enum EventDetailSection: Int, Hashable {
-        case main
-    }
     
-    private typealias DataSource = UICollectionViewDiffableDataSource<EventDetailSection, Event>
-    private typealias SnapShot = NSDiffableDataSourceSnapshot<EventDetailSection, Event>
+    private typealias DataSource = UICollectionViewDiffableDataSource<EventDetailSection, EventDetailItem>
+    private typealias SnapShot = NSDiffableDataSourceSnapshot<EventDetailSection, EventDetailItem>
     
     private let procedures = ProceduresFetchingManager.shared.fetchProcedures()
     private let masters = MastersFetchingManager.shared.fetchMasters()
@@ -28,7 +25,7 @@ class EventDetailViewController: UIViewController {
     
     public var events: [Event]?
     public var selectedEvent: Event?
-    
+        
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -45,7 +42,7 @@ class EventDetailViewController: UIViewController {
     
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-        showSelectedItem()
+//        showSelectedItem()
     }
     
     
@@ -56,39 +53,41 @@ class EventDetailViewController: UIViewController {
     
     
     
-    public func showSelectedItem () {
-        
-        guard let selectedEvent = selectedEvent,
-              let indexPathOfSelectedEvent = eventDetailDiffableDataSource.indexPath(for: selectedEvent) else {
-            return
-        }
-        eventDetailCollectionView.scrollToItem(at: indexPathOfSelectedEvent, at: .centeredHorizontally, animated: false)
-        
-    }
-    
-    private func updateSelectedEventOnScroll (by indexPath: IndexPath) {
-        
-        let eventAtIndexPath = eventDetailDiffableDataSource.itemIdentifier(for: indexPath)
-        selectedEvent = eventAtIndexPath
-        
-    }
+//    public func showSelectedItem () {
+//
+//        guard let selectedEvent = selectedEvent,
+//              let indexPathOfSelectedEvent = eventDetailDiffableDataSource.indexPath(for: selectedEvent) else {
+//            return
+//        }
+//        eventDetailCollectionView.scrollToItem(at: indexPathOfSelectedEvent, at: .centeredHorizontally, animated: false)
+//
+//    }
+//
+//    private func updateSelectedEventOnScroll (by indexPath: IndexPath) {
+//
+//        let eventAtIndexPath = eventDetailDiffableDataSource.itemIdentifier(for: indexPath)
+//        selectedEvent = eventAtIndexPath
+//
+//    }
     
     private func setupEventDetailCollectionView () {
         
         eventDetailCollectionView = UICollectionView(frame: .zero, collectionViewLayout: createLayout())
+
         view.addSubview(eventDetailCollectionView)
         eventDetailCollectionView.backgroundColor = .myBackgroundColor
         eventDetailCollectionView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
-            eventDetailCollectionView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 10),
-            eventDetailCollectionView.bottomAnchor.constraint(equalTo: view.keyboardLayoutGuide.topAnchor, constant: -10),
-            eventDetailCollectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 10),
-            eventDetailCollectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -10)
+            eventDetailCollectionView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            eventDetailCollectionView.bottomAnchor.constraint(equalTo: view.keyboardLayoutGuide.topAnchor),
+            eventDetailCollectionView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
+            eventDetailCollectionView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor)
         ])
         eventDetailCollectionView.alwaysBounceVertical = false
         eventDetailCollectionView.delegate = self
     }
     
+    //MARK: - Layout
     private func createLayout () -> UICollectionViewCompositionalLayout {
         
         // Item
@@ -106,29 +105,31 @@ class EventDetailViewController: UIViewController {
                 heightDimension: .fractionalHeight(1)
             ),
             subitem: item,
-            count: 5
+            count: 4
         )
         // Section
         let section = NSCollectionLayoutSection(group: group)
-        section.orthogonalScrollingBehavior = .paging
+        section.orthogonalScrollingBehavior = .groupPagingCentered
         
         
         //MAGIC HAPPENS HERE! The visibleItemsInvalidationHandler closure is triggered EVERY FCKIN TIME the item appears on screen. I loop through each of the current visible items, then I compare the current scrollOffset to the visible item's frame origin, AND IF those are true (and the are only after the next visible item stays still on screen, the title and selected events are changed!
-        section.visibleItemsInvalidationHandler = { [weak self] visibleItems, scrollOffset, layoutEnvironment in
-            visibleItems.forEach { visItem in
-                if scrollOffset == visItem.frame.origin {
-                    self?.updateSelectedEventOnScroll(by: visItem.indexPath)
-                }
-            }
-        }
-        
+//        section.visibleItemsInvalidationHandler = { [weak self] visibleItems, scrollOffset, layoutEnvironment in
+//            visibleItems.forEach { visItem in
+//                if scrollOffset == visItem.frame.origin {
+//                    self?.updateSelectedEventOnScroll(by: visItem.indexPath)
+//                }
+//            }
+//        }
+        let config = UICollectionViewCompositionalLayoutConfiguration()
+        config.scrollDirection = .horizontal
         //Return
-        return UICollectionViewCompositionalLayout(section: section)
+        return UICollectionViewCompositionalLayout(section: section, configuration: config)
     }
     
+    //MARK: - Data source
     private func setupDataSource () {
         
-        let cellRegistration = UICollectionView.CellRegistration<EventDetailCell, Event> { [weak self] cell, indexPath, event in
+        let cellRegistration = UICollectionView.CellRegistration<EventDetailCell, EventDetailItem> { [weak self] cell, indexPath, item in
             
             if indexPath == IndexPath(row: 0, section: indexPath.section) {
                 guard let pickerView = self?.configurePickerView() else { return }
@@ -141,35 +142,53 @@ class EventDetailViewController: UIViewController {
                 pickerView.tag = 1
                 cell.configure(with: .customer, supplementary: pickerView)
             }
-            
+
              if indexPath == IndexPath(row: 2, section: indexPath.section) {
                 guard let pickerView = self?.configurePickerView() else { return }
                 pickerView.tag = 2
                 cell.configure(with: .master, supplementary: pickerView)
             }
             
+            if indexPath == IndexPath(row: 3, section: indexPath.section) {
+                let textField = UITextField()
+                textField.text = item.item as? String
+                cell.configure(with: .note, supplementary: textField)
+            }
+            
         }
         
-        eventDetailDiffableDataSource = DataSource(collectionView: eventDetailCollectionView) { collectionView, indexPath, event in
+        eventDetailDiffableDataSource = DataSource(collectionView: eventDetailCollectionView) { collectionView, indexPath, item in
+             collectionView.dequeueConfiguredReusableCell(using: cellRegistration, for: indexPath, item: item)
             
-            guard let section = EventDetailSection.init(rawValue: indexPath.section) else { return nil }
-            switch section {
-            case .main:
-                return collectionView.dequeueConfiguredReusableCell(using: cellRegistration, for: indexPath, item: event)
-            }
         }
     }
     
     private func createInitialSnapshot () {
         
         var snapshot = SnapShot()
-        guard let availiableEvents = events else { return }
-        snapshot.appendSections([.main])
-        snapshot.appendItems(availiableEvents)
+        guard let events = events else { return }
+        let sections = events.compactMap { event -> EventDetailSection in
+            let section = EventDetailSection(event: event)
+            return section
+        }
+
+        snapshot.appendSections(sections)
+        sections.forEach { section in
+            guard let event = section.event else {
+                print("NO SECTIONS")
+                return
+            }
+            let item1 = EventDetailItem(item: event.procedure)
+            let item2 = EventDetailItem(item: event.customer)
+            let item3 = EventDetailItem(item: event.master)
+            let item4 = EventDetailItem(item: event.note)
+            snapshot.appendItems([item1, item2, item3, item4], toSection: section)
+        }
         eventDetailDiffableDataSource.apply(snapshot)
         
     }
     
+    //MARK: - Nav bar and Picker methods
     private func setupNavigationBar () {
         
         title = "Детализация"
