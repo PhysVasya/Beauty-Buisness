@@ -20,6 +20,7 @@ class EventDetailViewController: UIViewController {
     private let customers = CustomersFetchingManager.shared.fetchCustomers()
     
     private var eventDetailCollectionView: UICollectionView!
+
     private var eventDetailDiffableDataSource: DataSource!
     private var editBarButtonPressed: Bool = false { didSet { setupNavigationBar() } }
     
@@ -72,7 +73,8 @@ class EventDetailViewController: UIViewController {
     
     private func setupEventDetailCollectionView () {
         
-        eventDetailCollectionView = UICollectionView(frame: .zero, collectionViewLayout: createLayout())
+        let layout = createLayout()
+        eventDetailCollectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
 
         view.addSubview(eventDetailCollectionView)
         eventDetailCollectionView.backgroundColor = .myBackgroundColor
@@ -94,7 +96,7 @@ class EventDetailViewController: UIViewController {
         let item = NSCollectionLayoutItem(
             layoutSize: NSCollectionLayoutSize(
                 widthDimension: .fractionalWidth(1),
-                heightDimension: .fractionalHeight(1)
+                heightDimension: .fractionalHeight(1/4)
             )
         )
         item.contentInsets = NSDirectionalEdgeInsets(top: 5, leading: 10, bottom: 5, trailing: 10)
@@ -109,10 +111,10 @@ class EventDetailViewController: UIViewController {
         )
         // Section
         let section = NSCollectionLayoutSection(group: group)
-        section.orthogonalScrollingBehavior = .groupPagingCentered
-        
-        
-        //MAGIC HAPPENS HERE! The visibleItemsInvalidationHandler closure is triggered EVERY FCKIN TIME the item appears on screen. I loop through each of the current visible items, then I compare the current scrollOffset to the visible item's frame origin, AND IF those are true (and the are only after the next visible item stays still on screen, the title and selected events are changed!
+//        section.orthogonalScrollingBehavior = .groupPagingCentered
+//        
+//        
+//        MAGIC HAPPENS HERE! The visibleItemsInvalidationHandler closure is triggered EVERY FCKIN TIME the item appears on screen. I loop through each of the current visible items, then I compare the current scrollOffset to the visible item's frame origin, AND IF those are true (and the are only after the next visible item stays still on screen, the title and selected events are changed!
 //        section.visibleItemsInvalidationHandler = { [weak self] visibleItems, scrollOffset, layoutEnvironment in
 //            visibleItems.forEach { visItem in
 //                if scrollOffset == visItem.frame.origin {
@@ -120,16 +122,18 @@ class EventDetailViewController: UIViewController {
 //                }
 //            }
 //        }
-        let config = UICollectionViewCompositionalLayoutConfiguration()
-        config.scrollDirection = .horizontal
+        let layoutConfig = UICollectionViewCompositionalLayoutConfiguration()
+        layoutConfig.scrollDirection = .horizontal
         //Return
-        return UICollectionViewCompositionalLayout(section: section, configuration: config)
+        return UICollectionViewCompositionalLayout(section: section, configuration: layoutConfig)
     }
     
     //MARK: - Data source
     private func setupDataSource () {
         
         let cellRegistration = UICollectionView.CellRegistration<EventDetailCell, EventDetailItem> { [weak self] cell, indexPath, item in
+            
+            //Seems i am stupid
             
             if indexPath == IndexPath(row: 0, section: indexPath.section) {
                 guard let pickerView = self?.configurePickerView() else { return }
