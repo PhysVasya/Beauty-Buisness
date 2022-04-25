@@ -15,15 +15,21 @@ class EventDetailViewController: UIViewController {
         case main
     }
     
+    private typealias DataSource = UICollectionViewDiffableDataSource<EventDetailSection, Event>
+    private typealias SnapShot = NSDiffableDataSourceSnapshot<EventDetailSection, Event>
+    
+    private let procedures = ProceduresFetchingManager.shared.fetchProcedures()
+    private let masters = MastersFetchingManager.shared.fetchMasters()
+    private let customers = CustomersFetchingManager.shared.fetchCustomers()
     
     private var eventDetailCollectionView: UICollectionView!
-    private var eventDetailDiffableDataSource: UICollectionViewDiffableDataSource<EventDetailSection, Event>!
+    private var eventDetailDiffableDataSource: DataSource!
     private var editBarButtonPressed: Bool = false { didSet { setupNavigationBar() } }
-
+    
     public var events: [Event]?
     public var selectedEvent: Event?
-
-        
+    
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         navigationItem.largeTitleDisplayMode = .never
@@ -34,30 +40,30 @@ class EventDetailViewController: UIViewController {
         createInitialSnapshot()
         
         
-
-    }
         
+    }
+    
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         showSelectedItem()
     }
     
-
+    
     public func configureDetail (event: Event, from: [Event]) {
         selectedEvent = event
         events = from
     }
     
-   
+    
     
     public func showSelectedItem () {
-    
+        
         guard let selectedEvent = selectedEvent,
               let indexPathOfSelectedEvent = eventDetailDiffableDataSource.indexPath(for: selectedEvent) else {
             return
         }
         eventDetailCollectionView.scrollToItem(at: indexPathOfSelectedEvent, at: .centeredHorizontally, animated: false)
-
+        
     }
     
     private func updateSelectedEventOnScroll (by indexPath: IndexPath) {
@@ -66,12 +72,12 @@ class EventDetailViewController: UIViewController {
         selectedEvent = eventAtIndexPath
         
     }
-        
+    
     private func setupEventDetailCollectionView () {
         
         eventDetailCollectionView = UICollectionView(frame: .zero, collectionViewLayout: createLayout())
-        eventDetailCollectionView.layer.cornerRadius = view.frame.width / 20
         view.addSubview(eventDetailCollectionView)
+        eventDetailCollectionView.backgroundColor = .myBackgroundColor
         eventDetailCollectionView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
             eventDetailCollectionView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 10),
@@ -92,14 +98,15 @@ class EventDetailViewController: UIViewController {
                 heightDimension: .fractionalHeight(1)
             )
         )
+        item.contentInsets = NSDirectionalEdgeInsets(top: 5, leading: 10, bottom: 5, trailing: 10)
         // Group
-        let group = NSCollectionLayoutGroup.horizontal(
+        let group = NSCollectionLayoutGroup.vertical(
             layoutSize: NSCollectionLayoutSize(
                 widthDimension: .fractionalWidth(1),
                 heightDimension: .fractionalHeight(1)
             ),
             subitem: item,
-            count: 1
+            count: 5
         )
         // Section
         let section = NSCollectionLayoutSection(group: group)
@@ -121,31 +128,46 @@ class EventDetailViewController: UIViewController {
     
     private func setupDataSource () {
         
-        let cellRegistration = UICollectionView.CellRegistration<EventDetailCollectionViewCell, Event> { [weak self] cell, indexPath, event in
-    
-            cell.configure(event: self?.eventDetailDiffableDataSource.itemIdentifier(for: indexPath))
+        let cellRegistration = UICollectionView.CellRegistration<EventDetailCell, Event> { [weak self] cell, indexPath, event in
             
+            if indexPath == IndexPath(row: 0, section: indexPath.section) {
+                guard let pickerView = self?.configurePickerView() else { return }
+                pickerView.tag = 0
+                cell.configure(with: .procedure, supplementary: pickerView)
+            }
+            
+            if indexPath == IndexPath(row: 1, section: indexPath.section) {
+                guard let pickerView = self?.configurePickerView() else { return }
+                pickerView.tag = 1
+                cell.configure(with: .customer, supplementary: pickerView)
+            }
+            
+             if indexPath == IndexPath(row: 2, section: indexPath.section) {
+                guard let pickerView = self?.configurePickerView() else { return }
+                pickerView.tag = 2
+                cell.configure(with: .master, supplementary: pickerView)
+            }
             
         }
         
-        eventDetailDiffableDataSource = UICollectionViewDiffableDataSource(collectionView: eventDetailCollectionView) { collectionView, indexPath, event in
+        eventDetailDiffableDataSource = DataSource(collectionView: eventDetailCollectionView) { collectionView, indexPath, event in
             
             guard let section = EventDetailSection.init(rawValue: indexPath.section) else { return nil }
             switch section {
             case .main:
-               return collectionView.dequeueConfiguredReusableCell(using: cellRegistration, for: indexPath, item: event)
+                return collectionView.dequeueConfiguredReusableCell(using: cellRegistration, for: indexPath, item: event)
             }
         }
     }
     
     private func createInitialSnapshot () {
         
-        var snapshot = NSDiffableDataSourceSnapshot<EventDetailSection, Event>()
+        var snapshot = SnapShot()
         guard let availiableEvents = events else { return }
         snapshot.appendSections([.main])
         snapshot.appendItems(availiableEvents)
         eventDetailDiffableDataSource.apply(snapshot)
-  
+        
     }
     
     private func setupNavigationBar () {
@@ -163,14 +185,87 @@ class EventDetailViewController: UIViewController {
     }
     
     
+    private func configurePickerView () -> UIPickerView {
+        let pickerView = UIPickerView()
+        pickerView.delegate = self
+        pickerView.dataSource = self
+        return pickerView
+    }
     
-    
+    private func configurePickerViewDataSource (for pickerView: UIPickerView) -> [Any]? {
+        if pickerView.tag == 0 {
+            guard let procedures = procedures else { return nil }
+            return procedures
+        } else if pickerView.tag == 1 {
+            guard let customers = customers else { return nil }
+            return customers
+        } else if pickerView.tag == 2 {
+            guard let masters = masters else { return nil }
+            return masters
+        } else {
+            return nil
+        }
+    }
+     
 }
 
 
 extension EventDetailViewController: UICollectionViewDelegate {
     
     
+    
+}
+
+extension EventDetailViewController: UIPickerViewDelegate, UIPickerViewDataSource {
+    
+    
+    
+    func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
+        
+    }
+    
+    func numberOfComponents(in pickerView: UIPickerView) -> Int {
+        return 1
+    }
+    
+    func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
+        guard let numberOfObjects = configurePickerViewDataSource(for: pickerView)?.count else { return 1 }
+        return numberOfObjects
+    }
+    
+    func pickerView(_ pickerView: UIPickerView, viewForRow row: Int, forComponent component: Int, reusing view: UIView?) -> UIView {
+        
+        var labelView = UILabel()
+        labelView.font = .systemFont(ofSize: 16)
+        labelView.textColor = .myBackgroundColor
+        labelView.textAlignment = .center
+        
+        if let view = view {
+            labelView = view as! UILabel
+        }
+        
+        guard let object = configurePickerViewDataSource(for: pickerView) else { return labelView }
+        
+        if let procedures = object as? [Procedure],
+           let procedureName = procedures[row].name {
+            labelView.text = procedureName
+            return labelView
+        }
+        
+        if let customers = object as? [Customer],
+           let customerName = customers[row].name {
+            labelView.text = customerName
+            return labelView
+        }
+        
+        if let masters = object as? [Master],
+           let masterName = masters[row].name {
+            labelView.text = masterName
+            return labelView
+        }
+        
+        return labelView
+    }
     
 }
 
