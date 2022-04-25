@@ -37,7 +37,7 @@ class EventsFetchingManager {
         
     }
     
-    public func saveEvent (_ eventStartHour: Int, _ eventStartMinute: Int, _ eventEndHour: Int, _ eventEndMinute: Int, _ eventDay: Day, _ eventProcedure: Procedure, _ eventCustomer: Customer, _ eventMaster: Master ) {
+    public func saveEvent (_ eventStartHour: Int, _ eventStartMinute: Int, _ eventEndHour: Int, _ eventEndMinute: Int, _ eventDay: Day, _ eventProcedure: Procedure, _ eventCustomer: Customer, _ eventMaster: Master, _ note: String? = nil ) {
 
         //Classic approach
         let request: NSFetchRequest<Event> = Event.fetchRequest()
@@ -56,6 +56,9 @@ class EventsFetchingManager {
                 newEvent.customer = eventCustomer
                 newEvent.master = eventMaster
                 newEvent.isCompleted = false
+                if note != nil {
+                    newEvent.note = note
+                }
                 let day = DayOfWork(context: managedObjectContext)
                 
                 //Here day is definitely not nil, checked in calling of the function

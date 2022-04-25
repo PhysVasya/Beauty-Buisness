@@ -18,12 +18,12 @@ class NewEventViewController: UIViewController {
         return tableView
     }()
     
-    public var day: Day? 
+    public var day: Day?
     
     private var fetchedProcedures: [Procedure]?
     private var fetchedCustomers: [Customer]?
     private var fetchedMasters: [Master]?
-        
+    
     private var chosenStartHour: Int?
     private var chosenEndHour: Int?
     private var chosenStartMinute: Int?
@@ -33,6 +33,8 @@ class NewEventViewController: UIViewController {
     private var chosenClient: Customer?
     private var chosenMaster: Master?
     
+    private var note: String?
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         title = "Новая запись"
@@ -40,23 +42,28 @@ class NewEventViewController: UIViewController {
         setupTableView()
         setupCancelBarButton()
         setupDoneBarButton()
+        
+        let tapGesture = UITapGestureRecognizer(target: view, action: #selector(view.endEditing(_:)))
+        tapGesture.cancelsTouchesInView = false
+        view.addGestureRecognizer(tapGesture)
     }
     
     private func setupTableView() {
+        view.backgroundColor = .myBackgroundColor
         view.addSubview(newEventTableView)
-        newEventTableView.frame = view.bounds
         newEventTableView.translatesAutoresizingMaskIntoConstraints = false
         
-   
-        
+        NSLayoutConstraint.activate([
+            newEventTableView.topAnchor.constraint(equalTo: view.topAnchor),
+            newEventTableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            newEventTableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            newEventTableView.bottomAnchor.constraint(equalTo: view.keyboardLayoutGuide.topAnchor)
+        ])
         newEventTableView.backgroundColor = .myBackgroundColor
         newEventTableView.delegate = self
         newEventTableView.dataSource = self
-        
-        
-    }
     
-
+    }
     
     private func setupCancelBarButton() {
         let cancelBarButton = UIBarButtonItem(title: "Отмена", style: .plain, target: self, action: #selector(cancelBarButtonPressed))
@@ -86,7 +93,7 @@ class NewEventViewController: UIViewController {
             return
         }
         
-        EventsFetchingManager.shared.saveEvent(chosenStartHour, chosenStartMinute, chosenEndHour, chosenEndMinute, chosenDay, chosenProcedure, chosenClient, chosenMaster)
+        EventsFetchingManager.shared.saveEvent(chosenStartHour, chosenStartMinute, chosenEndHour, chosenEndMinute, chosenDay, chosenProcedure, chosenClient, chosenMaster, note)
         
         dismiss(animated: true)
     }
@@ -104,11 +111,6 @@ class NewEventViewController: UIViewController {
         chosenEndMinute = sender.minute
         
     }
-    
-    @objc private func addButtonPressed(_ sender: UIButton) {
-        
-    }
-    
     
 }
 
@@ -154,7 +156,7 @@ extension NewEventViewController: UITableViewDelegate, UITableViewDataSource {
                 return cell
             }
             
-        } else {
+        } else if indexPath.section == 3 {
             if indexPath.row == 0 {
                 textField.placeholder = "Выберите мастера..."
                 textField.tag = indexPath.section
@@ -166,12 +168,21 @@ extension NewEventViewController: UITableViewDelegate, UITableViewDataSource {
                 cell.configure(with: label)
                 return cell
             }
+        } else {
+            if indexPath.row == 0 {
+                textField.placeholder = ""
+                textField.tag = indexPath.section
+                cell.configure(with: textField)
+                return cell
+            } else {
+                return cell
+            }
         }
         
     }
     
     func numberOfSections(in tableView: UITableView) -> Int {
-        return 4
+        return 5
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -184,8 +195,12 @@ extension NewEventViewController: UITableViewDelegate, UITableViewDataSource {
         }
         if section == 2 {
             return fetchedCustomers?.count != nil ? fetchedCustomers!.count + 1 : 1
-        } else {
+        }
+        if section == 3 {
             return fetchedMasters?.count != nil ? fetchedMasters!.count + 1 : 1
+        }
+        else {
+            return 1
         }
     }
     
@@ -198,25 +213,31 @@ extension NewEventViewController: UITableViewDelegate, UITableViewDataSource {
             return "Процедура"
         } else if section == 2 {
             return "Клиент"
-        } else {
+        } else if section == 3 {
             return "Мастер"
+        } else {
+            return "Заметки"
         }
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        
         return 44
     }
+
+    
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
         tableView.deselectRow(at: indexPath, animated: true)
         
+        //Get the tableView cell, then in the cell's contentView subviews there's a stackView (only it) and in the stackView there's a textField, downcast for it, then set it's text. This is needed because the textField's delegate (didEndEditing) triggers BEFORE tableView's didSelectRowAtIndexPath
+        guard let textFieldOfChosenRow = tableView.cellForRow(at: IndexPath(row: 0, section: indexPath.section))?.contentView.subviews[0].subviews[0] as? UITextField else { return }
         if indexPath.section == 1 && indexPath.row > 0 {
             self.chosenProcedure = fetchedProcedures?[indexPath.row - 1]
-            fetchedProcedures = nil
+            textFieldOfChosenRow.text = chosenProcedure?.name
             if let indexPaths = tableView.indexPathsForVisibleRows?.compactMap({ $0.section == indexPath.section && $0.row != 0 ? $0 : nil }) {
                 tableView.beginUpdates()
+                fetchedProcedures = nil
                 tableView.deleteRows(at: indexPaths, with: .automatic)
                 tableView.endUpdates()
                 tableView.endEditing(true)
@@ -225,9 +246,10 @@ extension NewEventViewController: UITableViewDelegate, UITableViewDataSource {
         
         if indexPath.section == 2 && indexPath.row > 0 {
             self.chosenClient = fetchedCustomers?[indexPath.row - 1]
-            fetchedCustomers = nil
+            textFieldOfChosenRow.text = chosenClient?.name
             if let indexPaths = tableView.indexPathsForVisibleRows?.compactMap({ $0.section == indexPath.section && $0.row != 0 ? $0 : nil }) {
                 tableView.beginUpdates()
+                fetchedCustomers = nil
                 tableView.deleteRows(at: indexPaths, with: .automatic)
                 tableView.endUpdates()
                 tableView.endEditing(true)
@@ -236,16 +258,15 @@ extension NewEventViewController: UITableViewDelegate, UITableViewDataSource {
         
         if indexPath.section == 3 && indexPath.row > 0 {
             self.chosenMaster = fetchedMasters?[indexPath.row - 1]
-            fetchedMasters = nil
+            textFieldOfChosenRow.text = chosenMaster?.name
             if let indexPaths = tableView.indexPathsForVisibleRows?.compactMap({ $0.section == indexPath.section && $0.row != 0 ? $0 : nil }) {
                 tableView.beginUpdates()
+                fetchedMasters = nil
                 tableView.deleteRows(at: indexPaths, with: .automatic)
                 tableView.endUpdates()
                 tableView.endEditing(true)
             }
         }
-        
-        
     }
     
 }
@@ -259,22 +280,18 @@ extension NewEventViewController {
         let endingMinute = Int.endingMinute
         let startingHour = Int.startingHour
         let startingMinute = Int.startingMinute
-     
+        
         guard let currentDay = day?.getDate() else { return nil }
         
-        let startDatePicker = UIDatePicker()
-        startDatePicker.datePickerMode = .time
-        startDatePicker.minuteInterval = 5
-        startDatePicker.setDate(currentDay, animated: false)
+        let startDatePicker = UIDatePicker.forNewEvent
+        startDatePicker.setDate(Date.now, animated: false)
         startDatePicker.minimumDate = Calendar.current.date(bySettingHour: startingHour, minute: startingMinute, second: 0, of: currentDay)
         startDatePicker.maximumDate = Calendar.current.date(bySettingHour: endingHour, minute: endingMinute, second: 0, of: currentDay)
         
-        let endDatePicker = UIDatePicker()
-        endDatePicker.datePickerMode = .time
-        endDatePicker.minuteInterval = 5
-        endDatePicker.setDate(currentDay + 100, animated: false)
-        endDatePicker.minimumDate = Calendar.current.date(bySettingHour: startingHour, minute: startingMinute, second: 0, of: currentDay)
-        endDatePicker.maximumDate = Calendar.current.date(bySettingHour: endingHour, minute: endingMinute, second: 0, of: currentDay)
+        let endDatePicker = UIDatePicker.forNewEvent
+        endDatePicker.setDate(Date.now + 1000, animated: false)
+        endDatePicker.minimumDate = startDatePicker.minimumDate
+        endDatePicker.maximumDate = startDatePicker.maximumDate
         
         if indexPath == IndexPath(row: 0, section: 0) {
             let firstView = UILabel()
@@ -309,7 +326,7 @@ extension NewEventViewController: UITextFieldDelegate {
         case secondSection(with: String?)
         case thirdSection(with: String?)
         
-        func toFinishFetching () async -> Array<NSManagedObject>? {
+        func toFinishFetching () -> Array<NSManagedObject>? {
             
             switch self {
             case .firstSection(let input):
@@ -321,40 +338,32 @@ extension NewEventViewController: UITextFieldDelegate {
             }
         }
     }
-        
+    
     @objc private func onTextChanged (_ sender: UITextField) {
         
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) { [weak self] in
-                
-                if sender.tag == 1 {
-                    self?.makeCoreDataSearch(using: sender.tag, on: .firstSection(with: sender.text))
-                }
-                if sender.tag == 2 {
-                    self?.makeCoreDataSearch(using: sender.tag, on: .secondSection(with: sender.text))
-                }
-                if sender.tag == 3 {
-                    self?.makeCoreDataSearch(using: sender.tag, on: .thirdSection(with: sender.text))
-                }
+            
+            if sender.tag == 1 {
+                self?.makeCoreDataSearch(using: sender.tag, on: .firstSection(with: sender.text))
             }
+            if sender.tag == 2 {
+                self?.makeCoreDataSearch(using: sender.tag, on: .secondSection(with: sender.text))
+            }
+            if sender.tag == 3 {
+                self?.makeCoreDataSearch(using: sender.tag, on: .thirdSection(with: sender.text))
+            }
+            
+        }
+        if sender.tag == 4 {
+            note = sender.text
+        }
         
-        
-    }
-    
-    func textFieldDidEndEditing(_ textField: UITextField) {
-        if textField.tag == 1 {
-            textField.text = chosenProcedure?.name
-        }
-        if textField.tag == 2 {
-            textField.text = chosenClient?.name
-        }
-        if textField.tag == 3 {
-            textField.text = chosenMaster?.name
-        }
     }
     
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         textField.resignFirstResponder()
     }
+    
     
 }
 
@@ -363,37 +372,34 @@ extension NewEventViewController {
     
     private func makeCoreDataSearch (using senderTag: Int, on sectionNumber: TextFieldSection) {
         
-        Task {
-            if let fetchResults = await sectionNumber.toFinishFetching() {
+        if let fetchResults = sectionNumber.toFinishFetching() {
+            
+            if !fetchResults.isEmpty {
+                fetchedProcedures = fetchResults as? [Procedure]
+                fetchedCustomers = fetchResults as? [Customer]
+                fetchedMasters = fetchResults as? [Master]
                 
-                if !fetchResults.isEmpty {
-                    fetchedProcedures = fetchResults as? [Procedure]
-                    fetchedCustomers = fetchResults as? [Customer]
-                    fetchedMasters = fetchResults as? [Master]
-                    
-                    let indexPaths = fetchResults.map { procedure -> IndexPath in
-                        return IndexPath(row: fetchResults.firstIndex(of: procedure)! + 1, section: senderTag)
-                    }
-                    if indexPaths.count + 1 > self.newEventTableView.numberOfRows(inSection: senderTag) {
-                        newEventTableView.beginUpdates()
-                        newEventTableView.insertRows(at: indexPaths, with: .automatic)
-                        newEventTableView.endUpdates()
-                    } else if indexPaths.count + 1 < self.newEventTableView.numberOfRows(inSection: senderTag) {
-                        newEventTableView.beginUpdates()
-                        newEventTableView.deleteRows(at: indexPaths, with: .automatic)
-                        newEventTableView.endUpdates()
-                    }
-                } else {
-                    fetchedProcedures = nil
-                    if let indexPaths = self.newEventTableView.indexPathsForVisibleRows?.compactMap({$0.section == senderTag && $0.row != 0 ? $0 : nil}) {
-                        newEventTableView.beginUpdates()
-                        newEventTableView.deleteRows(at: indexPaths, with: .automatic)
-                        newEventTableView.endUpdates()
-                    }
+                let indexPaths = fetchResults.map { procedure -> IndexPath in
+                    return IndexPath(row: fetchResults.firstIndex(of: procedure)! + 1, section: senderTag)
+                }
+                if indexPaths.count + 1 > self.newEventTableView.numberOfRows(inSection: senderTag) {
+                    newEventTableView.beginUpdates()
+                    newEventTableView.insertRows(at: indexPaths, with: .automatic)
+                    newEventTableView.endUpdates()
+                } else if indexPaths.count + 1 < self.newEventTableView.numberOfRows(inSection: senderTag) {
+                    newEventTableView.beginUpdates()
+                    newEventTableView.deleteRows(at: indexPaths, with: .automatic)
+                    newEventTableView.endUpdates()
+                }
+            } else {
+                fetchedProcedures = nil
+                if let indexPaths = self.newEventTableView.indexPathsForVisibleRows?.compactMap({$0.section == senderTag && $0.row != 0 ? $0 : nil}) {
+                    newEventTableView.beginUpdates()
+                    newEventTableView.deleteRows(at: indexPaths, with: .automatic)
+                    newEventTableView.endUpdates()
                 }
             }
         }
-        
     }
 }
 

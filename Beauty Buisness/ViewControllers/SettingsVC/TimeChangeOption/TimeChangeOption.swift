@@ -15,6 +15,12 @@ class TimeChangeOption: UIViewController {
     private var newStartingMinute: Int?
     private var newEndingMinute: Int?
     
+    private var timeHasChanged: Bool = false {
+        didSet {
+            setupNavigationBar()
+        }
+    }
+    
     private let calendar = Calendar.current
 
     private let settingsTableView: UITableView = {
@@ -41,7 +47,10 @@ class TimeChangeOption: UIViewController {
     }
     
     private func setupNavigationBar() {
-        navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Сохранить", style: .plain, target: self, action: #selector(saveChanges))
+        let saveButton = UIBarButtonItem(title: "Сохранить", style: .plain, target: self, action: #selector(saveChanges))
+        saveButton.isEnabled = timeHasChanged
+        navigationItem.rightBarButtonItem = saveButton
+        
     }
     
     @objc private func saveChanges () {
@@ -65,6 +74,7 @@ class TimeChangeOption: UIViewController {
         let newStartingTime = calendar.dateComponents([.hour, .minute], from: sender.date)
         newStartingHour = newStartingTime.hour
         newStartingMinute = newStartingTime.minute
+        timeHasChanged = true
     }
     
     @objc private func bottomTimePickerChangedValue (_ sender: UIDatePicker) {
@@ -72,6 +82,7 @@ class TimeChangeOption: UIViewController {
         let newEndingTime = calendar.dateComponents([.hour, .minute], from: sender.date)
         newEndingHour = newEndingTime.hour
         newEndingMinute = newEndingTime.minute
+        timeHasChanged = true
     }
 }
 

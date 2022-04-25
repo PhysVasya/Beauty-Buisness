@@ -32,6 +32,8 @@ class EventDetailViewController: UIViewController {
         setupEventDetailCollectionView()
         setupDataSource()
         createInitialSnapshot()
+        
+        
 
     }
         
@@ -73,7 +75,7 @@ class EventDetailViewController: UIViewController {
         eventDetailCollectionView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
             eventDetailCollectionView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 10),
-            eventDetailCollectionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -10),
+            eventDetailCollectionView.bottomAnchor.constraint(equalTo: view.keyboardLayoutGuide.topAnchor, constant: -10),
             eventDetailCollectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 10),
             eventDetailCollectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -10)
         ])

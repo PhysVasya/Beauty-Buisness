@@ -121,6 +121,12 @@ extension DateComponents {
 
 extension Date {
     
+    public static var now: Date {
+        let date = Date()
+        let components = Calendar.current.dateComponents([.hour, .minute], from: date)
+        return Calendar.current.date(bySettingHour: components.hour!, minute: components.minute!, second: 0, of: date)!
+    }
+    
     public static var today: DateComponents {
         return Calendar.current.dateComponents([.day, .month, .year], from: Date())
     }
@@ -166,4 +172,17 @@ extension DayOfWork {
         return formatter.string(from: date).capitalized
     }
 }
+
+extension UIDatePicker {
+    
+    public static var forNewEvent: UIDatePicker {
+        let picker = UIDatePicker()
+        picker.datePickerMode = .time
+        picker.minuteInterval = 5
+        return picker
+    }
+    
+}
+
+
 

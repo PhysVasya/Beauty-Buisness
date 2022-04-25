@@ -14,6 +14,7 @@ class EventDetailCollectionViewCell: UICollectionViewCell {
     private let procedurePickerView = UIPickerView()
     private let masterPickerView = UIPickerView()
     private let customerPickerView = UIPickerView()
+    private let noteTextField = UITextField()
 
     private let procedures = ProceduresFetchingManager.shared.fetchProcedures()
     private let masters = MastersFetchingManager.shared.fetchMasters()
@@ -26,6 +27,7 @@ class EventDetailCollectionViewCell: UICollectionViewCell {
     private var procedureChanged: Procedure?
     private var masterChanged: Master?
     private var customerChanged: Customer?
+    private var noteChanged: String?
     
     private var editingEvent: Event?
     
@@ -42,12 +44,14 @@ class EventDetailCollectionViewCell: UICollectionViewCell {
               let nameView = configureNameLabel(with: eventName),
               let masterView = configureMasterLabel(with: event.master?.name),
               let customerView = configureCustomerLabel(with: event.customer?.name),
-              let eventView = configureEventLabel(with: event)  else { return }
+              let eventView = configureEventLabel(with: event),
+              let noteView = configureNotesTextField(from: event) else { return }
         configureCellLayout(views: [
             eventView,
             nameView,
             masterView,
-            customerView
+            customerView,
+            noteView
         ])
         guard let eventProcedure = event.procedure,
               let eventMaster = event.master,
@@ -102,13 +106,12 @@ class EventDetailCollectionViewCell: UICollectionViewCell {
         masterPickerView.dataSource = self
         masterPickerView.delegate = self
         masterPickerView.isUserInteractionEnabled = false
-      
 
-        
         let hStack = UIStackView(arrangedSubviews: [
             propLabel,
             masterPickerView
         ])
+        hStack.alignment = .center
         hStack.distribution = .fillEqually
         
         return hStack
@@ -129,13 +132,39 @@ class EventDetailCollectionViewCell: UICollectionViewCell {
             propLabel,
             customerPickerView
         ])
+        hStack.alignment = .center
+        hStack.distribution = .fillEqually
+        
+        return hStack
+    }
+    
+    private func configureNotesTextField (from event: Event?) -> UIView? {
+        
+        let propLabel = UILabel()
+        propLabel.text = "Заметка"
+        propLabel.font = .boldSystemFont(ofSize: 18)
+        propLabel.textColor = .myBackgroundColor
+            
+        noteTextField.autocorrectionType = .no
+        noteTextField.autocapitalizationType = .none
+        noteTextField.textColor = .myBackgroundColor
+        noteTextField.text = event?.note ?? "..."
+        noteTextField.isUserInteractionEnabled = false
+        noteTextField.delegate = self
+        noteTextField.addTarget(self, action: #selector(onTextChanged(_:)), for: .editingChanged)
+        noteTextField.textAlignment = .center
+        
+        let hStack = UIStackView(arrangedSubviews: [
+            propLabel,
+            noteTextField
+        ])
+        hStack.alignment = .center
         hStack.distribution = .fillEqually
         
         return hStack
     }
     
     private func configureCellLayout (views: [UIView]) {
-        
         
         //VerticalStack global
         let verticalStack = UIStackView(arrangedSubviews: views)
@@ -165,12 +194,14 @@ class EventDetailCollectionViewCell: UICollectionViewCell {
                 self?.procedurePickerView.isUserInteractionEnabled = true
                 self?.masterPickerView.isUserInteractionEnabled = true
                 self?.customerPickerView.isUserInteractionEnabled = true
+                self?.noteTextField.isUserInteractionEnabled = true
                 self?.isEditing = true
 
             case false:
                 self?.procedurePickerView.isUserInteractionEnabled = false
                 self?.masterPickerView.isUserInteractionEnabled = false
                 self?.customerPickerView.isUserInteractionEnabled = false
+                self?.noteTextField.isUserInteractionEnabled = false
                 self?.isEditing = false
                 
             }
@@ -188,6 +219,8 @@ class EventDetailCollectionViewCell: UICollectionViewCell {
         masterPickerView.selectRow(indexOfEventMaster!, inComponent: 0, animated: false)
         customerPickerView.selectRow(indexOfEventCustomer!, inComponent: 0, animated: false)
 
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(contentView.endEditing(_:)))
+        contentView.addGestureRecognizer(tapGesture)
 
     }
     
@@ -206,6 +239,10 @@ class EventDetailCollectionViewCell: UICollectionViewCell {
             }
             if customerChanged != nil {
                 editingEvent.customer = customerChanged
+                EventsFetchingManager.shared.updateEvent(editingEvent)
+            }
+            if noteChanged != nil {
+                editingEvent.note = noteChanged
                 EventsFetchingManager.shared.updateEvent(editingEvent)
             }
         }
@@ -281,5 +318,17 @@ extension EventDetailCollectionViewCell: UIPickerViewDelegate, UIPickerViewDataS
     
 }
 
+
+extension EventDetailCollectionViewCell: UITextFieldDelegate {
+    
+    func textFieldDidEndEditing(_ textField: UITextField) {
+        textField.resignFirstResponder()
+    }
+    
+    @objc private func onTextChanged (_ textField: UITextField) {
+        noteChanged =  textField.text
+    }
+    
+}
 
 

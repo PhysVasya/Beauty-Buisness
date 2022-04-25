@@ -15,6 +15,7 @@ class NewEventTableCell: UITableViewCell {
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
+   
     }
     
     required init?(coder: NSCoder) {
@@ -24,46 +25,27 @@ class NewEventTableCell: UITableViewCell {
     public var newText: ((String) -> Void)?
     
     public func configure (with view: UIView, secondView: UIView? = nil) {
+ 
+        let stackView = UIStackView()
+        stackView.addArrangedSubview(view)
         
-        if let secondView = secondView {
-            let stackView = UIStackView(arrangedSubviews: [view, secondView])
-            stackView.alignment = .center
-            stackView.axis = .horizontal
-            stackView.frame = contentView.bounds
-            contentView.addSubview(stackView)
-            
-            stackView.translatesAutoresizingMaskIntoConstraints = false
-            stackView.layoutMargins = UIEdgeInsets(top: 0, left: 20, bottom: 0, right: 20)
-            stackView.isLayoutMarginsRelativeArrangement = true
-            
-            NSLayoutConstraint.activate([
-                stackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
-                stackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
-                stackView.topAnchor.constraint(equalTo: contentView.topAnchor),
-                stackView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor)
-            ])
-
-        } else {
-            let stackView = UIStackView(arrangedSubviews: [view])
-            stackView.alignment = .center
-            stackView.axis = .horizontal
-            stackView.frame = contentView.bounds
-            contentView.addSubview(stackView)
-            
-            stackView.translatesAutoresizingMaskIntoConstraints = false
-            stackView.layoutMargins = UIEdgeInsets(top: 0, left: 20, bottom: 0, right: 20)
-            stackView.isLayoutMarginsRelativeArrangement = true
-            
-            NSLayoutConstraint.activate([
-                stackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
-                stackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
-                stackView.topAnchor.constraint(equalTo: contentView.topAnchor),
-                stackView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor)
-            ])  
+        if secondView != nil {
+            stackView.addArrangedSubview(secondView!)
         }
-       
+
+        stackView.alignment = .center
+        stackView.axis = .horizontal
+        stackView.distribution = .fillEqually
+        contentView.addSubview(stackView)
         
-        
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+    
+        NSLayoutConstraint.activate([
+            stackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20),
+            stackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -20),
+            stackView.topAnchor.constraint(equalTo: contentView.topAnchor),
+            stackView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor)
+        ])
         
     }
     

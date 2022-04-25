@@ -48,8 +48,8 @@ struct WorkingHoursSetupView: View {
     @Environment (\.dismiss) private var dismiss
     
     @State private var presentThirdStep: Bool = false
-    @State private var startingHour: Date = Date()
-    @State private var endingHour: Date = Date() + 200
+    @State private var startingHour: Date = Calendar.current.date(bySettingHour: 7, minute: 0, second: 0, of: Date())!
+    @State private var endingHour: Date = Calendar.current.date(bySettingHour: 22, minute: 0, second: 0, of: Date())!
     @State private var timeIsEqual: Bool = true
     @State private var isActive: Bool = false
     
