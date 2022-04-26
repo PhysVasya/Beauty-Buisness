@@ -9,6 +9,7 @@ import Foundation
 import UIKit
 import SwiftUI
 
+
 extension UIColor {
     
     open class var myAccentColor: UIColor? {
@@ -171,6 +172,14 @@ extension DayOfWork {
         let date = Calendar.current.date(from: dateFromComponents)!
         return formatter.string(from: date).capitalized
     }
+    
+    public func date () -> Date {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "EEEE, dd.MM"
+        let dateFromComponents = DateComponents(year: Int(year), month: Int(month), day: Int(day))
+        let date = Calendar.current.date(from: dateFromComponents)!
+        return date
+    }
 }
 
 extension UIDatePicker {
@@ -180,6 +189,36 @@ extension UIDatePicker {
         picker.datePickerMode = .time
         picker.minuteInterval = 5
         return picker
+    }
+    
+    func startEventPicker (event: EventDetailSection) -> UIDatePicker? {
+        guard let event = event.event,
+              let eventDate = event.day?.date() else { return nil }
+        let eventStartHour = Int(event.startHour)
+        let eventStartMinute = Int(event.startMinute)
+        
+        
+        let datePicker = UIDatePicker()
+        datePicker.datePickerMode = .time
+        datePicker.setDate(Calendar.current.date(bySettingHour: eventStartHour, minute: eventStartMinute, second: 0, of: eventDate)!, animated: false)
+        datePicker.overrideUserInterfaceStyle = .dark
+        datePicker.minuteInterval = 5
+        return datePicker
+
+    }
+    
+    func endEventPicker (event: EventDetailSection) -> UIDatePicker? {
+        guard let event = event.event,
+              let eventDate = event.day?.date() else { return nil }
+        let eventEndHour = Int(event.endHour)
+        let eventEndMinute = Int(event.endMinute)
+        
+        let datePicker = UIDatePicker()
+        datePicker.datePickerMode = .time
+        datePicker.setDate(Calendar.current.date(bySettingHour: eventEndHour, minute: eventEndMinute, second: 0, of: eventDate)!, animated: false)
+        datePicker.overrideUserInterfaceStyle = .dark
+        datePicker.minuteInterval = 5
+        return datePicker
     }
     
 }

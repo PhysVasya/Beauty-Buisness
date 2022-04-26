@@ -151,7 +151,7 @@ class EventsViewController: UIViewController {
             guard let eventToComplete = self?.eventsDataSource.itemIdentifier(for: indexPath) else { return nil }
             
             let completeAction = UIContextualAction(style: .destructive, title: "Выполнено") { action, view, completion in
-                EventsFetchingManager.shared.updateEvent(eventToComplete)
+                EventsFetchingManager.shared.setEventCompleted(eventToComplete)
             }
             
             if eventToComplete.isCompleted {
@@ -283,7 +283,8 @@ extension EventsViewController: UICollectionViewDelegate {
         let eventDelailVC = EventDetailViewController()
    
         eventDelailVC.configureDetail(event: selectedEvent, from: events)
-        navigationController?.pushViewController(eventDelailVC, animated: true)
+//        present(eventDelailVC, animated: true)
+        show(eventDelailVC, sender: self)
 
         
     }

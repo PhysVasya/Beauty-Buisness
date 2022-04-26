@@ -25,7 +25,6 @@
 		FF5A0381280024E900F8FB24 /* SalonTypesChooseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF5A0380280024E900F8FB24 /* SalonTypesChooseView.swift */; };
 		FF5A038328003AD400F8FB24 /* ProcedureTypesChooseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF5A038228003AD400F8FB24 /* ProcedureTypesChooseView.swift */; };
 		FF71262228114A0500609F70 /* EventDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF71262128114A0500609F70 /* EventDetailViewController.swift */; };
-		FF7126242811596700609F70 /* EventDetailCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF7126232811596700609F70 /* EventDetailCollectionViewCell.swift */; };
 		FF7126262816B18A00609F70 /* EventDetailCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF7126252816B18A00609F70 /* EventDetailCell.swift */; };
 		FF7126282816F21E00609F70 /* EventDetailSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF7126272816F21E00609F70 /* EventDetailSection.swift */; };
 		FF71262A2817002A00609F70 /* EventDetailItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF7126292817002A00609F70 /* EventDetailItem.swift */; };
@@ -78,7 +77,6 @@
 		FF5A0380280024E900F8FB24 /* SalonTypesChooseView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SalonTypesChooseView.swift; sourceTree = "<group>"; };
 		FF5A038228003AD400F8FB24 /* ProcedureTypesChooseView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProcedureTypesChooseView.swift; sourceTree = "<group>"; };
 		FF71262128114A0500609F70 /* EventDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventDetailViewController.swift; sourceTree = "<group>"; };
-		FF7126232811596700609F70 /* EventDetailCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventDetailCollectionViewCell.swift; sourceTree = "<group>"; };
 		FF7126252816B18A00609F70 /* EventDetailCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventDetailCell.swift; sourceTree = "<group>"; };
 		FF7126272816F21E00609F70 /* EventDetailSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventDetailSection.swift; sourceTree = "<group>"; };
 		FF7126292817002A00609F70 /* EventDetailItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventDetailItem.swift; sourceTree = "<group>"; };
@@ -125,6 +123,25 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		FF35BD6D2817F18600CDFA62 /* DetailEventVC */ = {
+			isa = PBXGroup;
+			children = (
+				FF35BD6E2817F19600CDFA62 /* DetailEventDiffableModels */,
+				FF71262128114A0500609F70 /* EventDetailViewController.swift */,
+				FF7126252816B18A00609F70 /* EventDetailCell.swift */,
+			);
+			path = DetailEventVC;
+			sourceTree = "<group>";
+		};
+		FF35BD6E2817F19600CDFA62 /* DetailEventDiffableModels */ = {
+			isa = PBXGroup;
+			children = (
+				FF7126272816F21E00609F70 /* EventDetailSection.swift */,
+				FF7126292817002A00609F70 /* EventDetailItem.swift */,
+			);
+			path = DetailEventDiffableModels;
+			sourceTree = "<group>";
+		};
 		FF512CEC280184C000D661B5 /* Models */ = {
 			isa = PBXGroup;
 			children = (
@@ -340,11 +357,7 @@
 			children = (
 				FFFAA33A27F9A43D002EC74B /* NewEventVC */,
 				FFFAA31027F09AA5002EC74B /* EventsViewController.swift */,
-				FF71262128114A0500609F70 /* EventDetailViewController.swift */,
-				FF7126232811596700609F70 /* EventDetailCollectionViewCell.swift */,
-				FF7126252816B18A00609F70 /* EventDetailCell.swift */,
-				FF7126272816F21E00609F70 /* EventDetailSection.swift */,
-				FF7126292817002A00609F70 /* EventDetailItem.swift */,
+				FF35BD6D2817F18600CDFA62 /* DetailEventVC */,
 			);
 			path = EventsVC;
 			sourceTree = "<group>";
@@ -445,7 +458,6 @@
 				FFEC2EAB280B1E9B00CE1E2F /* NewMasterTableCell.swift in Sources */,
 				FFFAA2FD27EFA3CA002EC74B /* Beauty_Buisness.xcdatamodeld in Sources */,
 				FFFAA32127F391F7002EC74B /* TimeChangeOptionCell.swift in Sources */,
-				FF7126242811596700609F70 /* EventDetailCollectionViewCell.swift in Sources */,
 				FF512CFE2803F21100D661B5 /* NewCustomerViewController.swift in Sources */,
 				FFEC2EA4280861CC00CE1E2F /* Protocols.swift in Sources */,
 				FF512CEE280200B200D661B5 /* MastersViewController.swift in Sources */,

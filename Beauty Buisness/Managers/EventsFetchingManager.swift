@@ -37,7 +37,7 @@ class EventsFetchingManager {
         
     }
     
-    public func saveEvent (_ eventStartHour: Int, _ eventStartMinute: Int, _ eventEndHour: Int, _ eventEndMinute: Int, _ eventDay: Day, _ eventProcedure: Procedure, _ eventCustomer: Customer, _ eventMaster: Master, _ note: String? = nil ) {
+    public func saveEvent (_ eventStartHour: Int, _ eventStartMinute: Int, _ eventEndHour: Int, _ eventEndMinute: Int, _ eventDay: Day, _ eventProcedure: Procedure, _ eventCustomer: Customer, _ eventMaster: Master, _ note: String?) {
 
         //Classic approach
         let request: NSFetchRequest<Event> = Event.fetchRequest()
@@ -57,6 +57,7 @@ class EventsFetchingManager {
                 newEvent.master = eventMaster
                 newEvent.isCompleted = false
                 if note != nil {
+                    guard let note = note else { return }
                     newEvent.note = note
                 }
                 let day = DayOfWork(context: managedObjectContext)
@@ -99,9 +100,14 @@ class EventsFetchingManager {
     public func updateEvent (_ event: Event) {
         
 
-        event.isCompleted = !event.isCompleted
+//        event.isCompleted = !event.isCompleted
         CoreDataStack.shared.saveContext()
         
+    }
+    
+    public func setEventCompleted (_ event: Event) {
+        event.isCompleted = !event.isCompleted
+        CoreDataStack.shared.saveContext()
     }
     
     
